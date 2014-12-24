@@ -26,7 +26,7 @@ object UserDBHelper extends DBHelper[User] {
     DB.withConnection{ implicit c =>
       val query = SQL( """
         INSERT INTO User
-        VALUES( {email}, {password}, {name}, {surname} )
+        VALUES( NULL, {email}, {password}, {name}, {surname} )
         """).on("email"->pEmail, "password"->pPassword, "name"->pName, "surname"->pSurname)
       
       query.execute

@@ -27,4 +27,8 @@ object User {
     UserDBHelper.loginUser(pEmail, pPassword)
     
   }
+    
+    def register(pEmail:String, pPassword:String, pName:String, pSurname:String)={
+      UserDBHelper.createUser(pEmail, pPassword, pName, pSurname)
+    }
 }
