@@ -34,9 +34,18 @@ object Register extends Controller {
     form => {
       val (email: String, password: String, name: String, surname : String)=form
       val userObj = User.register(email, password,name,surname)
-      Logger.error("registering user")
-      Logger.warn(userObj.toString)
-      Redirect(routes.Application.index()).flashing("success" -> "Contact saved!")
+
+      userObj match {
+        case None => {Logger.warn("Register.register: Registry Unsuccessful")
+          Logger.warn(userObj.toString)
+          BadRequest(views.html.register("Something went wrong during registry"))
+        }
+        case x => {
+          Logger.info("Register.register: Success ")
+          Logger.info(userObj.toString)
+          Redirect(routes.Application.index())
+        }
+      }
     }
   )
   }
