@@ -1,0 +1,6 @@
+12-10 16:32:32 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Table "USERLOOKUP" not found; SQL statement:
+Select contactid from UserLookup           Where id = ? [42102-175]
+12-10 16:32:33 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Table "USERLOOKUP" not found; SQL statement:
+Select contactid from UserLookup           Where id = ? [42102-175]
