@@ -23,7 +23,7 @@ case class User( pId : Option[Long],
 
 object User {
   
-    def login( pEmail: String, pPassword: String) : User = {
+    def login( pEmail: String, pPassword: String) : Option[User] = {
     UserDBHelper.loginUser(pEmail, pPassword)
     
   }

@@ -17,7 +17,7 @@ object UserDBHelper extends DBHelper[User] {
     }
     
   }
-  
+
   def createUser(pEmail : String , 
 		  		 pPassword : String ,
 		  		 pName : String,
@@ -28,7 +28,7 @@ object UserDBHelper extends DBHelper[User] {
         INSERT INTO User
         VALUES( NULL, {email}, {password}, {name}, {surname} )
         """).on("email"->pEmail, "password"->pPassword, "name"->pName, "surname"->pSurname)
-      
+
       query.execute
     }
     
@@ -65,7 +65,7 @@ object UserDBHelper extends DBHelper[User] {
           WHERE id = {id} AND password = {password}
           """).on("email"->pEmail, "password"->pPassword, "name"->pName, 
               "surname"->pSurname)
-      if (pNewPassword == Nil)
+      if (pNewPassword.isEmpty)
         query1.execute
       else
         query2.execute
@@ -73,15 +73,20 @@ object UserDBHelper extends DBHelper[User] {
     
   }
   
-  def loginUser(pEmail : String, pPassword : String ) : User = {
+  def loginUser(pEmail : String, pPassword : String ) : Option[User] = {
     DB.withConnection{ implicit c =>
       val query = SQL("""
           SELECT * FROM User
           WHERE email = {email} AND password = {password}
           """).on("email"-> pEmail, "password"->pPassword)
       
-      val result = query.executeQuery
-      result.as(parser *).toList.head
+      val result = query.executeQuery.as(parser *)
+
+      result match {
+        case Nil => None
+        case x :: xs => Some(x)
+
+      }
     }
   }
 

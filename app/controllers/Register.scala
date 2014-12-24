@@ -21,7 +21,7 @@ object Register extends Controller {
       
   def renderRegister = Action{implicit request =>
   	Logger.warn("renderRegister")
-  	Ok(views.html.register())
+  	Ok(views.html.register("Register"))
   }
   
   def register = Action{implicit request =>
@@ -29,13 +29,14 @@ object Register extends Controller {
          errors => {
            Logger.warn("In Registor errors")
            Logger.error("errors"+errors.errorsAsJson)
-      BadRequest(views.html.register("error"+errors.errorsAsJson))
+      BadRequest(views.html.register( "error"+errors.errorsAsJson))
     },
     form => {
       val (email: String, password: String, name: String, surname : String)=form
       val userObj = User.register(email, password,name,surname)
       Logger.error("registering user")
-      Redirect(routes.Application.index).flashing("success" -> "Contact saved!")
+      Logger.warn(userObj.toString)
+      Redirect(routes.Application.index()).flashing("success" -> "Contact saved!")
     }
   )
   }

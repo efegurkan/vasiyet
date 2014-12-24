@@ -1,19 +1,27 @@
 @(error: String = "")
 
-
- <div class="panel-body">
-                <form action='@routes.Login.login' method="post">
-                    <div class="col-md-10 col-md-offset-1">
-                        <div class="row row-with-margin">
-                            <input name="pEmail" type="text" class="form-control" placeholder="Username">
-                        </div>
-                        <div class="row row-with-margin">
-                            <input name="password" type="password" class="form-control" placeholder="Password">
-                        </div>
-                        <div class="row row-with-margin">
-                       
-                            <button class="btn btn-primary" type="submit" onclick="return validateForm(this.form, this.form.username, this.form.password);" style="float: right;">Login</button>
-                        </div>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <div class="panel-body">
+            <form action='@routes.Login.login' method="post">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="row row-with-margin">
+                        <input name="pEmail" type="text" class="form-control" placeholder="Username">
                     </div>
-                </form>
-            </div>
+                    <div class="row row-with-margin">
+                        <input name="password" type="password" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="row row-with-margin">
+
+                        <button class="btn btn-primary" type="submit"  style="float : right ;">
+                            Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
