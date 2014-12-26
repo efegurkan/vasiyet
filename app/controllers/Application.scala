@@ -22,10 +22,13 @@ object Application extends Controller{
     
   }
 
-  def home = Action {request =>{
-    Ok(views.html.home("Login success"))
+
+  def home = Action { request =>
+    request.session.get("LoggedUser").map { id =>
+      Ok(views.html.home("Login success", id))
+    }.getOrElse {
+      Unauthorized("Login unsuccessfull")
+    }
   }
-  }
-  
-  
+
 }
