@@ -21,6 +21,11 @@ object Application extends Controller{
   }
     
   }
+
+  def home = Action {request =>{
+    Ok(views.html.home("Login success"))
+  }
+  }
   
   
 }

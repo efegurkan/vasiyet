@@ -34,7 +34,7 @@ object Login extends Controller {
         case x =>
           Logger.info("Login.login: Success ")
           Logger.info(userObj.toString)
-          Redirect(routes.Application.index()).flashing("success" -> "Contact saved!")
+          Redirect(routes.Application.home).flashing("success" -> "Contact saved!")
       }
     }
   )
