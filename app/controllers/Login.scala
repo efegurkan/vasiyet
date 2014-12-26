@@ -46,4 +46,9 @@ object Login extends Controller {
       Ok(views.html.login("Vasiyet Login"))
     }
   }
+
+  def logout = Action{ implicit request =>{
+      Redirect(routes.Login.renderLogin()).withNewSession
+    }
+  }
 }
