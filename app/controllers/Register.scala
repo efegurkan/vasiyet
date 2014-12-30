@@ -1,11 +1,13 @@
 package controllers
 
 import play.api._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.mvc.Action
 import play.api.data._
 import play.api.data.Forms._
-import model.User
+import model.{User,RegisterForm}
 
 object Register extends Controller {
 
@@ -18,12 +20,34 @@ object Register extends Controller {
          
           )
       )
+
+  implicit val regForm : Reads[RegisterForm] = (
+    (JsPath \ "email").read[String] and
+    (JsPath \ "password").read[String] and
+    (JsPath \ "name").read[String] and
+    (JsPath \ "surname").read[String]
+
+    )(RegisterForm.apply _)
       
   def renderRegister = Action{implicit request =>
   	Logger.warn("renderRegister")
   	Ok(views.html.register("Register"))
   }
-  
+
+  def registerJson = Action(BodyParsers.parse.json){implicit request =>
+    val formData = request.body.validate[RegisterForm]
+
+    formData.fold(
+      errors => {
+        BadRequest(Json.obj("Status"->"KO","message"->JsError.toFlatJson(errors)))
+      },
+      data => {
+        val registerObj = User.registerJson(data)
+        Logger.warn("register success")
+        Ok("/home").withSession("LoggedUser"->registerObj.get.id.toString)
+      }
+    )
+  }
   def register = Action{implicit request =>
     registerForm.bindFromRequest.fold(
          errors => {

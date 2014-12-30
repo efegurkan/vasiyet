@@ -1,11 +1,15 @@
 package controllers
 
 import play.api._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.mvc.Action
 import play.api.data._
 import play.api.data.Forms._
-import model.User
+import model.{User,LoginForm}
+
+
 
 object Login extends Controller {
 
@@ -15,6 +19,28 @@ object Login extends Controller {
           "password"-> nonEmptyText
           )
       )
+
+  implicit val userLogin: Reads[LoginForm] =(
+    (JsPath \ "email").read[String] and
+      (JsPath \ "password").read[String]
+    )(LoginForm.apply _)
+
+  def loginJson = Action(BodyParsers.parse.json) { implicit  request =>
+    val formData = request.body.validate[LoginForm]
+
+    formData.fold(
+    errors => {
+      Logger.warn("loginJsonerror")
+      BadRequest(Json.obj("Status"-> "KO","message"->JsError.toFlatJson(errors)))
+    },
+    data =>{
+      val userObj = User.loginJson(data)
+      Logger.warn("loginjson success")
+      Ok("/home").withSession("LoggedUser"->userObj.get.id.toString)
+    }
+
+    )
+  }
 
    def login = Action{ implicit request =>
     userForm.bindFromRequest.fold(

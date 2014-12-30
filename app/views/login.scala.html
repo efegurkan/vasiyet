@@ -4,24 +4,50 @@
 <html>
     <head>
         <title>Login</title>
+        <link rel="stylesheet" href="@routes.Assets.at("/dist/css/bootstrap.min.css")">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     </head>
     <body>
         <div class="panel-body">
-            <form action='@routes.Login.login' method="post">
-                <div class="col-md-10 col-md-offset-1">
-                    <div class="row row-with-margin">
-                        <input name="pEmail" type="text" class="form-control" placeholder="Username">
-                    </div>
-                    <div class="row row-with-margin">
-                        <input name="password" type="password" class="form-control" placeholder="Password">
-                    </div>
-                    <div class="row row-with-margin">
-
-                        <button class="btn btn-primary" type="submit"  style="float : left ;">
-                            Login</button>
-                    </div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="email">Email adress</label>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Email">
                 </div>
+                <div class="form-group">
+                    <label class="sr-only" for="password">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <button type="button" id="submit" onclick="submitData ( )" class="btn btn-default" >Login</button>
             </form>
         </div>
+
+        <script>
+        function submitData ( ) {
+        var formData = {
+        'email' : $ ( '#email' ).val ( ),
+        'password' : $ ( '#password' ).val ( )
+        } ;
+
+        $.ajax ( {
+        type : "POST",
+        url : "http://localhost:9000/loginjson",
+        data : JSON.stringify ( formData ),
+        contentType : "application/json",
+        success : function ( data, textStatus, jqXHR ) {
+        console.log ( jqXHR.status ) ;
+        console.log ( textStatus ) ;
+        window.location.href = data ;
+        }
+        } ) ;
+        }
+
+
+        $(document).keypress(function(e) {
+        if(e.which === 13) {
+        $("#submit").first().click();
+        }
+        });
+        </script>
     </body>
 </html>

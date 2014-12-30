@@ -9,11 +9,13 @@ GET         /home                controllers.Application.home
 
 GET         /login               controllers.Login.renderLogin
 POST        /login               controllers.Login.login
+POST        /loginjson           controllers.Login.loginJson
 
 GET         /logout              controllers.Login.logout
 
 GET         /register            controllers.Register.renderRegister
 POST        /register            controllers.Register.register
+POST        /registerjson        controllers.Register.registerJson
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
