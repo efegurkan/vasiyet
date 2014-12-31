@@ -26,26 +26,32 @@ case class User( pId : Option[Long],
 }
 
 object User {
-  
-    def login( pEmail: String, pPassword: String) : Option[User] = {
-    UserDBHelper.loginUser(pEmail, pPassword)
-    
-    }
+
+//    def login( pEmail: String, pPassword: String) : Option[User] = {
+//    UserDBHelper.loginUser(pEmail, pPassword)
+//
+//    }
 
     def loginJson(form : LoginForm): Option[User] ={
-      UserDBHelper.loginUser(form.email,form.password)
+      try {
+        UserDBHelper.loginUser(form.email, form.password)
+      }
+      catch {
+        case e:Exception=> throw new Exception(e.getMessage)
+      }
     }
     
-    def register(pEmail:String, pPassword:String, pName:String, pSurname:String):Option[User]={
-      UserDBHelper.createUser(pEmail, pPassword, pName, pSurname)
-      login(pEmail,pPassword)
-
-    }
+//    def register(pEmail:String, pPassword:String, pName:String, pSurname:String):Option[User]={
+//      UserDBHelper.createUser(pEmail, pPassword, pName, pSurname)
+//      login(pEmail,pPassword)
+//
+//    }
 
     def registerJson(form:RegisterForm): Option[User] ={
       try {
         UserDBHelper.createUser(form.email, form.password, form.name, form.surname)
-        login(form.email, form.password)
+        val loginForm= new LoginForm(form.email,form.password)
+        loginJson(loginForm)
       }
       catch {
         case e:Exception => throw new Exception(e.getMessage)

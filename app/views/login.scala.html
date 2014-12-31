@@ -1,4 +1,4 @@
-@(error: String = "")
+@(error: String = "1")
 
 <!DOCTYPE html>
 <html>
@@ -37,8 +37,14 @@
         success : function ( data, textStatus, jqXHR ) {
         console.log ( jqXHR.status ) ;
         console.log ( textStatus ) ;
-        window.location.href = data ;
+        window.location.href = data ;},
+        error: function(jqXHR, textstatus, errorThrown){
+//            var resp = JSON.parse(jqXHR.responseText);
+            console.log(jqXHR.responseText );
+            console.log(textstatus);
+            console.log(errorThrown);
         }
+
         } ) ;
         }
 

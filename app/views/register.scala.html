@@ -57,9 +57,9 @@
             data:JSON.stringify(formdata),
             contentType:"application/json",
             success: function(data, textstatus, jqXHR){
-                var obj = JSON.parse(data)
+//                var obj = JSON.parse(data)
                 console.log(jqXHR.status);
-                window.location.href = obj.message;
+                window.location.href = data;
             },
             failure : function(data,textstatus,jqXHR){
                 var obj = JSON.parse(data)

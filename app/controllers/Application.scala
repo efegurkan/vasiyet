@@ -27,7 +27,7 @@ object Application extends Controller{
     request.session.get("LoggedUser").map { id =>
       Ok(views.html.home("Login success", id))
     }.getOrElse {
-      Unauthorized("Login unsuccessfull")
+      Redirect(routes.Login.renderLogin())
     }
   }
 

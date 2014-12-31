@@ -39,10 +39,13 @@ object UserDBHelper extends DBHelper[User] {
           if(ex.getErrorCode == 1062)
             throw new Exception("{'error':'This mail adress is already in use!'}")
           else
-            throw new Exception("{'error':'Unknown error occured please make contact with with us!'}")
+            throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
           }
-        case e : Throwable => e.printStackTrace()
+        case e : Throwable =>{
+          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
+          e.printStackTrace()
           false
+          }
       }
     }
   }
@@ -96,21 +99,30 @@ object UserDBHelper extends DBHelper[User] {
       try {
         val result = query.executeQuery.as(parser *)
         result match {
-          case Nil => None
+          case Nil => throw new UserCredentialsException()
           case x :: xs => Some(x)
 
         }
       }
       catch {
-        case mysqlException: MySQLIntegrityConstraintViolationException =>
-          mysqlException.printStackTrace()
-          None
-
-        case _ => Logger.error("dsa")
-          None
+        case mysqlException: jdbc4.MySQLIntegrityConstraintViolationException =>
+        {
+          throw new Exception("{'error':'An error occured with error code :" + mysqlException.getErrorCode+ ". Please contact us with error code '}")
+        }
+        case uce : UserCredentialsException =>
+        {
+          throw new Exception("{'error':'Username/password not correct'}")
+        }
+        case ex : Throwable =>
+        {
+          ex.printStackTrace()
+          throw new Exception("{'error':'An unknown error occured. Please contact us!'}")
+        }
       }
 
     }
   }
 
 }
+
+class UserCredentialsException() extends Exception
