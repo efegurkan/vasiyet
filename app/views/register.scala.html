@@ -57,8 +57,14 @@
             data:JSON.stringify(formdata),
             contentType:"application/json",
             success: function(data, textstatus, jqXHR){
+                var obj = JSON.parse(data)
                 console.log(jqXHR.status);
-                window.location.href = data;
+                window.location.href = obj.message;
+            },
+            failure : function(data,textstatus,jqXHR){
+                var obj = JSON.parse(data)
+                console.log(jqXHR.status);
+                console.log(obj.message);
             }
         });
             $(document ).keypress(

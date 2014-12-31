@@ -1,6 +1,6 @@
 package datalayer
 
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException
+import com.mysql.jdbc.exceptions.{jdbc4, MySQLIntegrityConstraintViolationException}
 import model.User
 import play.api.Logger
 import play.api.db.DB
@@ -35,6 +35,12 @@ object UserDBHelper extends DBHelper[User] {
         query.execute()
       }
       catch {
+        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
+          if(ex.getErrorCode == 1062)
+            throw new Exception("{'error':'This mail adress is already in use!'}")
+          else
+            throw new Exception("{'error':'Unknown error occured please make contact with with us!'}")
+          }
         case e : Throwable => e.printStackTrace()
           false
       }

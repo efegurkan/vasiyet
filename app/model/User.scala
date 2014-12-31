@@ -1,5 +1,6 @@
 package model
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException
 import datalayer.UserDBHelper
 
 case class LoginForm(email:String, password : String)
@@ -42,7 +43,12 @@ object User {
     }
 
     def registerJson(form:RegisterForm): Option[User] ={
-      UserDBHelper.createUser(form.email,form.password,form.name,form.surname)
-      login(form.email,form.password)
+      try {
+        UserDBHelper.createUser(form.email, form.password, form.name, form.surname)
+        login(form.email, form.password)
+      }
+      catch {
+        case e:Exception => throw new Exception(e.getMessage)
+      }
     }
 }

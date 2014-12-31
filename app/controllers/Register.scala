@@ -42,9 +42,17 @@ object Register extends Controller {
         BadRequest(Json.obj("Status"->"KO","message"->JsError.toFlatJson(errors)))
       },
       data => {
-        val registerObj = User.registerJson(data)
-        Logger.warn("register success")
-        Ok("/home").withSession("LoggedUser"->registerObj.get.id.toString)
+        try {
+          val registerObj = User.registerJson(data)
+          Logger.warn("register success")
+          Ok(Json.obj("Status"->"OK", "message"->"/home")).withSession("LoggedUser" -> registerObj.get.id.toString)
+        }
+        catch{
+          case e: Exception =>{
+            BadRequest(Json.obj("Status"->"KO","message"->e.getMessage))
+
+          }
+        }
       }
     )
   }
