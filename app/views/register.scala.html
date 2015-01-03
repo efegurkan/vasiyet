@@ -4,77 +4,49 @@
 <html>
     <head>
         <title>Register</title>
-        <link rel="stylesheet" href="@routes.Assets.at("/dist/css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("dist/css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("register.css")">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css"/>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script>
     </head>
     <body>
-        <div class="panel-body">
-            <form class="form-horizontal">
-                <div class="form-group ">
-                    <label class="col-sm-2 control-label" for="email">Email</label>
-                        <div class="col-sm-10">
+        <div class="container top_margin" >
+
+            <div class="panel-body">
+                <form class="form-horizontal col-sm-offset-3">
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label" for="email">Email</label>
+                        <div class="col-sm-6">
                             <input id="email" name="email" type="email" class="form-control" placeholder="Email">
                         </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="password">Password</label>
-                    <div class="col-sm-10">
-                        <input id="password" name="password" type="password" class="form-control" placeholder="Password">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="name">Name</label>
-                    <div class="col-sm-10">
-                        <input id="name" name="name" type="text" class="form-control" placeholder="Name">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="password">Password</label>
+                        <div class="col-sm-6">
+                            <input id="password" name="password" type="password" class="form-control" placeholder="Password">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="surname">Surname</label>
-                    <div class="col-sm-10">
-                        <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="name">Name</label>
+                        <div class="col-sm-6">
+                            <input id="name" name="name" type="text" class="form-control" placeholder="Name">
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-offset-2 col-sm-10">
-                        <button class="btn btn-primary" type="button" onclick="submitData()">Register</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="surname">Surname</label>
+                        <div class="col-sm-6">
+                            <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button class="btn btn-default" type="button" onclick="submitData ( )">Register</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
-    <script>
-        function submitData(){
-          var formdata = {
-              'email':$('#email' ).val(),
-              'password':$('#password' ).val(),
-              'name':$('#name' ).val(),
-              'surname':$('#surname' ).val()
-          };
-        console.log(formdata);
-        $.ajax({
-            type:"POST",
-            url:"/registerjson",
-            data:JSON.stringify(formdata),
-            contentType:"application/json",
-            success: function(data, textstatus, jqXHR){
-//                var obj = JSON.parse(data)
-                console.log(jqXHR.status);
-                window.location.href = data;
-            },
-            failure : function(data,textstatus,jqXHR){
-                var obj = JSON.parse(data)
-                console.log(jqXHR.status);
-                console.log(obj.message);
-            }
-        });
-            $(document ).keypress(
-              function(e){
-                if( e.which === 13){
-                    $("#submit" ).first( ).click();
-                }
-              }
-            );
-
-        };
-    </script>
+    <script src="@routes.Assets.at("javascripts/register.js")"></script>
 </html>

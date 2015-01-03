@@ -4,56 +4,35 @@
 <html>
     <head>
         <title>Login</title>
-        <link rel="stylesheet" href="@routes.Assets.at("/dist/css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("register.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("dist/css/bootstrap.min.css")">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrapValidator.js")"></script>
     </head>
     <body>
-        <div class="panel-body">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label class="sr-only" for="email">Email adress</label>
-                    <input type="email" name="email" class="form-control" id="email" placeholder="Email">
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="password">Password</label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-                </div>
-                <button type="button" id="submit" onclick="submitData ( )" class="btn btn-default" >Login</button>
-            </form>
+        <div class="container top_margin">
+            <div class="panel-body">
+                <form class="form-horizontal col-sm-offset-3" id="loginForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="email">Email</label>
+                        <div class="col-sm-6">
+                            <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="password">Password</label>
+                        <div class="col-sm-6">
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="button" id="submit" onclick="validate()" class="btn btn-default" >Login</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <script>
-        function submitData ( ) {
-        var formData = {
-        'email' : $ ( '#email' ).val ( ),
-        'password' : $ ( '#password' ).val ( )
-        } ;
-
-        $.ajax ( {
-        type : "POST",
-        url : "http://localhost:9000/loginjson",
-        data : JSON.stringify ( formData ),
-        contentType : "application/json",
-        success : function ( data, textStatus, jqXHR ) {
-        console.log ( jqXHR.status ) ;
-        console.log ( textStatus ) ;
-        window.location.href = data ;},
-        error: function(jqXHR, textstatus, errorThrown){
-//            var resp = JSON.parse(jqXHR.responseText);
-            console.log(jqXHR.responseText );
-            console.log(textstatus);
-            console.log(errorThrown);
-        }
-
-        } ) ;
-        }
-
-
-        $(document).keypress(function(e) {
-        if(e.which === 13) {
-        $("#submit").first().click();
-        }
-        });
-        </script>
+        <script src="@routes.Assets.at("javascripts/login.js")"></script>
     </body>
 </html>
