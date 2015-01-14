@@ -25,14 +25,6 @@ function submitData() {
 }
 
 
-$(document).keypress(function (e) {
-    if (e.which === 13) {
-        $("#submit").first().click();
-    }
-});
-
-
-
 function validateForm(){
     $("#loginForm")
         .bootstrapValidator({
