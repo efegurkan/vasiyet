@@ -13,10 +13,10 @@ object Register extends Controller {
 
 
   implicit val regForm: Reads[RegisterForm] = (
-    (JsPath \ "email").read[String] and
-      (JsPath \ "password").read[String] and
-      (JsPath \ "name").read[String] and
-      (JsPath \ "surname").read[String]
+    (JsPath \ "email").read[String](Reads.email) and
+      (JsPath \ "password").read[String](Reads.minLength[String](6)) and
+      (JsPath \ "name").read[String](Reads.minLength[String](1)) and
+      (JsPath \ "surname").read[String](Reads.minLength[String](1))
 
     )(RegisterForm.apply _)
 

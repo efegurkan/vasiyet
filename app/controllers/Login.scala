@@ -13,8 +13,8 @@ import model.{User, LoginForm}
 object Login extends Controller {
 
   implicit val userLogin: Reads[LoginForm] = (
-    (JsPath \ "email").read[String] and
-      (JsPath \ "password").read[String]
+    (JsPath \ "email").read[String](Reads.email) and
+      (JsPath \ "password").read[String](Reads.minLength[String](6))
     )(LoginForm.apply _)
 
   def loginJson = Action(BodyParsers.parse.json) { implicit request =>
