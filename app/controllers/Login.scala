@@ -8,6 +8,7 @@ import play.api.mvc.Action
 import play.api.data._
 import play.api.data.Forms._
 import model.{User, LoginForm}
+import utility.AuthAction
 
 
 object Login extends Controller {
@@ -52,14 +53,8 @@ object Login extends Controller {
   }
   }
 
-  def logout = Action { implicit request => {
-    if(request.session.get("LoggedUser").nonEmpty){
+  def logout = AuthAction { implicit request => {
       Redirect(routes.Login.renderLogin()).withNewSession
-    }
-    else
-    {
-      Redirect(routes.Login.renderLogin())
-    }
   }
   }
 }

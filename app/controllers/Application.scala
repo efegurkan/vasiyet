@@ -5,6 +5,7 @@ import play.api.mvc._
 import datalayer._
 import play.api.data._
 import play.api.data.Forms._
+import utility.AuthAction
 
 
 object Application extends Controller{
@@ -23,12 +24,10 @@ object Application extends Controller{
   }
 
 
-  def home = Action { request =>
-    request.session.get("LoggedUser").map { id =>
-      Ok(views.html.home("Login success", id))
-    }.getOrElse {
-      Redirect(routes.Login.renderLogin())
-    }
+  def home = AuthAction { request =>
+     val id = request.session.get("LoggedUser")
+     Ok(views.html.home("Login success", id.get))
+
   }
 
 }
