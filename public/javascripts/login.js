@@ -31,10 +31,11 @@ $(document).keypress(function (e) {
     }
 });
 
-$(document).ready(validate());
 
-function validate(){
-    $("#loginForm").bootstrapValidator({
+
+function validateForm(){
+    $("#loginForm")
+        .bootstrapValidator({
             message: 'This value is not valid',
             feedbackIcons:{
                 valid : 'glyphicon glyphicon-ok',
@@ -67,11 +68,11 @@ function validate(){
             }
         }
     ).on('success.form.bv', function(e) {
-            var $form = $(e.target);
-            var bv = $form.data('bootstrapValidator');
+            e.preventDefault();
             submitData();
         }
     )
 
 
 }
+$(document).ready(validateForm());
