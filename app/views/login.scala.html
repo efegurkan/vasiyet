@@ -10,27 +10,45 @@
         <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrapValidator.js")"></script>
     </head>
     <body>
-        <div class="container top_margin">
-            <div class="panel-body">
-                <form class="form-horizontal col-sm-offset-3" id="loginForm">
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <a class="navbar-brand" href="#">Vasiyet</a>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><button class="btn btn-default navbar-btn" type="button">Register</button></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 panel-body" id="marketingPanel">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et vehicula augue. Nullam semper euismod ultrices. Vivamus a molestie erat. Morbi at finibus justo, at lacinia est. Nullam lobortis urna eget ante accumsan, sit amet tempor risus sagittis. Donec vitae laoreet libero, nec pretium odio. Etiam at cursus erat, congue consectetur est. Duis dapibus ac ipsum quis fermentum.
+                    </p>
+                    <p> Pellentesque ullamcorper sem non augue ullamcorper convallis. Curabitur vitae massa volutpat massa luctus fringilla eu sit amet nisi. Sed id nisl sit amet nunc convallis vehicula eu eget quam. Morbi pellentesque pulvinar nisl ut aliquet. In mattis est non sapien hendrerit rhoncus. Cras lobortis hendrerit massa, non sagittis libero pulvinar non. Aenean in placerat nulla. Nunc condimentum aliquet massa sed ultricies. Morbi in venenatis eros. Aliquam fermentum fermentum est sed mattis. Aliquam eu purus lectus.
+                    </p>
+                    <p> Mauris sit amet fermentum purus. Phasellus justo erat, bibendum porttitor ligula vel, suscipit viverra diam. Proin auctor odio tristique, dapibus ex non, interdum dolor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Proin porta, augue eu tempor eleifend, ante diam facilisis lacus, id convallis eros orci in purus. Cras dignissim justo a erat pellentesque, sit amet eleifend odio suscipit. Aenean mattis leo enim, eget rutrum mauris volutpat eu. Vivamus vulputate lacus vel mi posuere fermentum. Mauris suscipit elit purus, ut faucibus ante lacinia sit amet. Curabitur non lectus arcu.
+                    </p>
+                </div>
+            <div class="col-md-4 panel-body">
+                <form class="form-horizontal " id="loginForm">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="email">Email</label>
-                        <div class="col-sm-6">
+                        <label class="col-sm-3 control-label" for="email">Email</label>
+                        <div class="col-sm-9">
                             <input type="email" name="email" class="form-control" id="email" placeholder="Email">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="password">Password</label>
-                        <div class="col-sm-6">
+                        <label class="col-sm-3 control-label" for="password">Password</label>
+                        <div class="col-sm-9">
                             <input type="password" name="password" class="form-control" id="password" placeholder="Password">
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-6">
+                        <div class="col-sm-offset-3 col-sm-6">
                             <button type="submit"  class="btn btn-default" >Login</button>
                         </div>
                     </div>
                 </form>
+            </div>
             </div>
         </div>
         <script src="@routes.Assets.at("javascripts/login.js")"></script>
