@@ -75,6 +75,10 @@ function validateForm(){
                             message: 'This cannot be empty'
                         },
                         stringLength:{
+                            min:6,
+                            message: 'Password length is too short'
+                        },
+                        identical:{
                             field: 'password',
                             message: 'The passwords are not matching'
                         }
