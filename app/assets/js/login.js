@@ -63,7 +63,7 @@ function validateForm(){
             e.preventDefault();
             submitData();
         }
-    )
+    );
 
 
 }

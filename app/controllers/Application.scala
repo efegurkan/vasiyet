@@ -33,4 +33,11 @@ object Application extends Controller{
 
   }
 
+  def contacts() = AuthAction{ request =>
+    Ok(views.html.contacts())
+  }
+
+  def editcontact() = AuthAction{request=>
+    Ok(views.html.editcontact())
+  }
 }

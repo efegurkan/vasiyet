@@ -106,7 +106,7 @@ function validateForm(){
             var bv = $form.data('bootstrapValidator');
             submitData();
         }
-    )
+    );
 
 
 }

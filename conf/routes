@@ -6,6 +6,9 @@
 GET         /                    controllers.Application.index
 
 GET         /home                controllers.Application.home
+GET         /contacts            controllers.Application.contacts
+#TODO make it dynamic with contact id
+GET         /editcontact         controllers.Application.editcontact
 
 GET         /login               controllers.Login.renderLogin
 #POST        /login               controllers.Login.login
