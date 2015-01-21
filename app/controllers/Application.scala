@@ -31,4 +31,7 @@ object Application extends Controller{
 
   def editcontact(id: Long) = AuthAction{request =>
   Ok(views.html.editcontact(id))}
+
+  def editgroup(id: Long) = AuthAction{request =>
+  Ok(views.html.editgroup(id))}
 }

@@ -3,29 +3,38 @@
     <head>
         <title>Contacts</title>
         <link rel="stylesheet" href="@routes.Assets.at("css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("css/contacts.css")">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script type="text/javascript" src="@routes.Assets.at("js/bootstrap.min.js")"></script>
     </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container center-block">
-            <a class="navbar-brand" href="#">Vasiyet</a>
+            <a class="navbar-brand" href="/">Vasiyet</a>
             <ul class="nav navbar-nav navbar-right">
                 <li><button class="btn btn-default navbar-btn" type="button" id="logout" onclick="logout()">Logout</button></li>
             </ul>
         </div>
         </nav>
+
+
         <div class="container center-block">
             <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <ul class="nav nav-tabs">
-                        <li role="presentation" class="active"><a href="#">Contacts</a></li>
-                        <li role="presentation"><a href="#">Groups</a></li>
+                <div role="tabpanel" class="col-md-8 col-md-offset-2">
+
+                    <!-- Nav tabs -->
+                    <ul role="tablist" class="nav nav-tabs navi-bottom" id="tabs">
+                        <li role="presentation" class="active"><a href="#contacts" aria-controls="contacts" data-toggle="tab">Contacts</a></li>
+                        <li role="presentation"><a href="#groups" aria-controls="groups" data-toggle="tab">Groups</a></li>
                     </ul>
-                    <div class="panel panel-default tab-content">
-                        <div class="row">
+
+                    <div class="tab-content">
+                        <!--Contacts tab-->
+                        <div role="tabpanel" class="tab-pane fade in active row" id="contacts">
+
                             <div class="col-md-3">
-                                <div class="thumbnail">@*use panel with footer instead*@
-                                    <a href="/editcontact/1" class="thumbnail">
+                                <div class="thumbnail">
+                                    <a href="/editcontact/1" >
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                     </a>
                                     <div class="caption">
@@ -33,9 +42,11 @@
                                     </div>
                                 </div>
                             </div>
+
+
                             <div class="col-md-3">
                                 <div class="thumbnail">
-                                    <a href="#" class="thumbnail">
+                                    <a href="#">
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                     </a>
                                     <div class="caption">
@@ -45,7 +56,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="thumbnail">
-                                    <a href="#" class="thumbnail">
+                                    <a href="#">
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                     </a>
                                     <div class="caption">
@@ -55,7 +66,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="thumbnail">
-                                    <a href="#" class="thumbnail">
+                                    <a href="#">
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                     </a>
                                     <div class="caption">
@@ -65,7 +76,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="thumbnail">
-                                    <a href="#" class="thumbnail">
+                                    <a href="#">
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                     </a>
                                     <div class="caption">
@@ -75,7 +86,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="thumbnail">
-                                    <a href="#" class="thumbnail">
+                                    <a href="#">
                                     <img src="@routes.Assets.at("img/plus.jpg")">
                                     </a>
                                     <div class="caption">
@@ -83,11 +94,24 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div><!--Contacts tab end -->
+                        <!--Groups tab-->
+                        <div role="tabpanel" class="tab-pane fade in row" id="groups">
+                            <div class="col-md-6 list-group">
+                                <a href="/editgroup/1" class="list-group-item">Family<span class="badge">12</span></a>
+                                <a href="/editgroup/2" class="list-group-item">Work<span class="badge">34</span></a>
+                            </div>
+                            <div class="col-md-6 list-group">
+                                <a href="/editgroup/3" class="list-group-item">Other<span class="badge">1337</span> </a>
+                                <a href="/addgroup" class="list-group-item">Add new group<span class="glyphicon glyphicon-plus pull-right"></span></a>
+
+                            </div>
+                        </div><!--Groups tab end -->
                     </div>
+
                 </div>
             </div>
         </div>
-    <script src="@routes.Assets.at("js/contacts.js")"></script>
+    <script src="@routes.Assets.at("/js/contacts.js")"></script>
 </body>
 </html>
