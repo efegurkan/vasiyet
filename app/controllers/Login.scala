@@ -54,7 +54,7 @@ object Login extends Controller {
   }
 
   def logout = AuthAction { implicit request => {
-      Redirect(routes.Login.renderLogin()).withNewSession
+      Ok("/").withNewSession
   }
   }
 }

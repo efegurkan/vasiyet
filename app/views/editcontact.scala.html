@@ -1,3 +1,4 @@
+@(id : Long)
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
   <head>
@@ -11,7 +12,7 @@
       <div class="container center-block">
         <a class="navbar-brand" href="#">Vasiyet</a>
         <ul class="nav navbar-nav navbar-right">
-          <li><button class="btn btn-default navbar-btn" type="button" id="logout">Logout</button></li>
+          <li><button class="btn btn-default navbar-btn" type="button" id="logout" onclick="logout()">Logout</button></li>
         </ul>
       </div>
     </nav>
@@ -64,5 +65,7 @@
         </div>
       </div>
     </div>
+    </div>
+    <script src="@routes.Assets.at("js/contacts.js")"></script>
   </body>
 </html>

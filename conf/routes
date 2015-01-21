@@ -7,15 +7,14 @@ GET         /                    controllers.Application.index
 
 GET         /home                controllers.Application.home
 GET         /contacts            controllers.Application.contacts
-#TODO make it dynamic with contact id
-GET         /editcontact         controllers.Application.editcontact
+GET         /editcontact/:id     controllers.Application.editcontact(id : Long)
 
 GET         /login               controllers.Login.renderLogin
 #POST        /login               controllers.Login.login
 POST        /loginjson           controllers.Login.loginJson
 
 #TODO make it post
-GET         /logout              controllers.Login.logout
+POST         /logout              controllers.Login.logout
 
 GET         /register            controllers.Register.renderRegister
 #POST        /register            controllers.Register.register
