@@ -3,21 +3,23 @@
 # ~~~~
 
 # Home page
-GET         /                       controllers.Application.index
+GET         /                               controllers.Application.index
 
-GET         /home                   controllers.Application.home
-GET         /contacts               controllers.Application.contacts
-GET         /editcontact/:id        controllers.Application.editcontact(id : Long)
-GET         /editgroup/:id          controllers.Application.editgroup(id : Long)
+GET         /home                           controllers.Application.home
+GET         /contacts                       controllers.Application.contacts
+GET         /editcontact/$id<[0-9]+>        controllers.Application.editcontact(id : Long)
+GET         /addcontact                     controllers.Application.addcontact()
+GET         /editgroup/$id<[0-9]+>          controllers.Application.editgroup(id : Long)
+GET         /addgroup                       controllers.Application.addgroup()
 
-GET         /login                  controllers.Login.renderLogin
-POST        /loginjson              controllers.Login.loginJson
+GET         /login                          controllers.Login.renderLogin
+POST        /loginjson                      controllers.Login.loginJson
 
-POST        /logout                 controllers.Login.logout
+POST        /logout                         controllers.Login.logout
 
-GET         /register               controllers.Register.renderRegister
-POST        /registerjson           controllers.Register.registerJson
+GET         /register                       controllers.Register.renderRegister
+POST        /registerjson                   controllers.Register.registerJson
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file           controllers.Assets.at(path="/public", file)
+GET         /assets/*file                   controllers.Assets.at(path="/public", file)
 

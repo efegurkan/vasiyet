@@ -18,8 +18,7 @@ $('#togglebtn').on('click',function(){
 });
 
 function validateForm(){
-    $("#loginForm")
-        .bootstrapValidator({
+    $("#loginForm").bootstrapValidator({
             message: 'This value is not valid',
             feedbackIcons:{
                 valid : 'glyphicon glyphicon-ok',
