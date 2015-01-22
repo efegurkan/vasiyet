@@ -1,0 +1,63 @@
+@(id: Long, page: String = "Add")
+
+@head = {<!--  Head Block  -->
+    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js"))"></script>
+}<!--  Head Includes END -->
+
+@body = {<!--  Body Block  -->
+    <div class="container center-block">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">@page contact</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <a href="#" class="thumbnail">
+                            <img src="@routes.Assets.at("img/thumbnail.jpg")">
+                        </a>
+                        <button class="form-control" type="button"><b>Upload image</b></button>
+                    </div>
+                    <div class="col-md-10">
+
+                        <form class="form-horizontal" id="editform">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="name">Name</label>
+                                <div class="col-sm-8">
+                                    <input id="name" name="name" type="text" class="form-control" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="surname">Surname</label>
+                                <div class="col-sm-8">
+                                    <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-sm-2 control-label" for="email">Email</label>
+                                <div class="col-sm-8">
+                                    <input id="email" name="email" type="email" class="form-control" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-1">
+                                    <button class="btn btn-default" type="button"><b>Save</b></button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-danger" type="button"><b>DELETE</b></button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}<!--  Body Block END -->
+
+@include = {<!--  Script Includes  -->
+    <script src="@routes.Assets.at("js/contacts.js")"></script>
+}<!--  Script Includes END -->
+
+@loggedMaster( page+" Contact")(head)(body)(include)

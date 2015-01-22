@@ -21,26 +21,26 @@ object Application extends Controller{
 //  }
 
   def home = AuthAction{request =>
-    Ok(views.html.contacts())
+    Ok(views.html.logged.contacts())
   }
 
   def contacts() = AuthAction{ request =>
-    Ok(views.html.contacts())
+    Ok(views.html.logged.contacts())
   }
 
 
   def editcontact(id: Long) = AuthAction{request =>
-    Ok(views.html.editcontact(id,"Edit"))}
+    Ok(views.html.logged.editcontact(id,"Edit"))}
 
   def editgroup(id: Long) = AuthAction{request =>
-    Ok(views.html.editgroup(id, "Edit"))
+    Ok(views.html.logged.editgroup(id, "Edit"))
   }
 
   def addgroup() = AuthAction{request =>
-    Ok(views.html.editgroup(0,"Add"))
+    Ok(views.html.logged.editgroup(0,"Add"))
   }
 
   def addcontact() = AuthAction{request =>
-    Ok(views.html.editcontact(0, "Add"))
+    Ok(views.html.logged.editcontact(0, "Add"))
   }
 }
