@@ -1,10 +1,7 @@
 package controllers
 
-import play.api._
+import model._
 import play.api.mvc._
-import datalayer._
-import play.api.data._
-import play.api.data.Forms._
 import utility.AuthAction
 
 
@@ -14,12 +11,6 @@ object Application extends Controller{
     Redirect("/login")
   }
 
-//  def home = AuthAction { request =>
-//     val id = request.session.get("LoggedUser")
-//     Ok(views.html.home("Login success", id.get))
-//
-//  }
-
   def home = AuthAction{request =>
     Ok(views.html.logged.contacts())
   }
@@ -28,19 +19,24 @@ object Application extends Controller{
     Ok(views.html.logged.contacts())
   }
 
+  def addcontact() = AuthAction{request =>
+    val empty = new model.Contact(new Some[Long](0),"","","")
+    Ok(views.html.logged.editcontact(empty,"Add"))
+  }
 
   def editcontact(id: Long) = AuthAction{request =>
-    Ok(views.html.logged.editcontact(id,"Edit"))}
-
-  def editgroup(id: Long) = AuthAction{request =>
-    Ok(views.html.logged.editgroup(id, "Edit"))
-  }
+    //TODO pull contact name from DB
+    val nonEmpty = new model.Contact(new Some[Long](0),"This","is a","test")
+    Ok(views.html.logged.editcontact(nonEmpty, "Edit"))}
 
   def addgroup() = AuthAction{request =>
-    Ok(views.html.logged.editgroup(0,"Add"))
+    val empty = new Group(new Some[Long](0), "");
+    Ok(views.html.logged.editgroup(empty, "Add"))
   }
 
-  def addcontact() = AuthAction{request =>
-    Ok(views.html.logged.editcontact(0, "Add"))
+  def editgroup(id: Long) = AuthAction{request =>
+    //TODO pull group data from DB
+    val nonEmpty = new Group(new Some[Long](0),"")
+    Ok(views.html.logged.editgroup(nonEmpty, "Edit"))
   }
 }

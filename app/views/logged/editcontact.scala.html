@@ -1,7 +1,8 @@
-@(id: Long, page: String = "Add")
+@(contact : model.Contact , page: String="Add")
+
 
 @head = {<!--  Head Block  -->
-    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js"))"></script>
+    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
 }<!--  Head Includes END -->
 
 @body = {<!--  Body Block  -->
@@ -24,19 +25,20 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="name">Name</label>
                                 <div class="col-sm-8">
-                                    <input id="name" name="name" type="text" class="form-control" placeholder="Name">
+                                    <input id="ContactId" type="hidden" value="@contact.id.get">
+                                    <input id="name" name="name" type="text" class="form-control" placeholder="Name" value="@contact.name">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="surname">Surname</label>
                                 <div class="col-sm-8">
-                                    <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname">
+                                    <input id="surname" name="surname" type="text" class="form-control" placeholder="Surname" value="@contact.surname">
                                 </div>
                             </div>
                             <div class="form-group ">
                                 <label class="col-sm-2 control-label" for="email">Email</label>
                                 <div class="col-sm-8">
-                                    <input id="email" name="email" type="email" class="form-control" placeholder="Email">
+                                    <input id="email" name="email" type="email" class="form-control" placeholder="Email" value="@contact.email">
                                 </div>
                             </div>
                             <div class="form-group">

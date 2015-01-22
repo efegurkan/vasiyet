@@ -1,6 +1,5 @@
 package model
 
-
 case class Contact ( pId : Option[Long], 
 				pName : String, 
 				pSurname : String,

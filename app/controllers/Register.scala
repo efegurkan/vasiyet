@@ -20,15 +20,15 @@ object Register extends Controller {
 
     )(RegisterForm.apply _)
 
-  def renderRegister = Action { implicit request =>
-    if (request.session.get("LoggedUser").nonEmpty) {
-      Redirect(routes.Application.home())
-    } else {
-
-      Logger.warn("renderRegister")
-      Ok(views.html.register("Register"))
-    }
-  }
+//  def renderRegister = Action { implicit request =>
+//    if (request.session.get("LoggedUser").nonEmpty) {
+//      Redirect(routes.Application.home())
+//    } else {
+//
+//      Logger.warn("renderRegister")
+//      Ok(views.html.register("Register"))
+//    }
+//  }
 
   def registerJson = Action(BodyParsers.parse.json) { implicit request =>
     val formData = request.body.validate[RegisterForm]

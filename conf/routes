@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET         /                               controllers.Application.index
+GET         /                               controllers.Login.renderLogin
 
 GET         /home                           controllers.Application.home
 GET         /contacts                       controllers.Application.contacts
@@ -16,8 +16,6 @@ GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson
 
 POST        /logout                         controllers.Login.logout
-
-GET         /register                       controllers.Register.renderRegister
 POST        /registerjson                   controllers.Register.registerJson
 
 # Map static resources from the /public folder to the /assets URL path
