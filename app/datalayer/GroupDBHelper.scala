@@ -96,10 +96,8 @@ object GroupDBHelper extends DBHelper[Group]{
   def getGroupById(pGroupId : Option[Long]) : Option[Group] = {
     DB.withConnection{implicit c=>
       val query = SQL(
-        """
-          |SELECT * FROM Group
-          |Where id = {groupid}
-        """.stripMargin).on("groupid"->pGroupId)
+        """ SELECT * FROM vasiyet.Group Where id ={groupid}
+        """).on("groupid"->pGroupId)
       try{
 
         val queryResult = query.executeQuery()
@@ -124,6 +122,7 @@ object GroupDBHelper extends DBHelper[Group]{
           throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
         }
         case e : Throwable =>{
+          Logger.error(e.getMessage)
           throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
           None
@@ -133,19 +132,17 @@ object GroupDBHelper extends DBHelper[Group]{
   }
 
   //TODO rework on this
-  def getGroupsOfUser(pUserId:Option[Long]):List[Option[Group]] ={
+  def getGroupsOfUser(pUserId:Option[Long]):List[Group] ={
     DB.withConnection{implicit c=>
       val query = SQL(
         """
-          |SELECT groupId FROM Group
-          |WHERE id
-          |IN(SELECT groupId FROM GroupContactLookup WHERE userId={userid})
+            SELECT groupId FROM UserGroupLookup WHERE userId={userid}
         """.stripMargin).on("userid"-> pUserId)
       
       val queryResult = query.executeQuery()
       val groupList : List[Long] = queryResult.parse(SqlParser.long("groupId").*).toList
 
-      val groups : List[Option[Group]] = groupList.map(a => getGroupById(Option(a)))
+      val groups : List[Group] = groupList.map(x=>getGroupById(Option(x))).flatMap(_.toList)
 
       groups
     }

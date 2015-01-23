@@ -28,7 +28,7 @@ object Login extends Controller {
         try {
           val userObj = User.loginJson(data)
           Logger.warn("loginjson success")
-          Ok("/home").withSession("LoggedUser" -> userObj.get.id.toString)
+          Ok("/home").withSession("LoggedUser" -> userObj.get.id.get.toString)
         }
         catch{
           case e : Exception =>{

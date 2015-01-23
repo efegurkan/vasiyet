@@ -21,7 +21,20 @@
                     <div role="tabpanel" class="tab-pane fade in active row" id="contacts">
 
                             <!-- TODO Make it dynamic  -->
+
+                        @for(c <-contactList){
                         <div class="col-md-3">
+                            <div class="thumbnail">
+                                <a href="/editcontact/"+@c.id >
+                                    <img src="@routes.Assets.at("img/thumbnail.jpg")">
+                                </a>
+                                <div class="caption">
+                                    <h5 class="text-center">@c.name @c.surname</h5>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        @*<div class="col-md-3">
                             <div class="thumbnail">
                                 <a href="/editcontact/1" >
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
@@ -72,7 +85,7 @@
                                     <h5 class="text-center">Contact5</h5>
                                 </div>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="col-md-3">
                             <div class="thumbnail">
                                 <a href="/addcontact">
@@ -87,15 +100,19 @@
                     <!--Groups tab-->
                     <div role="tabpanel" class="tab-pane fade in row" id="groups">
                         <!-- TODO Make it dynamic  -->
-                        <div class="col-md-6 list-group">
+                     @*   <div class="col-md-6 list-group">
                             <a href="/editgroup/1" class="list-group-item">Family<span class="badge">12</span></a>
                             <a href="/editgroup/2" class="list-group-item">Work<span class="badge">34</span></a>
-                        </div>
-                        <div class="col-md-6 list-group">
-                            <a href="/editgroup/3" class="list-group-item">Other<span class="badge">1337</span> </a>
-                            <a href="/addgroup" class="list-group-item">Add new group<span class="glyphicon glyphicon-plus pull-right"></span></a>
+                        </div>*@
 
-                        </div>
+                            <div class="col-md-12 list-group">
+                            @for(g <- groupList) {
+                                <a href="/editgroup/" + @g.id class="list-group-item">@g.name<span class="badge">@g.members.length</span> </a>
+                            }
+                                <a href="/addgroup" class="list-group-item">Add new group<span class="glyphicon glyphicon-plus pull-right"></span></a>
+
+                            </div>
+
                     </div><!--Groups tab end -->
                 </div>
 
