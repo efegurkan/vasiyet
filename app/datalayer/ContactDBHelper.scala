@@ -1,13 +1,15 @@
 package datalayer
 
+import com.mysql.jdbc.exceptions.jdbc4
 import model.Contact
+import play.api.Logger
 import play.api.db.DB
 import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
 
-class ContactDBHelper extends DBHelper[Contact] {
+object ContactDBHelper extends DBHelper[Contact] {
   
   def parser : RowParser[Contact] = {
     get[Option[Long]]("id") ~ 
@@ -75,5 +77,29 @@ class ContactDBHelper extends DBHelper[Contact] {
     }
   }
 
+  def getGroupContacts(pGroupId: Option[Long]): Option[List[Contact]] = {
+    DB.withConnection{implicit c=>
+      val query = SQL(
+        """
+          |SELECT * FROM vasiyet.Contact
+          |WHERE id
+          |IN( SELECT contactId from vasiyet.GroupContactLookup where groupId = {groupid})
+        """.stripMargin).on("groupid"-> pGroupId)
 
+      try{
+        val result = query.executeQuery()
+        val contactList: List[Contact]= result.as(parser *).toList
+        Some(contactList)
+      }catch {
+        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
+          throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
+        }
+        case e : Throwable =>{
+          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
+          e.printStackTrace()
+          None
+        }
+      }
+    }
+  }
 }

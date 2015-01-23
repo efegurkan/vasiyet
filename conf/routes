@@ -6,7 +6,9 @@
 GET         /                               controllers.Login.renderLogin
 
 GET         /home                           controllers.Application.home
-GET         /contacts                       controllers.Application.contacts
+#GET         /home                           controllers.Contact.showPage
+#GET         /contacts                       controllers.Application.contacts
+GET         /contacts                       controllers.Contact.showPage
 GET         /editcontact/$id<[0-9]+>        controllers.Application.editcontact(id : Long)
 GET         /addcontact                     controllers.Application.addcontact()
 GET         /editgroup/$id<[0-9]+>          controllers.Application.editgroup(id : Long)

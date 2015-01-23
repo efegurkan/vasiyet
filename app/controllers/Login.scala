@@ -5,8 +5,6 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.mvc._
 import play.api.mvc.Action
-import play.api.data._
-import play.api.data.Forms._
 import model.{User, LoginForm}
 import utility.AuthAction
 

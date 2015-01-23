@@ -6,24 +6,10 @@ import datalayer.UserDBHelper
 case class LoginForm(email:String, password : String)
 case class RegisterForm(email:String, password: String, name: String, surname: String)
 
-case class User( pId : Option[Long],
-				 pEmail : String,
-				 pName : String,
-				 pSurname : String) {
-  
-  private val _id = pId
-  private val _email = pEmail
-  private val _name = pName
-  private val _surname = pSurname
-  
-  //Getters
-  def id = _id
-  def email = _email
-  def name = _name
-  def surname = _surname
-  
-
-}
+case class User( id : Option[Long],
+				          email : String,
+				          name : String,
+				          surname : String)
 
 object User {
 
@@ -36,7 +22,7 @@ object User {
       try {
         UserDBHelper.loginUser(form.email, form.password)
       }
-      catch {
+      catch {//TODO make exceptions logical on here
         case e:Exception=> throw new Exception(e.getMessage)
       }
     }

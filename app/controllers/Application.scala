@@ -12,12 +12,16 @@ object Application extends Controller{
   }
 
   def home = AuthAction{request =>
-    Ok(views.html.logged.contacts())
+    Redirect("/contacts")
+//    Ok(views.html.logged.contacts())
   }
 
+/*
   def contacts() = AuthAction{ request =>
     Ok(views.html.logged.contacts())
+
   }
+*/
 
   def addcontact() = AuthAction{request =>
     val empty = new model.Contact(new Some[Long](0),"","","")
