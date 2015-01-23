@@ -25,7 +25,7 @@
                         @for(c <-contactList){
                         <div class="col-md-3">
                             <div class="thumbnail">
-                                <a href="/editcontact/"+@c.id >
+                                <a href="/editcontact/@c.id.get.toString" >
                                     <img src="@routes.Assets.at("img/thumbnail.jpg")">
                                 </a>
                                 <div class="caption">
@@ -107,7 +107,7 @@
 
                             <div class="col-md-12 list-group">
                             @for(g <- groupList) {
-                                <a href="/editgroup/" + @g.id class="list-group-item">@g.name<span class="badge">@g.members.length</span> </a>
+                                <a href="/editgroup/@g.id.get.toString"  class="list-group-item">@g.name<span class="badge">@g.members.length</span> </a>
                             }
                                 <a href="/addgroup" class="list-group-item">Add new group<span class="glyphicon glyphicon-plus pull-right"></span></a>
 

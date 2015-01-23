@@ -1,6 +1,8 @@
 package controllers
 
+import datalayer.{GroupDBHelper, ContactDBHelper}
 import model._
+import play.api.Logger
 import play.api.mvc._
 import utility.AuthAction
 
@@ -29,9 +31,14 @@ object Application extends Controller{
   }
 
   def editcontact(id: Long) = AuthAction{request =>
-    //TODO pull contact name from DB
-    val nonEmpty = new model.Contact(new Some[Long](0),"This","is a","test")
-    Ok(views.html.logged.editcontact(nonEmpty, "Edit"))}
+    //TODO inform user about Redirect
+    Logger.warn(id.toString)
+    val contact = ContactDBHelper.getContactById(id)
+    Logger.warn(contact.toString)
+    if(!contact.isDefined){Redirect("/")}
+    else
+//    val nonEmpty = new model.Contact(new Some[Long](0),"This","is a","test")
+    Ok(views.html.logged.editcontact(contact.get, "Edit"))}
 
   def addgroup() = AuthAction{request =>
     val empty = new Group(new Some[Long](0), "");
@@ -39,8 +46,14 @@ object Application extends Controller{
   }
 
   def editgroup(id: Long) = AuthAction{request =>
-    //TODO pull group data from DB
-    val nonEmpty = new Group(new Some[Long](0),"")
-    Ok(views.html.logged.editgroup(nonEmpty, "Edit"))
+    //TODO inform user about Redirect
+    Logger.warn(id.toString)
+    val group = GroupDBHelper.getGroupById(Option(id))
+    if(!group.isDefined){
+      Redirect("/")
+    }
+    else
+//    val nonEmpty = new Group(new Some[Long](0),"")
+    Ok(views.html.logged.editgroup(group.get, "Edit"))
   }
 }

@@ -10,7 +10,7 @@ import anorm.SqlParser._
 
 
 object ContactDBHelper extends DBHelper[Contact] {
-  
+
   def parser : RowParser[Contact] = {
     get[Option[Long]]("id") ~ 
     get[String]("name") ~ 
@@ -100,6 +100,21 @@ object ContactDBHelper extends DBHelper[Contact] {
           None
         }
       }
+    }
+  }
+
+  def getContactById(pContactId: Long): Option[Contact] = {
+    DB.withConnection{implicit c=>
+      val query = SQL(
+        """
+          |Select * From vasiyet.Contact
+          |Where {id}
+        """.stripMargin).on("id"-> pContactId)
+
+      val result = query.executeQuery()
+      val ret = result.as(parser *).headOption
+      ret
+
     }
   }
 }

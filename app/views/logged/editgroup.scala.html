@@ -47,13 +47,15 @@
       </div>
       <div class="panel-body">
         <div class="row">
-          <div class="col-md-12">
-            <div class="col-md-6 list-group">
-              <a href="#" class="list-group-item">Contact1</a>
-              <a href="#" class="list-group-item">Contact2</a>
-            </div>
-            <div class="col-md-6 list-group">
-              <a href="/#" class="list-group-item">Contact3</a>
+          <div class="col-md-12 list-group">
+            @*<div class="col-md-6 list-group">*@
+              @*<a href="#" class="list-group-item">Contact1</a>*@
+              @*<a href="#" class="list-group-item">Contact2</a>*@
+            @*</div>*@
+            @*<div class="col-md-6 list-group">*@
+            @for(c <- group.members) {
+              <a href="/editcontact/@c.id" class="list-group-item">@c.name @c.surname</a>
+            }
               <a href="#" class="list-group-item" data-toggle="modal" data-target="#addmodal">Add contact to this group <span class="glyphicon glyphicon-plus pull-right"></span> </a>
 
 
@@ -69,7 +71,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            @*</div>*@
           </div>
           <div class="col-md-6">
 
