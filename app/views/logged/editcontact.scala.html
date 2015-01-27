@@ -3,6 +3,7 @@
 
 @head = {<!--  Head Block  -->
     <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrapValidator.js")"></script>
 }<!--  Head Includes END -->
 
 @body = {<!--  Body Block  -->
@@ -43,7 +44,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-1">
-                                    <button class="btn btn-default" type="button"><b>Save</b></button>
+                                    <button class="btn btn-default" type="submit"><b>Save</b></button>
                                 </div>
                                 <div class="col-sm-2">
                                     <button class="btn btn-danger" type="button"><b>DELETE</b></button>
@@ -59,7 +60,7 @@
 }<!--  Body Block END -->
 
 @include = {<!--  Script Includes  -->
-    <script src="@routes.Assets.at("js/contacts.js")"></script>
+    <script src="@routes.Assets.at("js/editcontact.js")"></script>
 }<!--  Script Includes END -->
 
 @loggedMaster( page+" Contact")(head)(body)(include)

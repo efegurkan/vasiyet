@@ -8,9 +8,10 @@ GET         /                               controllers.Login.renderLogin
 GET         /home                           controllers.Application.home
 #GET         /home                           controllers.Contact.showPage
 #GET         /contacts                       controllers.Application.contacts
-GET         /contacts                       controllers.Contact.showPage
-GET         /editcontact/$id<[0-9]+>        controllers.Application.editcontact(id : Long)
-GET         /addcontact                     controllers.Application.addcontact()
+GET         /contacts                       controllers.ContactController.showPage
+GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
+POST        /editcontact                    controllers.ContactController.addContactJson()
+GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editgroup/$id<[0-9]+>          controllers.Application.editgroup(id : Long)
 GET         /addgroup                       controllers.Application.addgroup()
 

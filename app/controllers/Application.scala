@@ -25,20 +25,8 @@ object Application extends Controller{
   }
 */
 
-  def addcontact() = AuthAction{request =>
-    val empty = new model.Contact(new Some[Long](0),"","","")
-    Ok(views.html.logged.editcontact(empty,"Add"))
-  }
 
-  def editcontact(id: Long) = AuthAction{request =>
-    //TODO inform user about Redirect
-    Logger.warn(id.toString)
-    val contact = ContactDBHelper.getContactById(id)
-    Logger.warn(contact.toString)
-    if(!contact.isDefined){Redirect("/")}
-    else
-//    val nonEmpty = new model.Contact(new Some[Long](0),"This","is a","test")
-    Ok(views.html.logged.editcontact(contact.get, "Edit"))}
+
 
   def addgroup() = AuthAction{request =>
     val empty = new Group(new Some[Long](0), "");

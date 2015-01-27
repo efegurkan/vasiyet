@@ -108,7 +108,7 @@ object ContactDBHelper extends DBHelper[Contact] {
       val query = SQL(
         """
           |Select * From vasiyet.Contact
-          |Where {id}
+          |Where {id} = id
         """.stripMargin).on("id"-> pContactId)
 
       val result = query.executeQuery()

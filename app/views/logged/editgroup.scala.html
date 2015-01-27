@@ -58,15 +58,19 @@
             }
               <a href="#" class="list-group-item" data-toggle="modal" data-target="#addmodal">Add contact to this group <span class="glyphicon glyphicon-plus pull-right"></span> </a>
 
-
-              <div class="modal fade" id="addmodal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal fade" id="addmodal" tabindex="-1" role="dialog" aria-hidden="true"><!--  Contacts modal view  -->
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h6>Add contact to this group</h6>
                     </div>
                     <div class="modal-body">
+                      <div class="form-inline">
+                        <div class="form-group">
                       <input id="addcontact" class="form-control" type="text" autocomplete="off" >
+                        </div>
+                      <button id="add" class="form-control">Add</button>
+                      </div>
                     </div>
                   </div>
                 </div>
