@@ -85,14 +85,14 @@ object GroupController extends Controller {
     )
   }
 
-  def deleteMember() = AuthAction(BodyParsers.parse.json){ request =>
+  def deleteMember() = AuthAction(BodyParsers.parse.json) { request =>
     val jsonData = request.body.validate[AddMemberData]
 
     jsonData.fold(
-      errors=>{
-        BadRequest(Json.obj("Status"->"KO","message"->JsError.toFlatJson(errors)))
+      errors => {
+        BadRequest(Json.obj("Status" -> "KO", "message" -> JsError.toFlatJson(errors)))
       },
-      data=>{
+      data => {
         try {
           val isItDeleted = Group.deleteMember(data)
           if (isItDeleted)
@@ -100,7 +100,7 @@ object GroupController extends Controller {
             Ok("Contact deleted from group")
           else
             throw new Exception
-        }catch {
+        } catch {
           case ex: Exception => {
             Logger.error(ex.getMessage)
             BadRequest("Contact deletion from Group failed.")
@@ -108,5 +108,34 @@ object GroupController extends Controller {
         }
       }
     )
+  }
+
+  //todo rework on this
+  def deleteGroup() = AuthAction(parse.json) { request =>
+    val jsonData = request.body.validate[Long]
+    jsonData.fold(
+      errors => {
+        BadRequest(Json.obj("Staus" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      data => {
+        try {
+          val isItDeleted = Group.deleteGroup(data)
+          if (isItDeleted)
+          //todo inform user
+            Ok("Group deleted successfully")
+          else
+          //todo inform user
+            throw new Exception
+        } catch {
+          case ex: Exception => {
+            Logger.warn("Exception happened")
+            Logger.error(ex.getMessage)
+            //todo inform user
+            BadRequest(Json.obj("Status" -> "KO", "message" -> "Group deletion failed"))
+          }
+        }
+      }
+    )
+
   }
 }

@@ -73,6 +73,7 @@ object ContactController extends Controller{
 
   }
 
+  //todo rework on this doesnt work as expected
   def deleteContact() = AuthAction(BodyParsers.parse.json){implicit request =>
     val deleteData = request.body.validate[Long]
 

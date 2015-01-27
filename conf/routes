@@ -18,6 +18,7 @@ POST        /deletecontact                  controllers.ContactController.delete
 GET         /addgroup                       controllers.GroupController.showAddGroup()
 GET         /editgroup/$id<[0-9]+>          controllers.GroupController.showEditGroup(id : Long)
 POST        /editgroup                      controllers.GroupController.editGroup()
+POST        /deletegroup                    controllers.GroupController.deleteGroup()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson

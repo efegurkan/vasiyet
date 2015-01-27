@@ -18,7 +18,7 @@ object Group {
     false
   }
 
-  def deleteGroup(form: EditGroupForm): Boolean = {
+  def deleteGroup(form: Long): Boolean = {
     //todo not implemented
     false
   }

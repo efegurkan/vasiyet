@@ -143,7 +143,7 @@ function submitRegisterData() {
             console.log(jqXHR.status);
             window.location.href = data;
         },
-        failure: function (data, textstatus, jqXHR) {
+        error: function (data, textstatus, jqXHR) {
             var obj = JSON.parse(data);
             console.log(jqXHR.status);
             console.log(obj.message);

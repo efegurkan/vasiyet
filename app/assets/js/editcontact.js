@@ -2,7 +2,7 @@ $(document).ready(function () {
     validateForm();
 
 });
-    $("#delete").on('click', submitDeleteReq());
+$("#delete").on('click', submitDeleteReq());
 
 function validateForm() {
     $('#editform').bootstrapValidator({
@@ -79,32 +79,21 @@ function submitFormData() {
 
 function submitDeleteReq() {
     console.log("submitdelete");
-    $('#editform').bootstrapValidator({
-        message: 'Cannot send delete request!',
-        fields: {
-            contactId: {
-                validators: {
-                    notEmpty: "Cannot send delete request!",
-                    numeric: "Page data is changed, cannot send delete request! "
-                }
-            }
+    var contactId = {'id': $('#contactId').val()};
+    $.ajax({
+        type: 'POST',
+        url: '/deletecontact',
+        data: JSON.stringify(contactId),
+        contentType: 'application/json',
+        success: function (data) {
+            //todo inform user
+            console.log(data);
+        },
+        error: function (jqXHR, textstatus, errorThrown) {
+            console.log(jqXHR.responseText);
+            console.log(textstatus);
+            console.log(errorThrown);
         }
-    }).on('success.form.bv', function () {
-        var contactId = {'id': $('#contactId').val()};
-
-        $.ajax({
-            type: 'POST',
-            url: '/deletecontact',
-            data: JSON.stringify(contactId),
-            contentType: 'application/json',
-            success: function (data) {
-                //todo inform user
-                console.log(data);
-            },
-            error: function (jqXHR) {
-                console.log(jqXHR.responseText);
-            }
-        });
     });
 
 
