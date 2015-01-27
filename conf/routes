@@ -9,11 +9,14 @@ GET         /home                           controllers.Application.home
 #GET         /home                           controllers.Contact.showPage
 #GET         /contacts                       controllers.Application.contacts
 GET         /contacts                       controllers.ContactController.showPage
-GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
-POST        /editcontact                    controllers.ContactController.addContactJson()
+
 GET         /addcontact                     controllers.ContactController.showAddContact()
-GET         /editgroup/$id<[0-9]+>          controllers.Application.editgroup(id : Long)
-GET         /addgroup                       controllers.Application.addgroup()
+GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
+POST        /editcontact                    controllers.ContactController.editContactJson()
+
+GET         /addgroup                       controllers.GroupController.showAddGroup()
+GET         /editgroup/$id<[0-9]+>          controllers.GroupController.showEditGroup(id : Long)
+POST        /editgroup                      controllers.GroupController.editGroup()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson

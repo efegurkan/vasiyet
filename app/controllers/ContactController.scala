@@ -43,30 +43,7 @@ object ContactController extends Controller{
       Ok(views.html.logged.editcontact(contact.get, "Edit"))}
     }
 
-  def sendEditJson() = AuthAction(BodyParsers.parse.json){request =>
-    val formData = request.body.validate[EditContactForm]
-
-    formData.fold(
-    errors=> {
-      BadRequest(Json.obj("Status" -> "KO", "message" -> JsError.toFlatJson(errors)))
-    },
-    data => {
-      try {
-        val isitdone = Contact.updateContact(data)
-        Ok("/")
-      }
-      catch {
-        case e: Exception => {
-          Logger.warn(e.getMessage)
-          BadRequest(e.getMessage)
-        }
-      }
-    }
-    )
-    Ok("/")
-  }
-
-  def addContactJson() = AuthAction(BodyParsers.parse.json){ implicit request =>
+  def editContactJson() = AuthAction(BodyParsers.parse.json){ implicit request =>
    val contactFormData = request.body.validate[EditContactForm]
 
    contactFormData.fold(
@@ -75,7 +52,7 @@ object ContactController extends Controller{
      },
      data => {
        try{
-         val isItSaved = Contact.addContact(data)
+         val isItSaved = Contact.editContact(data)
          //todo inform user about success.
          if(isItSaved)
          Ok("Contact saved successfully.")

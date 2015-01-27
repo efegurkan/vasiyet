@@ -11,12 +11,13 @@ case class Contact ( id : Option[Long],
 
 object Contact {
 
-	def updateContact( form: EditContactForm) : Boolean ={
+	def editContact( form: EditContactForm) :  Boolean = {
 		//todo not implemented
+		//todo it can be add or edit according to id field.
 		false
 	}
 
-	def addContact( form: EditContactForm) :  Boolean = {
+	def deleteContact( form: EditContactForm) : Boolean ={
 		//todo not implemented
 		false
 	}

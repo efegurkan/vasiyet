@@ -28,20 +28,7 @@ object Application extends Controller{
 
 
 
-  def addgroup() = AuthAction{request =>
-    val empty = new Group(new Some[Long](0), "");
-    Ok(views.html.logged.editgroup(empty, "Add"))
-  }
 
-  def editgroup(id: Long) = AuthAction{request =>
-    //TODO inform user about Redirect
-    Logger.warn(id.toString)
-    val group = GroupDBHelper.getGroupById(Option(id))
-    if(!group.isDefined){
-      Redirect("/")
-    }
-    else
-//    val nonEmpty = new Group(new Some[Long](0),"")
-    Ok(views.html.logged.editgroup(group.get, "Edit"))
-  }
+
+
 }
