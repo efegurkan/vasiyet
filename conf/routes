@@ -13,6 +13,7 @@ GET         /contacts                       controllers.ContactController.showPa
 GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
 POST        /editcontact                    controllers.ContactController.editContactJson()
+POST        /deletecontact                  controllers.ContactController.deleteContact()
 
 GET         /addgroup                       controllers.GroupController.showAddGroup()
 GET         /editgroup/$id<[0-9]+>          controllers.GroupController.showEditGroup(id : Long)

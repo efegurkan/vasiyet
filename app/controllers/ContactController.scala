@@ -1,11 +1,10 @@
 package controllers
 
-import play.api._
 import datalayer.{ContactDBHelper, GroupDBHelper}
-import model.{EditContactForm, Contact}
+import model.{Contact, EditContactForm}
 import play.api.Logger
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
 import utility.AuthAction
 
@@ -17,6 +16,9 @@ object ContactController extends Controller{
      (JsPath \ "surname").read[String](Reads.minLength[String](1)) and
      (JsPath \ "email").read[String](Reads.email)
     )(EditContactForm.apply _)
+
+  implicit val deleteContactData: Reads[Long] =
+    (JsPath \ "id").read[Long]
 
   def showPage = AuthAction{request =>
     val id = request.session.get("LoggedUser")
@@ -68,6 +70,33 @@ object ContactController extends Controller{
        }
      }
    )
-    
+
+  }
+
+  def deleteContact() = AuthAction(BodyParsers.parse.json){implicit request =>
+    val deleteData = request.body.validate[Long]
+
+    deleteData.fold(
+      errors=>{
+        BadRequest(Json.obj("Staus" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      data=>{
+        try{
+          val isItDeleted = Contact.deleteContact(data)
+          if (isItDeleted)
+            //todo inform user
+            Ok("Contact deleted successfully")
+          else
+            //todo inform user
+            throw new Exception
+        }catch {
+          case ex: Exception => {
+            Logger.error(ex.getMessage)
+            //todo inform user
+            BadRequest(Json.obj("Status"->"KO","message"->"Contact deletion failed"))
+          }
+        }
+      }
+    )
   }
 }

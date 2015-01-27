@@ -26,7 +26,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="name">Name</label>
                                 <div class="col-sm-8">
-                                    <input id="ContactId" type="hidden" value="@contact.id.get">
+                                    <input id="contactId" type="hidden" value="@contact.id.get">
                                     <input id="name" name="name" type="text" class="form-control" placeholder="Name" value="@contact.name">
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                                     <button class="btn btn-default" type="submit"><b>Save</b></button>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button class="btn btn-danger" type="button"><b>DELETE</b></button>
+                                    <button class="btn btn-danger" type="button" id="delete" onclick="submitDeleteReq()"><b>DELETE</b></button>
                                 </div>
                             </div>
                         </form>
