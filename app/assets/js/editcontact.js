@@ -2,7 +2,7 @@ $(document).ready(function () {
     validateForm();
 
 });
-$("#delete").on('click', submitDeleteReq());
+//$("#delete").on('click', submitDeleteReq());
 
 function validateForm() {
     $('#editform').bootstrapValidator({

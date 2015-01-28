@@ -40,12 +40,13 @@ object ContactDBHelper extends DBHelper[Contact] {
     
     DB.withConnection{ implicit c =>
       val query = SQL("""
-          INSERT INTO Contact
-          VALUES ({name},{surname},{email})
+          INSERT INTO vasiyet.Contact
+          VALUES (NULL,{name},{surname},{email})
           """).on("name"->pName, "surname"->pSurname, "email"->pEmail)
       
-     query.execute
-      
+     val result : Option[Long] = query.executeInsert()
+
+      result.isDefined
     }
     
   }
@@ -68,12 +69,17 @@ object ContactDBHelper extends DBHelper[Contact] {
 		  			 pEmail : String) : Boolean = {
     DB.withConnection{ implicit c =>
       val query = SQL("""
-          UPDATE Contact
+          UPDATE vasiyet.Contact
           SET name = {name}, surname = {surname}, email = {email}
           WHERE id = {id}
           """).on("id"-> pId,"name"->pName, "surname"->pSurname, "email"->pEmail)
-      
-      query.execute()
+      //todo cleanup
+      val poncik = query.execute()
+      println(pId, pName, pSurname, pEmail)
+      println("query")
+      println(query)
+      println(poncik)
+      poncik
     }
   }
 
