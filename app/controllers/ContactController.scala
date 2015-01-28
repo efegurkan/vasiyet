@@ -11,16 +11,6 @@ import scala.util.Try
 
 object ContactController extends Controller {
 
-//  implicit val editContactForm: Reads[EditContactForm] = (
-//    (JsPath \ "id").read[Long] and
-//      (JsPath \ "name").read[String](Reads.minLength[String](1)) and
-//      (JsPath \ "surname").read[String](Reads.minLength[String](1)) and
-//      (JsPath \ "email").read[String](Reads.email)
-//    )(EditContactForm.apply _)
-
-  implicit val deleteContactData: Reads[Long] =
-    (JsPath \ "id").read[Long]
-
   def showPage = AuthAction { request =>
     val id = request.session.get("LoggedUser")
     //TODO exception cases
@@ -88,7 +78,7 @@ object ContactController extends Controller {
         val contact = extractContactFromJson(contactJson)
         println(contact)
         //save contact
-        val isIt = Contact.editContact(contact)
+        val isIt = Contact.editContact(contact,request.session.get("LoggedUser").get.toLong)
         println(isIt)
         if (isIt)
           Ok("Contact saved successfully.")
@@ -109,31 +99,30 @@ object ContactController extends Controller {
     }
   }
 
+  def getDeleteJsonData(json: JsValue) : Option[Long] = {
+    val idValid: Boolean = Try((json \ "id").as[String].toLong).isSuccess
+    if(idValid) {
+      val id = Try((json \ "id").as[String].toLong).toOption
+      id
+    }
+    else
+      throw new Exception("Incoming data is corrupted")
+  }
+
   //todo rework on this doesnt work as expected
   def deleteContact() = AuthAction(BodyParsers.parse.json) { implicit request =>
-    val deleteData = request.body.validate[Long]
+    try{
 
-    deleteData.fold(
-      errors => {
-        BadRequest(Json.obj("Staus" -> "KO", "message" -> JsError.toFlatJson(errors)))
-      },
-      data => {
-        try {
-          val isItDeleted = Contact.deleteContact(data)
-          if (isItDeleted)
-          //todo inform user
-            Ok("Contact deleted successfully")
-          else
-          //todo inform user
-            throw new Exception
-        } catch {
-          case ex: Exception => {
-            Logger.error(ex.getMessage)
-            //todo inform user
-            BadRequest(Json.obj("Status" -> "KO", "message" -> "Contact deletion failed"))
-          }
-        }
-      }
-    )
+    val contactIdJson = getDeleteJsonData(request.body)
+    if(Contact.deleteContact(contactIdJson.get))
+      Ok("Contact deleted successfully")
+      else
+        throw new Exception("Contact deletion failed")
+    }catch {
+      case ex: Exception =>
+        val message = ex.getMessage
+        Logger.error(message)
+        BadRequest(Json.obj("Status"->"KO", "message"-> message))
+    }
   }
 }
