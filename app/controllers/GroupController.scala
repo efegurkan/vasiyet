@@ -65,13 +65,12 @@ object GroupController extends Controller {
         try {
           val isItSaved = Group.addMember(data)
           if (isItSaved)
-          //todo inform user
-            Ok("Contact added to group.")
-          else throw new Exception
+            Ok(Json.obj("Status"->"OK","message"->"Contact added to group."))
+          else throw new Exception("Contact save to Group failed.")
         } catch {
           case ex: Exception => {
             Logger.error(ex.getMessage)
-            BadRequest("Contact save to Group failed.")
+            BadRequest(Json.obj("Status"->"KO","message"->ex.getMessage))
           }
         }
       }
