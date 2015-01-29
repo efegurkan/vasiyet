@@ -1,7 +1,6 @@
 package model
 
-import com.mysql.jdbc.JDBC4MySQLConnection
-import com.mysql.jdbc.exceptions.{jdbc4, MySQLStatementCancelledException}
+import com.mysql.jdbc.exceptions.jdbc4
 import datalayer.ContactDBHelper
 import play.api.Logger
 import play.api.libs.json._
@@ -20,10 +19,9 @@ object Contact extends JSONConvertable[Contact] {
   override def toJSON(contact: Contact): JsValue = ???
 
   //todo email regex
-  override def fromJSON(json : JsValue): Contact =
-  {
+  override def fromJSON(json: JsValue): Contact = {
     // get data from json
-    val id = Try((json \ "id").as[String].toLong.ensuring(i=>i>=0))
+    val id = Try((json \ "id").as[String].toLong.ensuring(i => i >= 0))
     val name = (json \ "name").asOpt[String]
     val surname = (json \ "surname").asOpt[String]
     val email = (json \ "email").asOpt[String]
@@ -33,25 +31,25 @@ object Contact extends JSONConvertable[Contact] {
     val surnameValid: Boolean = surname.exists(n => n.size >= 1)
     val emailValid: Boolean = email.exists(e => e.size >= 1)
 
-    if(idValid && nameValid && surnameValid && emailValid)
-    {
-      new Contact(id.toOption,name.get,surname.get,email.get)
+    if (idValid && nameValid && surnameValid && emailValid) {
+      new Contact(id.toOption, name.get, surname.get, email.get)
     }
-    else
-    {
+    else {
       throw new Exception("Contact Json is not valid")
     }
   }
+
   def editContact(form: Contact, loggedUserId: Long): Boolean = {
     try {
-      val id = form.id.get
+      val id = form.id.getOrElse(throw new Exception("Incoming data is corrupted"))
 
       //This is an add request
       if (id == 0) {
         println(loggedUserId)
         ContactDBHelper.addNewContact(loggedUserId, form.name, form.surname, form.email)
       }
-      else {//This is an edit request
+      else {
+        //This is an edit request
         ContactDBHelper.updateContact(id, form.name, form.surname, form.email)
       }
     } catch {
@@ -69,17 +67,17 @@ object Contact extends JSONConvertable[Contact] {
   }
 
   def deleteContact(id: Long): Boolean = {
-    try{
-       ContactDBHelper.deleteContact(id)
+    try {
+      ContactDBHelper.deleteContact(id)
 
-    }catch {
+    } catch {
       case ex: Exception =>
         Logger.error("Contact deleteContact")
         Logger.error(ex.getMessage)
         Logger.error(ex.getCause.toString)
         false
     }
-    }
+  }
 
 
 }

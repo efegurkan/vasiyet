@@ -61,7 +61,7 @@ function validateName() {
 
 function submitNameData() {
     var formdata = {
-        'id': $('#id').val(),
+        'id': $('#groupId').val(),
         'name': $('#name').val()
     };
 

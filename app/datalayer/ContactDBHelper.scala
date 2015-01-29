@@ -1,12 +1,12 @@
 package datalayer
 
+import anorm.SqlParser._
+import anorm._
 import com.mysql.jdbc.exceptions.jdbc4
 import model.Contact
 import play.api.Logger
-import play.api.db.DB
 import play.api.Play.current
-import anorm._
-import anorm.SqlParser._
+import play.api.db.DB
 
 
 object ContactDBHelper extends DBHelper[Contact] {
@@ -40,10 +40,10 @@ object ContactDBHelper extends DBHelper[Contact] {
 
     try {
       DB.withTransaction { implicit c =>
-        val insertedId : Option[Long] = SQL("INSERT INTO Contact VALUES (NULL,{name},{surname},{email})").
-        on("name"->pName, "surname"->pSurname, "email"->pEmail).executeInsert()
+        val insertedId: Option[Long] = SQL("INSERT INTO Contact VALUES (NULL,{name},{surname},{email})").
+          on("name" -> pName, "surname" -> pSurname, "email" -> pEmail).executeInsert()
 
-        SQL( "INSERT INTO UserLookup  VALUES (NULL,{userId},{lastid})").on("userId"->pUserId,"lastid"->insertedId.get).executeInsert()
+        SQL("INSERT INTO UserLookup  VALUES (NULL,{userId},{lastid})").on("userId" -> pUserId, "lastid" -> insertedId.get).executeInsert()
 
         true
       }
@@ -51,9 +51,6 @@ object ContactDBHelper extends DBHelper[Contact] {
       case ex: Exception =>
         ex.printStackTrace()
         Logger.error(ex.toString)
-        println("db seysi")
-        println(ex.getCause.getMessage)
-        println(ex.getMessage)
         false
     }
 
@@ -82,7 +79,7 @@ object ContactDBHelper extends DBHelper[Contact] {
       val query = SQL( """ DELETE FROM vasiyet.Contact WHERE id = {id} """.stripMargin).on("id" -> pId)
 
       //If no rows affected it is false
-      query.executeUpdate() !=0
+      query.executeUpdate() != 0
     }
   }
 

@@ -37,28 +37,19 @@ object GroupController extends Controller {
   }
 
   def editGroup() = AuthAction(BodyParsers.parse.json) { implicit request =>
-    val formData = request.body.validate[EditGroupForm]
+    try {
+      val group = Group.fromJSON(request.body)
+      val isItSaved = Group.editGroup(group, request.session.get("LoggedUser").get.toLong);
 
-    formData.fold(
-      errors => {
-        BadRequest(Json.obj("Status" -> "KO", "message" -> JsError.toFlatJson(errors)))
-      },
-      data => {
-        try {
-          val isItSaved = Group.editGroup(data);
-
-          if (isItSaved)
-          //todo inform user about success
-            Ok("Group save successful.")
-          else
-            throw new Exception()
-        } catch {
-          case ex: Exception => {
-            BadRequest("Group save failed")
-          }
-        }
-      }
-    )
+      if (isItSaved)
+        Ok("Group save successful.")
+      else
+        throw new Exception("Group save failed")
+    } catch {
+      case ex: Exception =>
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
+    }
   }
 
   def addMember() = AuthAction(BodyParsers.parse.json) { request =>

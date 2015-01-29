@@ -1,63 +1,63 @@
 package datalayer
 
-import com.mysql.jdbc.exceptions.jdbc4
-import play.api.Logger
-import play.api.db.DB
-import play.api.Play.current
-import anorm.{SqlParser, ~, RowParser, SQL}
 import anorm.SqlParser._
-import model.{Group,Contact}
+import anorm.{RowParser, SQL, SqlParser, ~}
+import com.mysql.jdbc.exceptions.jdbc4
+import model.{Contact, Group}
+import play.api.Logger
+import play.api.Play.current
+import play.api.db.DB
 
-object GroupDBHelper extends DBHelper[Group]{
+object GroupDBHelper extends DBHelper[Group] {
 
 
-  def parser : RowParser[Group] = {
+  def parser: RowParser[Group] = {
     get[Option[Long]]("id") ~
-      get[String]("name")map{
-      case id ~ name => Group(id,name)
+      get[String]("name") map {
+      case id ~ name => Group(id, name)
     }
   }
 
-  def createGroup(pGroupName: String): Boolean ={
-    DB.withConnection{implicit c=>
-      val query =SQL(
-        """ INSERT INTO Group
-            VALUES( NULL, {name} )
-        """).on("name"->pGroupName)
+  def createGroup(pGroupName: String, userId: Long): Boolean = {
+    try {
+      DB.withTransaction { implicit c =>
+        val insertedId = SQL("INSERT INTO vasiyet.Group VALUES( NULL, {name} )").on("name" -> pGroupName).executeInsert()
 
-      try{
-        query.execute()
-      }catch {
-        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
-            throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
-        }
-        case e : Throwable =>{
-          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
-          e.printStackTrace()
-          false
-        }
+        SQL("INSERT INTO vasiyet.UserGroupLookup VALUES(NULL, {user}, {inserted} )").on("inserted" -> insertedId, "user" -> userId).executeInsert()
+
+        true
       }
-
+    } catch {
+      case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
+        Logger.error(ex.getErrorCode.toString)
+        throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
+      }
+      case e: Throwable => {
+        e.printStackTrace()
+        throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
+        false
+      }
     }
   }
 
-  def deleteGroup(pId : Option[Long]): Boolean ={
-    DB.withConnection{implicit c=>
+  def deleteGroup(pId: Option[Long]): Boolean = {
+    DB.withConnection { implicit c =>
       val query = SQL(
         """
           |DELETE FROM Group
           |Where id = {id}
         """.stripMargin
 
-      ).on("id"-> pId)
+      ).on("id" -> pId)
 
-      try{
+      try {
         query.execute()
-      }catch {
-        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
-          throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
+      } catch {
+        case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
+          Logger.error(ex.getErrorCode.toString)
+          throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
-        case e : Throwable =>{
+        case e: Throwable => {
           throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
           false
@@ -67,8 +67,8 @@ object GroupDBHelper extends DBHelper[Group]{
     }
   }
 
-  def updateGroup(pId : Option[Long], name: String): Boolean = {
-    DB.withConnection{implicit c=>
+  def updateGroup(pId: Option[Long], name: String): Boolean = {
+    DB.withConnection { implicit c =>
       val query = SQL(
         """
           |UPDATE Group
@@ -76,15 +76,16 @@ object GroupDBHelper extends DBHelper[Group]{
           |WHERE id = {id}
         """.stripMargin
 
-      ).on("id"->pId, "name"->name)
+      ).on("id" -> pId, "name" -> name)
 
-      try{
+      try {
         query.execute()
-      }catch {
-        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
-          throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
+      } catch {
+        case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
+          Logger.error(ex.getErrorCode.toString)
+          throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
-        case e : Throwable =>{
+        case e: Throwable => {
           throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
           false
@@ -93,35 +94,37 @@ object GroupDBHelper extends DBHelper[Group]{
     }
   }
 
-  def getGroupById(pGroupId : Option[Long]) : Option[Group] = {
-    DB.withConnection{implicit c=>
+  def getGroupById(pGroupId: Option[Long]): Option[Group] = {
+    DB.withConnection { implicit c =>
       val query = SQL(
         """ SELECT * FROM vasiyet.Group Where id ={groupid}
-        """).on("groupid"->pGroupId)
-      try{
+        """).on("groupid" -> pGroupId)
+      try {
 
         val queryResult = query.executeQuery()
 
-        val ret : Option[Group] = queryResult.as(parser *).toList.headOption// take group or None
+        val ret: Option[Group] = queryResult.as(parser *).toList.headOption // take group or None
 
-        val result: Option[Group] = ret.map {// map result or None
+        val result: Option[Group] = ret.map {
+          // map result or None
           r =>
-            val contact = ContactDBHelper.getGroupContacts(r.id).getOrElse(List.empty[Contact])// get contacts, else empty List
+            val contact = ContactDBHelper.getGroupContacts(r.id).getOrElse(List.empty[Contact]) // get contacts, else empty List
 
-            if(contact.nonEmpty) {
-              r.copy(members = contact)// create new object with members
+            if (contact.nonEmpty) {
+              r.copy(members = contact) // create new object with members
             } else {
-              r// return object with empty members
+              r // return object with empty members
             }
         }
         result
 
 
-      }catch {
-        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
-          throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
+      } catch {
+        case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
+          Logger.error(ex.getErrorCode.toString)
+          throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
-        case e : Throwable =>{
+        case e: Throwable => {
           Logger.error(e.getMessage)
           throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
@@ -132,17 +135,17 @@ object GroupDBHelper extends DBHelper[Group]{
   }
 
   //TODO rework on this
-  def getGroupsOfUser(pUserId:Option[Long]):List[Group] ={
-    DB.withConnection{implicit c=>
+  def getGroupsOfUser(pUserId: Option[Long]): List[Group] = {
+    DB.withConnection { implicit c =>
       val query = SQL(
         """
             SELECT groupId FROM UserGroupLookup WHERE userId={userid}
-        """.stripMargin).on("userid"-> pUserId)
-      
-      val queryResult = query.executeQuery()
-      val groupList : List[Long] = queryResult.parse(SqlParser.long("groupId").*).toList
+        """.stripMargin).on("userid" -> pUserId)
 
-      val groups : List[Group] = groupList.map(x=>getGroupById(Option(x))).flatMap(_.toList)
+      val queryResult = query.executeQuery()
+      val groupList: List[Long] = queryResult.parse(SqlParser.long("groupId").*).toList
+
+      val groups: List[Group] = groupList.map(x => getGroupById(Option(x))).flatMap(_.toList)
 
       groups
     }
