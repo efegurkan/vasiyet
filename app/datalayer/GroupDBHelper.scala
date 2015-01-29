@@ -40,18 +40,12 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
-  def deleteGroup(pId: Option[Long]): Boolean = {
+  def deleteGroup(pId: Long): Boolean = {
     DB.withConnection { implicit c =>
-      val query = SQL(
-        """
-          |DELETE FROM Group
-          |Where id = {id}
-        """.stripMargin
-
-      ).on("id" -> pId)
+      val query = SQL("DELETE FROM vasiyet.Group Where id = {id}").on("id" -> pId)
 
       try {
-        query.execute()
+        query.executeUpdate() !=0
       } catch {
         case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
           Logger.error(ex.getErrorCode.toString)

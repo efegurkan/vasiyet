@@ -4,9 +4,11 @@ import datalayer.GroupDBHelper
 import model.{AddMemberData, EditGroupForm, Group}
 import play.api.Logger
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsError, JsPath, Json, Reads}
+import play.api.libs.json._
 import play.api.mvc.{BodyParsers, Controller}
 import utility.AuthAction
+
+import scala.util.Try
 
 object GroupController extends Controller {
   implicit val editGroupForm: Reads[EditGroupForm] = (
@@ -101,32 +103,35 @@ object GroupController extends Controller {
     )
   }
 
-  //todo rework on this
+  //extract group id from JSON for deletion
+  def extractDeleteGroupData(json: JsValue): Long = {
+    val idValid: Boolean = Try((json \ "id").as[String].toLong.ensuring(i => i > 0)).isSuccess
+    if (idValid) {
+      val id = Try((json \ "id").as[String].toLong).get
+      id
+    }
+    else
+      throw new Exception("Incoming data is corrupted")
+  }
+
+  //Handle group delete request as JSON
   def deleteGroup() = AuthAction(parse.json) { request =>
-    val jsonData = request.body.validate[Long]
-    jsonData.fold(
-      errors => {
-        BadRequest(Json.obj("Staus" -> "KO", "message" -> JsError.toFlatJson(errors)))
-      },
-      data => {
-        try {
-          val isItDeleted = Group.deleteGroup(data)
-          if (isItDeleted)
-          //todo inform user
-            Ok("Group deleted successfully")
-          else
-          //todo inform user
-            throw new Exception
-        } catch {
-          case ex: Exception => {
-            Logger.warn("Exception happened")
-            Logger.error(ex.getMessage)
-            //todo inform user
-            BadRequest(Json.obj("Status" -> "KO", "message" -> "Group deletion failed"))
-          }
-        }
+    try {
+      val data = extractDeleteGroupData(request.body)
+      val isItDeleted = Group.deleteGroup(data)
+      if (isItDeleted)
+        Ok(Json.obj("Status" -> "OK", "message" -> "Group deleted successfully"))
+      else
+        throw new Exception("Group deletion failed")
+    } catch {
+      case ex: Exception => {
+        Logger.warn("Group deletion exception")
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }
-    )
+    }
+    //      }
+    //    )
 
   }
 }

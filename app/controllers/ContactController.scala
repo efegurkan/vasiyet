@@ -59,8 +59,8 @@ object ContactController extends Controller {
   }
 
   //extract delete request and validate
-  def getDeleteJsonData(json: JsValue): Option[Long] = {
-    val idValid: Boolean = Try((json \ "id").as[String].toLong.ensuring(i=> i>= 0)).isSuccess
+  def extractDeleteJsonData(json: JsValue): Option[Long] = {
+    val idValid: Boolean = Try((json \ "id").as[String].toLong.ensuring(i=> i> 0)).isSuccess
     if (idValid) {
       val id = Try((json \ "id").as[String].toLong).toOption
       id
@@ -72,8 +72,8 @@ object ContactController extends Controller {
   //Handle delete request as JSON
   def deleteContact() = AuthAction(BodyParsers.parse.json) { implicit request =>
     try {
-      val contactIdJson = getDeleteJsonData(request.body)
-      if (Contact.deleteContact(contactIdJson.get))
+      val contactId = extractDeleteJsonData(request.body)
+      if (Contact.deleteContact(contactId.get))
         Ok(Json.obj("Status"-> "OK","message"->"Contact deleted successfully"))
       else
         throw new Exception("Contact deletion failed")

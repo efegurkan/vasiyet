@@ -43,9 +43,17 @@ object Group extends JSONConvertable[Group] {
     }
   }
 
-  def deleteGroup(form: Long): Boolean = {
-    //todo not implemented
-    false
+  def deleteGroup(groupId: Long): Boolean = {
+    try {
+      GroupDBHelper.deleteGroup(groupId)
+
+    } catch {
+      case ex: Exception =>
+        Logger.error("Contact deleteContact")
+        Logger.error(ex.getMessage)
+        Logger.error(ex.getCause.toString)
+        false
+    }
   }
 
   def addMember(data: AddMemberData): Boolean = {
