@@ -69,25 +69,18 @@ object GroupDBHelper extends DBHelper[Group] {
 
   def updateGroup(pId: Option[Long], name: String): Boolean = {
     DB.withConnection { implicit c =>
-      val query = SQL(
-        """
-          |UPDATE Group
-          |SET name = {name}
-          |WHERE id = {id}
-        """.stripMargin
-
-      ).on("id" -> pId, "name" -> name)
+      val query = SQL("UPDATE vasiyet.Group SET name = {name} WHERE id = {id}").on("id" -> pId, "name" -> name)
 
       try {
-        query.execute()
+        query.executeUpdate() !=0
       } catch {
         case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
           Logger.error(ex.getErrorCode.toString)
           throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
         case e: Throwable => {
-          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
+          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           false
         }
       }
