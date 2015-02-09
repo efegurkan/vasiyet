@@ -46,7 +46,7 @@ object ContactController extends Controller {
       //save contact and observe result.
       val isItSaved = Contact.editContact(contact, request.session.get("LoggedUser").get.toLong)
       if (isItSaved)
-        Ok(Json.obj("Status"->"OK","message"->"Contact saved successfully."))
+        Ok(Json.obj("Status" -> "OK", "message" -> "Contact saved successfully."))
       else
         throw new Exception("EditContact failed")
     } catch {
@@ -60,7 +60,7 @@ object ContactController extends Controller {
 
   //extract delete request and validate
   def extractDeleteJsonData(json: JsValue): Option[Long] = {
-    val idValid: Boolean = Try((json \ "id").as[String].toLong.ensuring(i=> i> 0)).isSuccess
+    val idValid: Boolean = Try((json \ "id").as[String].toLong.ensuring(i => i > 0)).isSuccess
     if (idValid) {
       val id = Try((json \ "id").as[String].toLong).toOption
       id
@@ -74,7 +74,7 @@ object ContactController extends Controller {
     try {
       val contactId = extractDeleteJsonData(request.body)
       if (Contact.deleteContact(contactId.get))
-        Ok(Json.obj("Status"-> "OK","message"->"Contact deleted successfully"))
+        Ok(Json.obj("Status" -> "OK", "message" -> "Contact deleted successfully"))
       else
         throw new Exception("Contact deletion failed")
     } catch {
@@ -83,5 +83,36 @@ object ContactController extends Controller {
         Logger.error(message)
         BadRequest(Json.obj("Status" -> "KO", "message" -> message))
     }
+  }
+
+  def getContactsAutoComplete() = AuthAction { implicit request =>
+    val userid = request.session.get("LoggedUser")
+    try {
+      //    val useridValid: Boolean = Try((request.body \ "userid").as[String].toLong.ensuring(i => i > 0)).isSuccess
+      //    if (useridValid) {
+      //      val userid = (request.body \ "userid").as[String].toLong
+
+
+      //      val ret = Group.getMembers(groupId)
+      val contacts = ContactDBHelper.getContactsByUserId(userid.get.toLong)
+      if (contacts.isEmpty) {
+        val ret = Json.obj("Contact" -> "You don't have any contact")
+        Ok(ret)
+      } else {
+        Json.arr()
+
+        val list = contacts.map(f => Contact.toJSON(f))
+        val ret = list.foldLeft(JsArray())((acc, x) => acc ++ Json.arr(x))
+        Ok(ret)
+      }
+
+
+    }
+
+    catch {
+      case ex: Exception =>
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
+    }
+
   }
 }

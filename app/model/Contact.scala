@@ -15,8 +15,16 @@ case class Contact(id: Option[Long],
                    email: String)
 
 object Contact extends JSONConvertable[Contact] {
-  //todo complete toJSON
-  override def toJSON(contact: Contact): JsValue = ???
+  override def toJSON(contact: Contact): JsValue = {
+    val ret = Json.obj(
+      "id" -> contact.id.get,
+      "name" -> contact.name,
+      "surname" -> contact.surname,
+      "email" -> contact.email
+    )
+
+    ret
+  }
 
   //todo email regex
   override def fromJSON(json: JsValue): Contact = {

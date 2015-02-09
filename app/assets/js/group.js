@@ -1,30 +1,32 @@
 $(document).ready(function () {
 
-    var numbers = new Bloodhound({
+    var contacts = new Bloodhound({
         datumTokenizer: function (d) {
             return Bloodhound.tokenizers.whitespace(d.num);
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: [
-            {num: 'one'},
-            {num: 'two'},
-            {num: 'three'},
-            {num: 'four'},
-            {num: 'five'},
-            {num: 'six'},
-            {num: 'seven'},
-            {num: 'eight'},
-            {num: 'nine'},
-            {num: 'ten'}
-        ]
+        remote: {
+            url:'/contactsauto',
+            filter:function(contacts){
+                return $.map(contacts, function(contact){
+                    return {
+                        value: contact.id,
+                        name:  contact.name + " " + contact.surname
+                    };
+                });
+            },
+            ajax:{
+                type: 'POST'
+            }
+        }
     });
 
-    numbers.initialize();
+    contacts.initialize();
 
     $('#addcontact').typeahead(null, {
-        name: 'example',
-        displayKey: 'num',
-        source: numbers.ttAdapter()
+        name: 'contactsAuto',
+        displayKey: 'name',
+        source: contacts.ttAdapter()
     });
 
     //validators

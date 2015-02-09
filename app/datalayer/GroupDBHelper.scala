@@ -10,7 +10,6 @@ import play.api.db.DB
 
 object GroupDBHelper extends DBHelper[Group] {
 
-
   def parser: RowParser[Group] = {
     get[Option[Long]]("id") ~
       get[String]("name") map {
@@ -45,7 +44,7 @@ object GroupDBHelper extends DBHelper[Group] {
       val query = SQL("DELETE FROM vasiyet.Group Where id = {id}").on("id" -> pId)
 
       try {
-        query.executeUpdate() !=0
+        query.executeUpdate() != 0
       } catch {
         case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
           Logger.error(ex.getErrorCode.toString)
@@ -66,7 +65,7 @@ object GroupDBHelper extends DBHelper[Group] {
       val query = SQL("UPDATE vasiyet.Group SET name = {name} WHERE id = {id}").on("id" -> pId, "name" -> name)
 
       try {
-        query.executeUpdate() !=0
+        query.executeUpdate() != 0
       } catch {
         case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
           Logger.error(ex.getErrorCode.toString)
@@ -138,5 +137,27 @@ object GroupDBHelper extends DBHelper[Group] {
     }
 
 
+  }
+
+  def deleteMember(groupid: Long, contactid: Long): Boolean = {
+    //todo not implemented
+    DB.withConnection { implicit c =>
+      val query = SQL("DELETE FROM vasiyet.contact WHERE groupId = {groupid} AND contactId = {contactid}").
+        on("groupid"->groupid, "contactid"->contactid).executeUpdate()
+      query !=0
+    }
+    false
+  }
+
+  def addMember(groupId: Long, contactId: Long): Boolean = {
+    //todo not implemented
+    DB.withConnection{implicit c =>
+      val query = SQL("INSERT INTO vasiyet.GroupContactLookup VALUES(NULL,{groupid}, {contactid})").
+        on("groupid"->groupId,"contactid"->contactId)
+
+      val result = query.executeInsert()
+      true//todo ?
+    }
+    false
   }
 }

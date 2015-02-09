@@ -1,9 +1,9 @@
 package model
 
 import com.mysql.jdbc.exceptions.jdbc4
-import datalayer.GroupDBHelper
+import datalayer.{ContactDBHelper, GroupDBHelper}
 import play.api.Logger
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsArray, JsValue, Json}
 
 import scala.util.Try
 
@@ -15,8 +15,6 @@ case class Group(id: Option[Long],
                  name: String,
                  members: List[Contact] = List.empty
                   )
-
-case class AddMemberData(contactId: Option[Long], groupId: Option[Long])
 
 object Group extends JSONConvertable[Group] {
   def editGroup(form: Group, loggedUserId: Long): Boolean = {
@@ -49,21 +47,68 @@ object Group extends JSONConvertable[Group] {
 
     } catch {
       case ex: Exception =>
-        Logger.error("Contact deleteContact")
+        Logger.error("delete Group")
         Logger.error(ex.getMessage)
         Logger.error(ex.getCause.toString)
         false
     }
   }
 
-  def addMember(data: AddMemberData): Boolean = {
+  def addMember(data: (Long, Long)): Boolean = {
+    val groupid = data._1
+    val contactid = data._2
+
+    try {
+      GroupDBHelper.addMember(groupid, contactid)
+    }
+    catch {
+      //todo exception handling review
+      case ex: Exception =>
+        Logger.error("Group addMember")
+        Logger.error(ex.getMessage)
+        Logger.error(ex.getCause.toString)
+        false
+    }
+  }
+
+  def deleteMember(data: (Long, Long)): Boolean = {
     //todo not implemented
+    val groupid = data._1
+    val contactid = data._2
+
+    try {
+      GroupDBHelper.deleteMember(groupid, contactid)
+    }
+    catch {
+      //todo exception handling review
+      case ex: Exception =>
+        Logger.error("Group deleteMember")
+        Logger.error(ex.getMessage)
+        Logger.error(ex.getCause.toString)
+    }
     false
   }
 
-  def deleteMember(data: AddMemberData): Boolean = {
-    //todo not implemented
-    false
+  def getMembersAsJson(data: Long): JsArray = {
+    try {
+      val members = ContactDBHelper.getGroupContacts(Some(data))
+      if (members.isDefined) {
+        val list = members.get
+        val lst = list.map(f => Contact.toJSON(f))
+        val ret = lst.foldLeft(JsArray())((acc, x) => acc ++ Json.arr(x))
+        ret
+      }
+      else
+        throw new Exception
+
+    }
+    catch {
+      case ex: Exception =>
+        Logger.error("Group getMembers")
+        Logger.error(ex.getMessage)
+        ex.printStackTrace()
+        throw new Exception("Couldn't load member data")
+    }
   }
 
   override def toJSON(t: Group): JsValue = ???

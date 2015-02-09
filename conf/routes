@@ -14,11 +14,14 @@ GET         /addcontact                     controllers.ContactController.showAd
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
 POST        /editcontact                    controllers.ContactController.editContactJson()
 POST        /deletecontact                  controllers.ContactController.deleteContact()
+#get contacts for group autocomplete
+POST        /contactsauto                   controllers.ContactController.getContactsAutoComplete()
 
 GET         /addgroup                       controllers.GroupController.showAddGroup()
 GET         /editgroup/$id<[0-9]+>          controllers.GroupController.showEditGroup(id : Long)
 POST        /editgroup                      controllers.GroupController.editGroup()
 POST        /deletegroup                    controllers.GroupController.deleteGroup()
+POST        /addgroupmember                 controllers.GroupController.addMember()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson
