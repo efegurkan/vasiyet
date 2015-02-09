@@ -1,37 +1,11 @@
 $(document).ready(function () {
-
-    var contacts = new Bloodhound({
-        datumTokenizer: function (d) {
-            return Bloodhound.tokenizers.whitespace(d.num);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url:'/contactsauto',
-            filter:function(contacts){
-                return $.map(contacts, function(contact){
-                    return {
-                        value: contact.id,
-                        name:  contact.name + " " + contact.surname
-                    };
-                });
-            },
-            ajax:{
-                type: 'POST'
-            }
-        }
-    });
-
-    contacts.initialize();
-
-    $('#addcontact').typeahead(null, {
-        name: 'contactsAuto',
-        displayKey: 'name',
-        source: contacts.ttAdapter()
-    });
-
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    $('select').select2({tags:true});
     //validators
     validateName();
 });
+
+function openmodal(){$('#addmodal').modal('show');}
 
 function validateName() {
     $('#editform').bootstrapValidator({
@@ -107,3 +81,23 @@ function submitDeleteReq(){
         }
     });
 }
+//
+//function addmember(){
+//    var id = {'id':$('#groupId').val()};
+//    $('#addcontact')
+//    $.ajax({
+//        type:   'POST',
+//        url:    '/addmember',
+//        data:   JSON.stringify(id),
+//        contentType: 'application/json',
+//        success:    function(data){
+//            //todo inform user
+//            console.log(data)
+//        },
+//        error: function (jqXHR, textstatus, errorThrown) {
+//            console.log(jqXHR.responseText);
+//            console.log(textstatus);
+//            console.log(errorThrown);
+//        }
+//    });
+//}

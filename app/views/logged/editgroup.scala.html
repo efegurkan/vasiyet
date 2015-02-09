@@ -1,10 +1,14 @@
-@(group: model.Group, page :String= "Add")
+@(group: model.Group, page :String= "Add", contacts : List[model.Contact])
 
 @head = {<!--  Head Block  -->
-  <link rel="stylesheet" href="@routes.Assets.at("css/autocomplete.css")">
+  @*<link rel="stylesheet" href="@routes.Assets.at("css/autocomplete.css")">*@
   <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
-  <script type="text/javascript" src="@routes.Assets.at("js/lib/typeahead.bundle.js")"></script>
+  @*<script type="text/javascript" src="@routes.Assets.at("js/lib/typeahead.bundle.js")"></script>*@
   <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrapValidator.min.js")"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/css/select2.min.css" />
+    <link href="@routes.Assets.at("css/select2-bootstrap.css")">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-beta.3/js/select2.min.js"></script>`
 
 }<!--  Head Includes END -->
 
@@ -57,9 +61,9 @@
             @for(c <- group.members) {
               <a href="/editcontact/@c.id" class="list-group-item">@c.name @c.surname</a>
             }
-              <a href="#" class="list-group-item" data-toggle="modal" data-target="#addmodal">Add contact to this group <span class="glyphicon glyphicon-plus pull-right"></span> </a>
-
-              <div class="modal fade" id="addmodal" tabindex="-1" role="dialog" aria-hidden="true"><!--  Contacts modal view  -->
+              <a href="#" class="list-group-item" onclick="openmodal()" @*data-toggle="modal" data-target="#addmodal"*@>Add contact to this group <span class="glyphicon glyphicon-plus pull-right"></span> </a>
+              
+              <div class="modal fade" id="addmodal" role="dialog" aria-hidden="true"><!--  Contacts modal view  -->
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -68,9 +72,14 @@
                     <div class="modal-body">
                       <div class="form-inline" >
                         <div class="form-group">
-                      <input id="addcontact" class="form-control" type="text" autocomplete="off" >
+                      @*<input id="addcontact" class="form-control" type="text" autocomplete="off" >*@
+                            <select id="selectcontact" class="form-control" multiple="multiple">
+                            @for(c <- contacts) {
+                                <option value="@c.id.get">@c.name @c.surname</option>
+                            }
+                            </select>
                         </div>
-                      <button id="add" class="form-control">Add</button>
+                      <button id="add" class="form-control" onclick="addmember()">Add</button>
                       </div>
                     </div>
                   </div>

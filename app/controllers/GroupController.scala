@@ -1,6 +1,6 @@
 package controllers
 
-import datalayer.GroupDBHelper
+import datalayer.{ContactDBHelper, GroupDBHelper}
 import model.{EditGroupForm, Group}
 import play.api.Logger
 import play.api.libs.functional.syntax._
@@ -23,7 +23,8 @@ object GroupController extends Controller {
 */
   def showAddGroup() = AuthAction { request =>
     val empty = new Group(new Some[Long](0), "");
-    Ok(views.html.logged.editgroup(empty, "Add"))
+    val id =request.session.get("LoggedUser").get.toLong
+    Ok(views.html.logged.editgroup(empty, "Add",ContactDBHelper.getContactsByUserId(id)))
   }
 
   def showEditGroup(id: Long) = AuthAction { request =>
@@ -35,7 +36,7 @@ object GroupController extends Controller {
     }
     else
     //    val nonEmpty = new Group(new Some[Long](0),"")
-      Ok(views.html.logged.editgroup(group.get, "Edit"))
+      Ok(views.html.logged.editgroup(group.get, "Edit",ContactDBHelper.getContactsByUserId(id)))
   }
 
   def editGroup() = AuthAction(BodyParsers.parse.json) { implicit request =>
