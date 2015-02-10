@@ -22,6 +22,7 @@ GET         /editgroup/$id<[0-9]+>          controllers.GroupController.showEdit
 POST        /editgroup                      controllers.GroupController.editGroup()
 POST        /deletegroup                    controllers.GroupController.deleteGroup()
 POST        /addgroupmember                 controllers.GroupController.addMember()
+POST        /deletegroupmember              controllers.GroupController.deleteMember()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson
