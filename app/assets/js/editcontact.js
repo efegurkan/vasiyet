@@ -1,14 +1,17 @@
 $(document).ready(function () {
     validateForm();
 
+    $('#delete').click(function(e){
+        e.preventDefault();
+        submitDeleteReq();
+    });
+
+    $('#save').click(function(e){
+        e.preventDefault();
+        submitFormData();
+    });
 
 });
-
-function registerDeleteEvent(selector) {
-    $(selector).on('click', function () {
-
-    });
-}
 
 function validateForm() {
     $('#editform').bootstrapValidator({
@@ -68,16 +71,18 @@ function submitFormData() {
         data: JSON.stringify(formdata),
         contentType: 'application/json',
         success: function (data, textstatus, jqXHR) {
-            //todo inform user about save
             console.log(jqXHR.status);
             console.log(textstatus);
             console.log(data);
+            alert(data.message);
+            window.location.href='/';
         },
         error: function (jqXHR, textstatus, errorThrown) {
-            //todo inform user about failure
             console.log(jqXHR.responseText);
             console.log(textstatus);
             console.log(errorThrown);
+            var msg =JSON.parse(jqXHR.responseText);
+            alert(msg.message);
         }
     });
 
