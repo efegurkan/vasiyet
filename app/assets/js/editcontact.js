@@ -1,8 +1,14 @@
 $(document).ready(function () {
     validateForm();
 
+
 });
-//$("#delete").on('click', submitDeleteReq());
+
+function registerDeleteEvent(selector) {
+    $(selector).on('click', function () {
+
+    });
+}
 
 function validateForm() {
     $('#editform').bootstrapValidator({
@@ -80,21 +86,32 @@ function submitFormData() {
 function submitDeleteReq() {
     console.log("submitdelete");
     var contactId = {'id': $('#contactId').val()};
-    $.ajax({
-        type: 'POST',
-        url: '/deletecontact',
-        data: JSON.stringify(contactId),
-        contentType: 'application/json',
-        success: function (data) {
-            //todo inform user
-            console.log(data);
-        },
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-        }
-    });
+
+    if (confirm('You are about to delete this Contact! This cannot be undone! Are you sure?')) {
+        console.log('Contact delete confirmed');
+        $.ajax({
+            type: 'POST',
+            url: '/deletecontact',
+            data: JSON.stringify(contactId),
+            contentType: 'application/json',
+            success: function (data) {
+                console.log(data);
+
+                alert(data.message);
+                window.location.href = '/contacts';
+
+            },
+            error: function (jqXHR, textstatus, errorThrown) {
+                console.log(jqXHR.responseText);
+                console.log(textstatus);
+                console.log(errorThrown);
+                var msg = JSON.parse(jqXHR);
+                alert(msg.message);
+            }
+        });
+    } else {
+        console.log('Contact delete cancelled');
+    }
 
 
 }

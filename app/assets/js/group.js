@@ -1,6 +1,6 @@
 $(document).ready(function () {
     //$.fn.modal.Constructor.prototype.enforceFocus = function() {};
-    $('select').select2();
+    $('select').select2({width:'420'});
     $('.list-group-item').click(function(e){
         var thingie = e.currentTarget;
         e.preventDefault();
