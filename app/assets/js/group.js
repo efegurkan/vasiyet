@@ -125,7 +125,6 @@ function registerCloseEvent(target){
                 data:   JSON.stringify(postdata),
                 contentType:'application/json',
                 success: function (data) {
-                    //todo inform user
                     console.log(data);
                     //delete list item
                     $('a[href$="/editcontact/'+deleteId+'"]').remove();
@@ -135,7 +134,8 @@ function registerCloseEvent(target){
                     console.log(jqXHR.responseText);
                     console.log(textstatus);
                     console.log(errorThrown);
-                    alert(jqXHR.message);
+                    var response = JSON.parse(jqXHR.responseText);
+                    alert(response.message);
                 }
             });
 
