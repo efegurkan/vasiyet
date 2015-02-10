@@ -50,30 +50,25 @@
       <div class="panel-heading">
         <h4 class="panel-title">Group Members</h4>
       </div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-md-12 list-group">
-            @*<div class="col-md-6 list-group">*@
-              @*<a href="#" class="list-group-item">Contact1</a>*@
-              @*<a href="#" class="list-group-item">Contact2</a>*@
-            @*</div>*@
-            @*<div class="col-md-6 list-group">*@
+      <div class="row panel-body center-block">
+          <div class="list-group col-md-12 ">
             @for(c <- group.members) {
-              <a href="/editcontact/@c.id" class="list-group-item">@c.name @c.surname</a>
+              <a href="/editcontact/@c.id" class="list-group-item">@c.name @c.surname <button type="button" class="close deleteContactBtn" value="@c.id">&times;</button></a>
             }
               <a href="#" class="list-group-item" onclick="openmodal()" @*data-toggle="modal" data-target="#addmodal"*@>Add contact to this group <span class="glyphicon glyphicon-plus pull-right"></span> </a>
-              
+
               <div class="modal fade" id="addmodal" role="dialog" aria-hidden="true"><!--  Contacts modal view  -->
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h6>Add contact to this group</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h6 class="modal-title">Add contact to this group</h6>
                     </div>
                     <div class="modal-body">
                       <div class="form-inline" >
                         <div class="form-group">
                       @*<input id="addcontact" class="form-control" type="text" autocomplete="off" >*@
-                            <select id="selectcontact" class="form-control" multiple="multiple">
+                            <select id="selectcontact" class="form-control">
                             @for(c <- contacts) {
                                 <option value="@c.id.get">@c.name @c.surname</option>
                             }
@@ -83,12 +78,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
               </div>
-            @*</div>*@
-          </div>
-          <div class="col-md-6">
-
           </div>
         </div>
       </div>

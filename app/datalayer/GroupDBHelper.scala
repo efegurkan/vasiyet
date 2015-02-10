@@ -140,13 +140,11 @@ object GroupDBHelper extends DBHelper[Group] {
   }
 
   def deleteMember(groupid: Long, contactid: Long): Boolean = {
-    //todo not implemented
     DB.withConnection { implicit c =>
-      val query = SQL("DELETE FROM vasiyet.contact WHERE groupId = {groupid} AND contactId = {contactid}").
+      val query = SQL("DELETE FROM vasiyet.GroupContactLookup WHERE groupId = {groupid} AND contactId = {contactid}").
         on("groupid"->groupid, "contactid"->contactid).executeUpdate()
       query !=0
     }
-    false
   }
 
   def addMember(groupId: Long, contactId: Long): Boolean = {

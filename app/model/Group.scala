@@ -60,6 +60,7 @@ object Group extends JSONConvertable[Group] {
 
     try {
       GroupDBHelper.addMember(groupid, contactid)
+      true
     }
     catch {
       //todo exception handling review
@@ -85,8 +86,8 @@ object Group extends JSONConvertable[Group] {
         Logger.error("Group deleteMember")
         Logger.error(ex.getMessage)
         Logger.error(ex.getCause.toString)
+        false
     }
-    false
   }
 
   def getMembersAsJson(data: Long): JsArray = {

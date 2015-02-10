@@ -1,6 +1,13 @@
 $(document).ready(function () {
-    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-    $('select').select2({tags:true});
+    //$.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    //$('select').select2();
+    $('.list-group-item').click(function(e){
+        var thingie = e.currentTarget;
+        e.preventDefault();
+        //registerCloseEvent(thingie);
+        console.log(e);
+    });
+    registerCloseEvent();
     //validators
     validateName();
 });
@@ -81,23 +88,66 @@ function submitDeleteReq(){
         }
     });
 }
-//
-//function addmember(){
-//    var id = {'id':$('#groupId').val()};
-//    $('#addcontact')
-//    $.ajax({
-//        type:   'POST',
-//        url:    '/addmember',
-//        data:   JSON.stringify(id),
-//        contentType: 'application/json',
-//        success:    function(data){
-//            //todo inform user
-//            console.log(data)
-//        },
-//        error: function (jqXHR, textstatus, errorThrown) {
-//            console.log(jqXHR.responseText);
-//            console.log(textstatus);
-//            console.log(errorThrown);
-//        }
-//    });
-//}
+
+function addmember(){
+    var id = {'groupId':$('#groupId').val(),'contactId':$('#selectcontact').val()};
+    $.ajax({
+        type:   'POST',
+        url:    '/addgroupmember',
+        data:   JSON.stringify(id),
+        contentType: 'application/json',
+        success:    function(data){
+            //todo inform user
+            console.log(data);
+        },
+        error: function (jqXHR, textstatus, errorThrown) {
+            console.log(jqXHR.responseText);
+            console.log(textstatus);
+            console.log(errorThrown);
+        }
+    });
+}
+
+function registerCloseEvent(target){
+
+    $('.deleteContactBtn').click(function(e){
+        e.preventDefault();
+
+        //Confirm delete
+        if(confirm("You are about to delete the contact from this group! Are you sure ?")){
+
+            //id of contact which will be deleted.
+            var deleteId = $(this).val();
+            var postdata = {'groupId':$('#groupId').val(),'contactId':deleteId};
+            $.ajax({
+                type:   'POST',
+                url:    '/deletegroupmember',
+                data:   JSON.stringify(postdata),
+                contentType:'application/json',
+                success: function (data) {
+                    //todo inform user
+                    console.log(data);
+                    //delete list item
+                    $('a[href$="/editcontact/'+deleteId+'"]').remove();
+                    alert(data.message);
+                },
+                error: function (jqXHR, textstatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                    console.log(textstatus);
+                    console.log(errorThrown);
+                    alert(jqXHR.message);
+                }
+            });
+
+
+        }
+        else{
+            console.log('Contact delete cancelled!');
+        }
+
+        //todo delete target
+        //todo if it is deleted
+        //target.remove();
+    });
+
+}

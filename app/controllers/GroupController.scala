@@ -98,7 +98,6 @@ object GroupController extends Controller {
       val data = extractMemberAdditionData(request.body)
       val isItDeleted = Group.deleteMember(data)
       if (isItDeleted)
-      //todo Inform User
         Ok(Json.obj("Status" -> "OK", "message" -> "Member deleted from group successfully"))
       else
         throw new Exception("Member deletion from group failed")
