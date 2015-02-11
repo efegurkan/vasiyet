@@ -1,7 +1,10 @@
-@(posts: List[model.Post] = List.empty)
+@(posts: List[model.Post] = List.empty, groups: List[model.Group] = List.empty)
 
 @head = {
+    <link rel="stylesheet" href="@routes.Assets.at("css/select2.min.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("css/select2-bootstrap.css")">
     <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+    <script type="application/javascript" src="@routes.Assets.at("js/lib/select2.full.js")"></script>
 }
 
 @body = {
@@ -26,13 +29,13 @@
                         </div>
                         <div class="form-group">
                             <label for="newPostContent">Post content</label>
-                            <textarea class="form-control" id="newPostContent" placeholder="Enter post here."></textarea>
+                            <textarea rows="3" class="form-control" id="newPostContent" placeholder="Enter post here."></textarea>
                         </div>
                     </form>
                     @*</div>*@
                 </div><!--end modal body    -->
                 <div class="modal-footer">
-                    <select class="pull-left">
+                    <select id="newPostGroupSelect">
                         <option value="grup1"> Group1</option>
                     </select>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -71,6 +74,7 @@
 }
 
 @include = {
+    <script src="@routes.Assets.at("js/posts.js")"></script>
 
 }
 
