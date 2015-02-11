@@ -1,7 +1,7 @@
 $(document).ready(function () {
     //$.fn.modal.Constructor.prototype.enforceFocus = function() {};
-    $('select').select2({width:'420'});
-    $('.list-group-item').click(function(e){
+    $('select').select2({width: '420'});
+    $('.list-group-item').click(function (e) {
         var thingie = e.currentTarget;
         e.preventDefault();
         //registerCloseEvent(thingie);
@@ -12,7 +12,9 @@ $(document).ready(function () {
     validateName();
 });
 
-function openmodal(){$('#addmodal').modal('show');}
+function openmodal() {
+    $('#addmodal').modal('show');
+}
 
 function validateName() {
     $('#editform').bootstrapValidator({
@@ -54,80 +56,96 @@ function submitNameData() {
         data: JSON.stringify(formdata),
         contentType: 'application/json',
         success: function (data, textstatus, jqXHR) {
-            //todo inform user
             console.log(jqXHR.status);
             console.log(textstatus);
             console.log(data);
+            alert(data.message);
+            //todo redirect? save id etc.
         },
         error: function (jqXHR, textstatus, errorThrown) {
             //todo inform user
             console.log(jqXHR.responseText);
             console.log(textstatus);
             console.log(errorThrown);
+
+            var msg = JSON.parse(jqXHR.responseText);
+            alert(msg.message);
         }
 
     });
 }
 
-function submitDeleteReq(){
-    var id = {'id':$('#groupId').val()};
+function submitDeleteReq() {
+    var id = {'id': $('#groupId').val()};
 
-    $.ajax({
-        type:   'POST',
-        url:    '/deletegroup',
-        data:   JSON.stringify(id),
-        contentType:'application/json',
-        success: function (data) {
-            //todo inform user
-            console.log(data);
-        },
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-        }
-    });
+    if (confirm('You are about to delete the group!. This cannot be undone. Are you sure?')) {
+        console.log('Group deletion confirmed.!');
+        $.ajax({
+            type: 'POST',
+            url: '/deletegroup',
+            data: JSON.stringify(id),
+            contentType: 'application/json',
+            success: function (data) {
+                console.log(data);
+                alert(data.message);
+                window.location.href = "/";
+            },
+            error: function (jqXHR, textstatus, errorThrown) {
+                console.log(jqXHR.responseText);
+                console.log(textstatus);
+                console.log(errorThrown);
+                var msg = JSON.parse(jqXHR);
+                alert(msg.message);
+            }
+        });
+    }
+    else {
+        console.log("Group deletion cancelled.");
+    }
+
 }
 
-function addmember(){
-    var id = {'groupId':$('#groupId').val(),'contactId':$('#selectcontact').val()};
+function addmember() {
+    var id = {'groupId': $('#groupId').val(), 'contactId': $('#selectcontact').val()};
     $.ajax({
-        type:   'POST',
-        url:    '/addgroupmember',
-        data:   JSON.stringify(id),
+        type: 'POST',
+        url: '/addgroupmember',
+        data: JSON.stringify(id),
         contentType: 'application/json',
-        success:    function(data){
-            //todo inform user
+        success: function (data) {
             console.log(data);
+            alert(data.message);
         },
         error: function (jqXHR, textstatus, errorThrown) {
             console.log(jqXHR.responseText);
             console.log(textstatus);
             console.log(errorThrown);
+            var msg = JSON.parse(jqXHR.responseText);
+            alert(msg.message);
         }
     });
 }
 
-function registerCloseEvent(target){
+function registerCloseEvent(target) {
 
-    $('.deleteContactBtn').click(function(e){
+    $('.deleteContactBtn').click(function (e) {
         e.preventDefault();
 
         //Confirm delete
-        if(confirm("You are about to delete the contact from this group! Are you sure ?")){
+        if (confirm("You are about to delete the contact from this group! Are you sure ?")) {
 
             //id of contact which will be deleted.
             var deleteId = $(this).val();
-            var postdata = {'groupId':$('#groupId').val(),'contactId':deleteId};
+            var postdata = {'groupId': $('#groupId').val(), 'contactId': deleteId};
             $.ajax({
-                type:   'POST',
-                url:    '/deletegroupmember',
-                data:   JSON.stringify(postdata),
-                contentType:'application/json',
+                type: 'POST',
+                url: '/deletegroupmember',
+                data: JSON.stringify(postdata),
+                contentType: 'application/json',
                 success: function (data) {
                     console.log(data);
                     //delete list item
-                    $('a[href$="/editcontact/'+deleteId+'"]').remove();
+                    $('a[href$="/editcontact/' + deleteId + '"]').remove();
                     alert(data.message);
                 },
                 error: function (jqXHR, textstatus, errorThrown) {
@@ -141,7 +159,7 @@ function registerCloseEvent(target){
 
 
         }
-        else{
+        else {
             console.log('Contact delete cancelled!');
         }
     });

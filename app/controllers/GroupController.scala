@@ -45,7 +45,7 @@ object GroupController extends Controller {
       val isItSaved = Group.editGroup(group, request.session.get("LoggedUser").get.toLong);
 
       if (isItSaved)
-        Ok("Group save successful.")
+        Ok(Json.obj("Status"->"OK", "message"->"Group saved successfully"))
       else
         throw new Exception("Group save failed")
     } catch {
