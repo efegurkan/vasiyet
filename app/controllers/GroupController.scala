@@ -35,7 +35,6 @@ object GroupController extends Controller {
       Redirect("/")
     }
     else
-    //    val nonEmpty = new Group(new Some[Long](0),"")
       Ok(views.html.logged.editgroup(group.get, "Edit",ContactDBHelper.getContactsByUserId(id)))
   }
 
@@ -44,8 +43,8 @@ object GroupController extends Controller {
       val group = Group.fromJSON(request.body)
       val isItSaved = Group.editGroup(group, request.session.get("LoggedUser").get.toLong);
 
-      if (isItSaved)
-        Ok(Json.obj("Status"->"OK", "message"->"Group saved successfully"))
+      if (isItSaved._1)
+        Ok(Json.obj("Status"->"OK", "message"->"Group saved successfully","groupId"->isItSaved._2))
       else
         throw new Exception("Group save failed")
     } catch {

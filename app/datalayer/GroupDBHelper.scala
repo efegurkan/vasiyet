@@ -17,14 +17,14 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
-  def createGroup(pGroupName: String, userId: Long): Boolean = {
+  def createGroup(pGroupName: String, userId: Long): Long = {
     try {
       DB.withTransaction { implicit c =>
         val insertedId = SQL("INSERT INTO vasiyet.Group VALUES( NULL, {name} )").on("name" -> pGroupName).executeInsert()
 
-        SQL("INSERT INTO vasiyet.UserGroupLookup VALUES(NULL, {user}, {inserted} )").on("inserted" -> insertedId, "user" -> userId).executeInsert()
-
-        true
+        val query2 =SQL("INSERT INTO vasiyet.UserGroupLookup VALUES(NULL, {user}, {inserted} )").on("inserted" -> insertedId, "user" -> userId)
+        val insGroupId = query2.executeInsert()
+        insGroupId.getOrElse(0)
       }
     } catch {
       case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
@@ -34,7 +34,6 @@ object GroupDBHelper extends DBHelper[Group] {
       case e: Throwable => {
         e.printStackTrace()
         throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
-        false
       }
     }
   }

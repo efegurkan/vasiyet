@@ -17,26 +17,30 @@ case class Group(id: Option[Long],
                   )
 
 object Group extends JSONConvertable[Group] {
-  def editGroup(form: Group, loggedUserId: Long): Boolean = {
+  def editGroup(form: Group, loggedUserId: Long): (Boolean,Option[Long]) = {
     val id = form.id.getOrElse(throw new Exception("Incoming data is corrupted"))
     try {
       if (id == 0) {
         //This is an add request
-        GroupDBHelper.createGroup(form.name, loggedUserId)
+        val newId =GroupDBHelper.createGroup(form.name, loggedUserId)
+        (newId!=0,Some(newId))
       }
-      else //This is an edit request
-        GroupDBHelper.updateGroup(Some(id), form.name)
+      else {
+        //This is an edit request
+        val ret = GroupDBHelper.updateGroup(Some(id), form.name)
+        (ret, Some(id))
+      }
     }
     catch {
       case mysqlException: jdbc4.MySQLIntegrityConstraintViolationException => {
         Logger.error(mysqlException.getErrorCode.toString)
-        false
+        (false,None)
       }
       case ex: Exception => {
         Logger.error("Group editGroup")
         Logger.error(ex.getMessage)
         Logger.error(ex.getCause.toString)
-        false
+        (false, None)
       }
     }
   }

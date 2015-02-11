@@ -60,6 +60,7 @@ function submitNameData() {
             console.log(textstatus);
             console.log(data);
             alert(data.message);
+            $('#groupId').val(data.groupId);
             //todo redirect? save id etc.
         },
         error: function (jqXHR, textstatus, errorThrown) {
