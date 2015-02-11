@@ -1,0 +1,77 @@
+@(posts: List[model.Post] = List.empty)
+
+@head = {
+    <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+}
+
+@body = {
+    <!-- compose modal-->
+    <div class="modal fade in" id="newPostModal" role="dialog" aria-labelledby="#modaltitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @*<div class="container">*@
+                    @*</div>*@
+                    <div class="modal-title" id="modaltitle"><h4>Compose new post</h4></div>
+                </div><!--end modal header-->
+
+                <div class="modal-body" style="overflow: auto">
+                    @*<div class="container">*@
+                    <form>
+
+                        <div class="form-group">
+                            <label for="newPostTitle">Post title</label>
+                            <input class="form-control" id="newPostTitle" placeholder="Enter post title here.">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPostContent">Post content</label>
+                            <textarea class="form-control" id="newPostContent" placeholder="Enter post here."></textarea>
+                        </div>
+                    </form>
+                    @*</div>*@
+                </div><!--end modal body    -->
+                <div class="modal-footer">
+                    <select class="pull-left">
+                        <option value="grup1"> Group1</option>
+                    </select>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save post</button>
+                </div>
+            </div><!--end modal content-->
+        </div><!--end modal dialog-->
+
+    </div> <!-- end modal-->
+
+    <div class="container center-block">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="list-group">
+                    <a class=" list-group-item list-group-item-info text-center" data-toggle="modal" data-target="#newPostModal"><span class="glyphicon glyphicon-plus"></span> <b>
+                        Compose new</b></a>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <button type='button' class='close' data-dismiss='alert'>×</button>
+                        <h3 class="panel-title">Post title</h3>
+                    </div>
+                    <div class="panel-body">
+                        Post content
+                        @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
+                    </div>
+                    <div class="panel-footer">
+                        written by : User <a class="dropdown-toggle" role="button" href=""><span class="glyphicon glyphicon-user pull-right"></span></a>
+                    </div><!--End footer-->
+                </div><!-- End Panel-->
+
+            </div><!--End column-->
+        </div><!-- End row -->
+    </div> <!-- End container -->
+
+}
+
+@include = {
+
+}
+
+@loggedMaster("Wall")(head)(body)(include)
