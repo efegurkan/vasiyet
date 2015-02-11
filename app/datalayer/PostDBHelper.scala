@@ -7,10 +7,10 @@ import anorm._
 import anorm.SqlParser._
 import org.joda.time.DateTime
 
-class PostDBHelper extends DBHelper[Post] {
+object PostDBHelper extends DBHelper[Post] {
   
   def parser : RowParser[Post] = {
-    get[Option[Long]]("id") ~ 
+    get[Long]("id") ~
     get[String]("title") ~ 
     get[String]("content") ~
     get[Option[String]]("filepath")~
@@ -20,16 +20,29 @@ class PostDBHelper extends DBHelper[Post] {
     }
   }
   
-  def getPostsById( pId : Long ) : List[Post] = {
+  def getPostsBySenderId( pSenderId : Long ) : List[Post] = {
     DB.withConnection{  implicit c => 
       val query = SQL("""
           Select * from Post
           Where sender = {id}
           """
-          ).on("id" -> pId)
+          ).on("id" -> pSenderId)
         val result = query.executeQuery()
         val posts = result.as(parser * ).toList
         posts
+    }
+  }
+
+  //todo visibility
+  def createPost(title: String,
+                 content: String,
+                 filepath: Option[String],
+                 sender: Long,
+                 date: DateTime) : Long = {DB.withConnection{ implicit  c=>
+
+    val query = SQL("INSERT INTO vasiyet.Post VALUES(Null, title, content, filepath,sender,date)").on("title"->title, "content"->content, "filepath"->filepath,"sender"->sender,"date"->date)
+    val insertedId = query.executeInsert()
+    insertedId.getOrElse(0)
     }
   }
 

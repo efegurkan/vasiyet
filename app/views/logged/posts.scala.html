@@ -12,14 +12,14 @@
     <div class="modal fade in" id="newPostModal" role="dialog" aria-labelledby="#modaltitle" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header clearfix">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     @*<div class="container">*@
                     @*</div>*@
                     <div class="modal-title" id="modaltitle"><h4>Compose new post</h4></div>
                 </div><!--end modal header-->
 
-                <div class="modal-body" style="overflow: auto">
+                <div class="modal-body" style="overflow : auto">
                     @*<div class="container">*@
                     <form>
 
@@ -39,13 +39,14 @@
                         <option value="grup1"> Group1</option>
                     </select>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save post</button>
+                    <button id="saveBtn" type="button" class="btn btn-primary">Save post</button>
                 </div>
             </div><!--end modal content-->
         </div><!--end modal dialog-->
 
     </div> <!-- end modal-->
 
+    <!-- page content -->
     <div class="container center-block">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -53,19 +54,38 @@
                     <a class=" list-group-item list-group-item-info text-center" data-toggle="modal" data-target="#newPostModal"><span class="glyphicon glyphicon-plus"></span> <b>
                         Compose new</b></a>
                 </div>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <button type='button' class='close' data-dismiss='alert'>×</button>
-                        <h3 class="panel-title">Post title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Post content
-                        @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
-                    </div>
-                    <div class="panel-footer">
-                        written by : User <a class="dropdown-toggle" role="button" href=""><span class="glyphicon glyphicon-user pull-right"></span></a>
-                    </div><!--End footer-->
-                </div><!-- End Panel-->
+                @for(p <- posts) {
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button value="@p.id" type='button' class='close deletepost'>×</button>
+                            <h3 class="panel-title"><b>@p.title</b></h3>
+                        </div>
+                        <div class="panel-body" style="min-height: 100px">
+                            <p>@p.content</p>
+                            @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
+                        </div>
+                        <div class="panel-footer clearfix">
+                            @*Sender : @p.sender*@
+                        <a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>
+                        </div> <!--End footer-->
+                    </div> <!-- End Panel-->
+
+                    }
+                <!--DEBUG-->
+                <!--TEMPLATE POST-->
+                @* <div class="panel panel-primary">
+                <div class="panel-heading">
+                <button type='button' class='close deletepost'>×</button>
+                <h3 class="panel-title">Post title</h3>
+                </div>
+                <div class="panel-body">
+                Post content
+                *@@*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@@*
+                </div>
+                <div class="panel-footer clearfix">
+                <a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>
+                </div><!--End footer-->
+                </div><!-- End Panel-->*@
 
             </div><!--End column-->
         </div><!-- End row -->
