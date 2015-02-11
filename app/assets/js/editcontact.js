@@ -1,17 +1,29 @@
 $(document).ready(function () {
     validateForm();
 
-    $('#delete').click(function(e){
+    $('#delete').click(function (e) {
         e.preventDefault();
         submitDeleteReq();
     });
 
-    $('#save').click(function(e){
+    $('#save').click(function (e) {
         e.preventDefault();
         submitFormData();
     });
 
+    enableDeleteButton();
+
 });
+
+function enableDeleteButton() {
+    var btn = $('#delete');
+    if ($('#contactId').length !== 0 && $('#contactId').val() ==='0') {
+        btn.prop('disabled',true);
+    }
+    else {
+        btn.prop('disabled',false);
+    }
+}
 
 function validateForm() {
     $('#editform').bootstrapValidator({
@@ -75,13 +87,13 @@ function submitFormData() {
             console.log(textstatus);
             console.log(data);
             alert(data.message);
-            window.location.href='/';
+            window.location.href = '/';
         },
         error: function (jqXHR, textstatus, errorThrown) {
             console.log(jqXHR.responseText);
             console.log(textstatus);
             console.log(errorThrown);
-            var msg =JSON.parse(jqXHR.responseText);
+            var msg = JSON.parse(jqXHR.responseText);
             alert(msg.message);
         }
     });
