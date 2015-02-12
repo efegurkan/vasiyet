@@ -14,6 +14,18 @@ case class Post(id: Long,
                 date: DateTime)
 
 object Post extends JSONConvertable[Post] {
+  def deletePost(id: Long): Boolean = {
+    try {
+      PostDBHelper.deletePost(id)
+    }
+    catch {
+      case ex: Exception => {
+        ex.printStackTrace()
+        throw new Exception("Post deletion could not saved on database")
+      }
+    }
+  }
+
   override def toJSON(t: Post): JsValue = ???
 
   //todo visibility and other fields
@@ -52,7 +64,8 @@ object Post extends JSONConvertable[Post] {
     try {
       if (data.id == 0) {
         //Add request
-        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, data.sender, data.date)
+        //todo sender is not provided by json!
+        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date)
         (insertedId != 0, insertedId)
       }
       else {

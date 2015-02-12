@@ -25,6 +25,9 @@ POST        /deletegroup                    controllers.GroupController.deleteGr
 POST        /addgroupmember                 controllers.GroupController.addMember()
 POST        /deletegroupmember              controllers.GroupController.deleteMember()
 
+POST        /editpost                       controllers.PostController.addPost()
+POST        /deletepost                     controllers.PostController.deletePost()
+
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson
 

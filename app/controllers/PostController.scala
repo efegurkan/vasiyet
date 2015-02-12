@@ -8,6 +8,8 @@ import play.api.mvc.BodyParsers
 import play.mvc._
 import utility.AuthAction
 
+import scala.util.Try
+
 object PostController extends Controller {
 
   def showPage = AuthAction { request =>
@@ -15,7 +17,7 @@ object PostController extends Controller {
       val posts = Post.getPosts(request.session.get("LoggedUser").get.toLong)
 
       //todo get groups and pass
-      Ok(views.html.logged.posts(posts, List.empty))
+      Ok(views.html.logged.posts(posts.reverse, List.empty))
     }
     catch {
       case ex: Exception => {
@@ -31,21 +33,44 @@ object PostController extends Controller {
 
       val ret = Post.editPost(post, request.session.get("LoggedUser").get.toLong)
 
-      if (ret._1){
-        Ok(Json.obj("Status"->"OK","message"->"Post saved successfully","postId"->ret._2))
+      if (ret._1) {
+        Ok(Json.obj("Status" -> "OK", "message" -> "Post saved successfully", "postId" -> ret._2))
       }
-      else{
+      else {
         throw new Exception("Post save failed!")
       }
     }
     catch {
-      case ex:Exception => {
+      case ex: Exception => {
         Logger.error("PostController Error")
-        BadRequest(Json.obj("Status"->"KO","message"->ex.getMessage))
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }
 
     }
 
   }
 
+  def deletePost() = AuthAction(BodyParsers.parse.json) { request =>
+    
+    try {
+      val idValid: Boolean = Try((request.body \ "postId").as[String].toLong.ensuring(i => i > 0)).isSuccess
+      val id = Try((request.body \ "postId").as[String].toLong).get
+      val isItDeleted = Post.deletePost(id)
+
+      if (isItDeleted) {
+        Ok(Json.obj("Status" -> "OK", "message" -> "Post deleted successfully"))
+      }
+      else {
+        throw new Exception("Post deletion failed!")
+      }
+    }
+    catch {
+      case ex: Exception => {
+        Logger.error("PostController Error")
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
+      }
+    }
+  }
 }
