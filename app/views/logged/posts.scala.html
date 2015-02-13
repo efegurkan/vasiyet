@@ -11,138 +11,68 @@
 }
 
 @body = {
-    <!-- compose modal-->
-    <div class="modal fade in" id="newPostModal" role="dialog" aria-labelledby="#modaltitle" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header clearfix">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @*<div class="container">*@
-                    @*</div>*@
-                    <div class="modal-title" id="modaltitle"><h4>Compose new post</h4></div>
-                </div><!--end modal header-->
-
-                <div class="modal-body" style="overflow : auto">
-                    @*<div class="container">*@
-                    <form>
-
-                        <div class="form-group">
-                            <label for="newPostTitle">Post title</label>
-                            <input class="form-control" id="newPostTitle" placeholder="Enter post title here.">
-                        </div>
-                        <div class="form-group">
-                            <label for="newPostContent">Post content</label>
-                            <textarea rows="3" class="form-control" id="newPostContent" placeholder="Enter post here."></textarea>
-                        </div>
-                    </form>
-                    @*</div>*@
-                </div><!--end modal body    -->
-                <div class="modal-footer">
-                    <select id="newPostGroupSelect">
-                        <option value="grup1"> Group1</option>
-                    </select>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="saveBtn" type="button" class="btn btn-primary">Save post</button>
-                </div>
-            </div><!--end modal content-->
-        </div><!--end modal dialog-->
-
-    </div> <!-- end modal-->
-
     <!-- page content -->
     <div class="container center-block">
         <div class="row">
+                <!--middle content area-->
             <div class="col-md-8 col-md-offset-2">
-                @*<div class="list-group">*@
-                @*<a class=" list-group-item list-group-item-info text-center" data-toggle="modal" data-target="#newPostModal"><span class="glyphicon glyphicon-plus"></span> <b>*@
-                @*Compose new</b></a>*@
-                @*</div>*@
 
-                <div class="panel panel-primary">
+                <!-- New post panel-->
+                <div class="panel panel-info">
+                        <!--Panel Heading-->
                     <div class="panel-heading">
-                        <button type='button' class='close deletepost'>×</button>
-                        @*<h3 class="panel-title post-title" contenteditable="true">New Post Title</h3>*@
-                        <h4 class="postheader"><input class="transparent-text-area" placeholder="Write your title." value="Write your title."></h4>
+                        <h4 class="postheader"><input class="new-post-title transparent-text-area" placeholder="Click here to title your new post."></h4>
                     </div>
+                        <!--Panel body-->
                     <div class="panel-body new-post-body">
-                        @*<p class="post-content" contenteditable="true"></p>*@
-                        <textarea class="post-content" role="textbox" placeholder="Write your post here." style="resize : none"></textarea>
+                        <textarea class="new-post-content post-content" role="textbox" placeholder="Write your post here." style="resize : none"></textarea>
 
-                    </div>
+                    </div><!-- End Body-->
                     <div class="panel-footer clearfix">
-                        @*Sender : @p.sender*@
+                            <!-- Left side buttons-->
                         <div class="btn-toolbar pull-left" role="toolbar">
                             <a class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span> </a>
                         </div>
+
+                            <!-- Right side buttons-->
                         <div class="btn-toolbar pull-right" role="toolbar">
                             <div class="btn-group">
-                                <a class="btn btn-info"><span class="glyphicon glyphicon-picture"></span></a>
-                                <a class="btn btn-success" ><span class="glyphicon glyphicon-floppy-disk"></span></a>
+                                <a class="btn btn-info btn-newImage"><span class="glyphicon glyphicon-picture"></span></a>
+                                <a class="btn btn-success btn-newPostSave" ><span class="glyphicon glyphicon-floppy-disk"></span></a>
                             </div>
                         </div>
 
-
                     </div> <!--End footer-->
-                </div> <!-- End Panel-->
+                </div> <!-- End New Post Panel-->
 
-                @for(p <- posts) {
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <button type='button' class='close deletepost'>×</button>
-                            <h4 class="postheader"><input class="transparent-text-area" placeholder="Write your title." value="@p.title"></h4>
-                        </div>
-                        <div class="panel-body new-post-body">
-                        <textarea class="post-content disabled" role="textbox" placeholder="Write your post here." style="resize : none">@p.content</textarea>
-
-                        </div>
-                        <div class="panel-footer clearfix">
-                            @*Sender : @p.sender*@
+            <!--Load posts-->
+            @for(p <- posts) {
+                <!-- Post panel-->
+                <div class="panel panel-primary" data-wall-post="@p.id">
+                    <!--Panel Header-->
+                    <div class="panel-heading">
+                        <button type='button' class='close deletepost'>×</button>
+                        <h4 class="postheader">@p.title</h4>
+                    </div>
+                    <!--Panel Body-->
+                    <div class="panel-body new-post-body">
+                        <p class="post-content" style="resize : none">@p.content</p>
+                    </div>
+                    <!--Panel Footer-->
+                    <div class="panel-footer clearfix">
+                        @*Sender : @p.sender*@
                         <div class="btn-toolbar pull-left" role="toolbar">
                             <a class="btn btn-default disabled"><span class="glyphicon glyphicon-user"></span> </a>
                         </div>
                         <div class="btn-toolbar pull-right" role="toolbar">
                             <div class="btn-group">
-                                <a class="btn btn-danger" ><span class="glyphicon glyphicon-edit"></span></a>
+                                <a class="btn btn-danger btn-editPost" ><span class="glyphicon glyphicon-edit"></span></a>
                             </div>
                         </div>
 
-
-                        </div> <!--End footer-->
-                    </div> <!-- End Panel-->
-
-
-                        @*<div id="@p.id" class="panel panel-primary">*@
-                        @*<div class="panel-heading">*@
-                            @*<button type='button' class='close deletepost'>×</button>*@
-                            @*<h3 class="panel-title"><b>@p.title</b></h3>*@
-                        @*</div>*@
-                        @*<div class="panel-body" style="min-height : 100 px">*@
-                            @*<p>@p.content</p>*@
-                            @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
-                        @*</div>*@
-                        @*<div class="panel-footer clearfix">*@
-                            @*Sender : @p.sender*@
-                        @*<a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>*@
-                        @*</div> <!--End footer-->*@
-                    @*</div> <!-- End Panel-->*@
-
-                    }
-            <!--DEBUG-->
-            <!--TEMPLATE POST-->
-                @* <div class="panel panel-primary">
-                <div class="panel-heading">
-                <button type='button' class='close deletepost'>×</button>
-                <h3 class="panel-title">Post title</h3>
-                </div>
-                <div class="panel-body">
-                Post content
-                *@@*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@@*
-                </div>
-                <div class="panel-footer clearfix">
-                <a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>
-                </div><!--End footer-->
-                </div><!-- End Panel-->*@
+                    </div> <!--End footer-->
+                </div> <!-- End Panel-->
+            }
 
             </div><!--End column-->
         </div> <!-- End row -->

@@ -67,7 +67,7 @@ object PostController extends Controller {
     }
     catch {
       case ex: Exception => {
-        Logger.error("PostController Error")
+        Logger.error("PostController delete Error")
         Logger.error(ex.getMessage)
         BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }

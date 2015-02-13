@@ -2,24 +2,51 @@ $(document).ready(function () {
     $('select').select2({width: 'style'});
     $('textarea').autosize();
 
-    $('#saveBtn').on('click', function (e) {
-        e.preventDefault();
-        submitSaveRequest();
+    $('.btn-newPostSave').on('click', function(e) {
+        registerNewSave(e);
+    });
+    $('.deletepost').on('click', function (e) {
+        registerDeleteRequest(e, $(this));
     });
 
-    $('.deletepost').on('click', function (e) {
-        console.log("deletepost");
-        e.preventDefault();
-        submitDeleteRequest($(this));
-    });
 });
 
-function submitDeleteRequest(target) {
+function registerNewSave(event) {
+    console.log("register new save event");
+    event.preventDefault();
 
-    var postId = {
-        'postId': target.parents('.panel').attr('id')
+    var title = $('input.new-post-title');
+    console.log(title);
+    //todo picture ?
+    var content = $('textarea.new-post-content');
+
+    if (title.val().length > 0 && content.val().length > 0) {//not empty
+
+        //todo add other properties + visibility
+        var newSaveData = {
+            'id': '0',
+            'title': title.val(),
+            'content': content.val()
+        };
+
+        submitSaveRequest(newSaveData);
+    } else {//empty
+        alert("Your post has some empty areas!");
+    }
+
+}
+
+function registerDeleteRequest(event, button){
+    event.preventDefault();
+    var id = button.closest('div.panel.panel-primary').data('wallPost');
+    console.log(id);
+    data= {
+       'postId': String(id)
     };
+    submitDeleteRequest(data);
+}
 
+function submitDeleteRequest(postId) {
     $.ajax({
         type: 'POST',
         url: '/deletepost',
@@ -30,7 +57,6 @@ function submitDeleteRequest(target) {
             console.log(textstatus);
             console.log(data);
             alert(data.message);
-            $('#' + target.val()).remove();
             window.location.href = '/posts';
         },
         error: function (jqXHR, textstatus, errorThrown) {
@@ -43,14 +69,7 @@ function submitDeleteRequest(target) {
     });
 }
 
-function submitSaveRequest() {
-
-    //todo add other properties + visibility
-    var postData = {
-        'id': '0',
-        'title': $('#newPostTitle').val(),
-        'content': $('#newPostContent').val()
-    };
+function submitSaveRequest(postData) {
 
     $.ajax({
         type: 'POST',
