@@ -14,7 +14,7 @@ object Application extends Controller{
   }
 
   def home = AuthAction{request =>
-    Redirect("/contacts")
+    Redirect("/posts")
 //    Ok(views.html.logged.contacts())
   }
 

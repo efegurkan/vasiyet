@@ -147,7 +147,6 @@ object GroupDBHelper extends DBHelper[Group] {
   }
 
   def addMember(groupId: Long, contactId: Long): Boolean = {
-    //todo not implemented
     DB.withConnection{implicit c =>
       val query = SQL("INSERT INTO vasiyet.GroupContactLookup VALUES(NULL,{groupid}, {contactid})").
         on("groupid"->groupId,"contactid"->contactId)

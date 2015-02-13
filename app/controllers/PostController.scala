@@ -52,7 +52,7 @@ object PostController extends Controller {
   }
 
   def deletePost() = AuthAction(BodyParsers.parse.json) { request =>
-    
+
     try {
       val idValid: Boolean = Try((request.body \ "postId").as[String].toLong.ensuring(i => i > 0)).isSuccess
       val id = Try((request.body \ "postId").as[String].toLong).get
