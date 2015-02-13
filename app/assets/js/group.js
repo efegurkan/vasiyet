@@ -64,7 +64,6 @@ function submitNameData() {
             //todo redirect? save id etc.
         },
         error: function (jqXHR, textstatus, errorThrown) {
-            //todo inform user
             console.log(jqXHR.responseText);
             console.log(textstatus);
             console.log(errorThrown);

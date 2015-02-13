@@ -3,8 +3,11 @@
 @head = {
     <link rel="stylesheet" href="@routes.Assets.at("css/select2.min.css")">
     <link rel="stylesheet" href="@routes.Assets.at("css/select2-bootstrap.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("css/posts.css")">
     <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
     <script type="application/javascript" src="@routes.Assets.at("js/lib/select2.full.js")"></script>
+    <script type="application/javascript" src="@routes.Assets.at("js/lib/jquery.autosize.js")"></script>
+
 }
 
 @body = {
@@ -50,29 +53,83 @@
     <div class="container center-block">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div class="list-group">
-                    <a class=" list-group-item list-group-item-info text-center" data-toggle="modal" data-target="#newPostModal"><span class="glyphicon glyphicon-plus"></span> <b>
-                        Compose new</b></a>
-                </div>
+                @*<div class="list-group">*@
+                @*<a class=" list-group-item list-group-item-info text-center" data-toggle="modal" data-target="#newPostModal"><span class="glyphicon glyphicon-plus"></span> <b>*@
+                @*Compose new</b></a>*@
+                @*</div>*@
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <button type='button' class='close deletepost'>×</button>
+                        @*<h3 class="panel-title post-title" contenteditable="true">New Post Title</h3>*@
+                        <h4 class="postheader"><input class="transparent-text-area" placeholder="Write your title." value="Write your title."></h4>
+                    </div>
+                    <div class="panel-body new-post-body">
+                        @*<p class="post-content" contenteditable="true"></p>*@
+                        <textarea class="post-content" role="textbox" placeholder="Write your post here." style="resize : none"></textarea>
+
+                    </div>
+                    <div class="panel-footer clearfix">
+                        @*Sender : @p.sender*@
+                        <div class="btn-toolbar pull-left" role="toolbar">
+                            <a class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span> </a>
+                        </div>
+                        <div class="btn-toolbar pull-right" role="toolbar">
+                            <div class="btn-group">
+                                <a class="btn btn-info"><span class="glyphicon glyphicon-picture"></span></a>
+                                <a class="btn btn-success" ><span class="glyphicon glyphicon-floppy-disk"></span></a>
+                            </div>
+                        </div>
+
+
+                    </div> <!--End footer-->
+                </div> <!-- End Panel-->
+
                 @for(p <- posts) {
-                    <div id="@p.id" class="panel panel-primary">
+
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <button type='button' class='close deletepost'>×</button>
-                            <h3 class="panel-title"><b>@p.title</b></h3>
+                            <h4 class="postheader"><input class="transparent-text-area" placeholder="Write your title." value="@p.title"></h4>
                         </div>
-                        <div class="panel-body" style="min-height: 100px">
-                            <p>@p.content</p>
-                            @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
+                        <div class="panel-body new-post-body">
+                        <textarea class="post-content disabled" role="textbox" placeholder="Write your post here." style="resize : none">@p.content</textarea>
+
                         </div>
                         <div class="panel-footer clearfix">
                             @*Sender : @p.sender*@
-                        <a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>
+                        <div class="btn-toolbar pull-left" role="toolbar">
+                            <a class="btn btn-default disabled"><span class="glyphicon glyphicon-user"></span> </a>
+                        </div>
+                        <div class="btn-toolbar pull-right" role="toolbar">
+                            <div class="btn-group">
+                                <a class="btn btn-danger" ><span class="glyphicon glyphicon-edit"></span></a>
+                            </div>
+                        </div>
+
+
                         </div> <!--End footer-->
                     </div> <!-- End Panel-->
 
+
+                        @*<div id="@p.id" class="panel panel-primary">*@
+                        @*<div class="panel-heading">*@
+                            @*<button type='button' class='close deletepost'>×</button>*@
+                            @*<h3 class="panel-title"><b>@p.title</b></h3>*@
+                        @*</div>*@
+                        @*<div class="panel-body" style="min-height : 100 px">*@
+                            @*<p>@p.content</p>*@
+                            @*<textarea class="col-md-12" style="resize: none" rows="4"></textarea>*@
+                        @*</div>*@
+                        @*<div class="panel-footer clearfix">*@
+                            @*Sender : @p.sender*@
+                        @*<a class="btn btn-group-sm pull-right dropdown-toggle"><span class="glyphicon glyphicon-user"></span></a>*@
+                        @*</div> <!--End footer-->*@
+                    @*</div> <!-- End Panel-->*@
+
                     }
-                <!--DEBUG-->
-                <!--TEMPLATE POST-->
+            <!--DEBUG-->
+            <!--TEMPLATE POST-->
                 @* <div class="panel panel-primary">
                 <div class="panel-heading">
                 <button type='button' class='close deletepost'>×</button>
@@ -88,7 +145,7 @@
                 </div><!-- End Panel-->*@
 
             </div><!--End column-->
-        </div><!-- End row -->
+        </div> <!-- End row -->
     </div> <!-- End container -->
 
 }

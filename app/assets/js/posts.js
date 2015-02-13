@@ -1,5 +1,6 @@
 $(document).ready(function () {
     $('select').select2({width: 'style'});
+    $('textarea').autosize();
 
     $('#saveBtn').on('click', function (e) {
         e.preventDefault();
