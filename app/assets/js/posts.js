@@ -2,14 +2,61 @@ $(document).ready(function () {
     $('select').select2({width: 'style'});
     $('textarea').autosize();
 
-    $('.btn-newPostSave').on('click', function(e) {
+    $('.btn-newPostSave').on('click', function (e) {
         registerNewSave(e);
     });
     $('.deletepost').on('click', function (e) {
         registerDeleteRequest(e, $(this));
     });
 
+    getPostsAndFill();
+
 });
+
+function getPostsAndFill() {
+    console.info("Getting posts");
+    var sessionid = {'loggedUser':$('#loggedUser').val()};
+
+    postAjax('/getposts',sessionid, function(data){
+        for(i = 0; i<data.length;i++){
+            console.log(data[i]);
+            createLoadTemplate(data[i]);
+        }
+    });
+
+}
+
+function createLoadTemplate(postdata){
+    var instance = $('#loadtemplate').clone();
+
+    //fill instance with content
+    instance.prop('data-wall-post',postdata.id);
+    instance.find('h4.postheader').append(postdata.title);
+    instance.find('p.post-content').append(postdata.content);
+    instance.find('a.btn.btn-default.disabled').append(postdata.visibility);
+    //cleanup unnecessary props and classes
+    instance.removeProp('id');
+    instance.removeClass('hidden');
+    //append template
+    $('#middlecontentarea').append(instance);
+}
+
+function postAjax(url,data,success){
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success:success,
+        error: function (jqXHR, textstatus, errorThrown) {
+            console.log(jqXHR.responseText);
+            console.log(textstatus);
+            console.log(errorThrown);
+            var msg = JSON.parse(jqXHR.responseText);
+            alert(msg.message);
+        }
+    });
+}
 
 function registerNewSave(event) {
     console.log("register new save event");
@@ -36,12 +83,12 @@ function registerNewSave(event) {
 
 }
 
-function registerDeleteRequest(event, button){
+function registerDeleteRequest(event, button) {
     event.preventDefault();
     var id = button.closest('div.panel.panel-primary').data('wallPost');
     console.log(id);
-    data= {
-       'postId': String(id)
+    data = {
+        'postId': String(id)
     };
     submitDeleteRequest(data);
 }

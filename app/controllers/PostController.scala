@@ -77,4 +77,22 @@ object PostController extends Controller {
       }
     }
   }
+
+  def getPosts() = AuthAction(BodyParsers.parse.json){request =>
+
+    try {
+      val idvalid: Boolean = Try((request.body \ "loggedUser").as[String].toLong.ensuring(i=> i>0)).isSuccess
+      val id = Try((request.body \ "loggedUser").as[String].toLong).get
+      val posts = Post.getPostsJson(id)
+      Ok(posts)
+    }
+    catch {
+      case ex: Exception => {
+        Logger.error("Postcontroller get posts")
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status"->"KO", "message"-> ex.getMessage))
+      }
+    }
+
+  }
 }

@@ -11,12 +11,37 @@
 }
 
 @body = {
+    <!-- Post panel-->
+    <div id="loadtemplate" class="panel panel-primary hidden" data-wall-post="">
+            <!--Panel Header-->
+        <div class="panel-heading">
+            <button type='button' class='close deletepost'>×</button>
+            <h4 class="postheader"></h4>
+        </div>
+            <!--Panel Body-->
+        <div class="panel-body new-post-body">
+            <p class="post-content" style="resize : none"></p>
+        </div>
+            <!--Panel Footer-->
+        <div class="panel-footer clearfix">
+            <div class="btn-toolbar pull-left" role="toolbar">
+                <a class="btn btn-default disabled"></a>
+            </div>
+            <div class="btn-toolbar pull-right" role="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-danger btn-editPost" ><span class="glyphicon glyphicon-edit"></span></a>
+                </div>
+            </div>
+
+        </div> <!--End footer-->
+    </div> <!-- End Panel-->
+
     <!-- page content -->
     <input id="loggedUser" type="hidden" value="@loggedUser">
     <div class="container center-block">
         <div class="row">
                 <!--middle content area-->
-            <div class="col-md-8 col-md-offset-2">
+            <div id="middlecontentarea" class="col-md-8 col-md-offset-2">
 
                     <!-- New post panel-->
                 <div class="panel panel-info">
@@ -51,7 +76,7 @@
                     </div> <!--End footer-->
                 </div> <!-- End New Post Panel-->
 
-                <!--Load posts-->
+          @*      <!--Load posts-->
             @for(p <- posts) {
                 <!-- Post panel-->
                 <div class="panel panel-primary" data-wall-post="@p.id">
@@ -66,7 +91,7 @@
                     </div>
                         <!--Panel Footer-->
                     <div class="panel-footer clearfix">
-                        @*Sender : @p.sender*@
+                        *@@*Sender : @p.sender*@@*
                         <div class="btn-toolbar pull-left" role="toolbar">
                             <a class="btn btn-default disabled"><span class="glyphicon glyphicon-user"></span> </a>
                         </div>
@@ -78,7 +103,7 @@
 
                     </div> <!--End footer-->
                 </div> <!-- End Panel-->
-            }
+            }*@
 
             </div><!--End column-->
         </div> <!-- End row -->

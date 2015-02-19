@@ -2,7 +2,7 @@ package model
 
 import datalayer.PostDBHelper
 import org.joda.time.DateTime
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsValue, Json}
 
 import scala.util.Try
 
@@ -15,6 +15,12 @@ case class Post(id: Long,
                 visibility: Long)
 
 object Post extends JSONConvertable[Post] {
+  def getPostsJson(userId: Long) : JsValue = {
+    val rawPosts = this.getPosts(userId)
+    val jsonlist = rawPosts.map(p => toJSON(p))
+    Json.toJson(jsonlist);
+  }
+
   def deletePost(id: Long): Boolean = {
     try {
       PostDBHelper.deletePost(id)
