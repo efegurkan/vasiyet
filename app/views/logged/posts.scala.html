@@ -1,4 +1,4 @@
-@(posts: List[model.Post] = List.empty, groups: List[model.Group] = List.empty)
+@(loggedUser: Long, posts: List[model.Post] = List.empty, groups: List[model.Group] = List.empty)
 
 @head = {
     <link rel="stylesheet" href="@routes.Assets.at("css/select2.min.css")">
@@ -12,12 +12,13 @@
 
 @body = {
     <!-- page content -->
+    <input id="loggedUser" type="hidden" value="@loggedUser">
     <div class="container center-block">
         <div class="row">
                 <!--middle content area-->
             <div class="col-md-8 col-md-offset-2">
 
-                <!-- New post panel-->
+                    <!-- New post panel-->
                 <div class="panel panel-info">
                         <!--Panel Heading-->
                     <div class="panel-heading">
@@ -31,7 +32,12 @@
                     <div class="panel-footer clearfix">
                             <!-- Left side buttons-->
                         <div class="btn-toolbar pull-left" role="toolbar">
-                            <a class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span> </a>
+                            <select class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span>
+                            @for(g<-groups){
+                                <option value="@g.id.get">@g.name</option>
+                            }
+                            </select>
+
                         </div>
 
                             <!-- Right side buttons-->
@@ -45,20 +51,20 @@
                     </div> <!--End footer-->
                 </div> <!-- End New Post Panel-->
 
-            <!--Load posts-->
+                <!--Load posts-->
             @for(p <- posts) {
                 <!-- Post panel-->
                 <div class="panel panel-primary" data-wall-post="@p.id">
-                    <!--Panel Header-->
+                        <!--Panel Header-->
                     <div class="panel-heading">
                         <button type='button' class='close deletepost'>×</button>
                         <h4 class="postheader">@p.title</h4>
                     </div>
-                    <!--Panel Body-->
+                        <!--Panel Body-->
                     <div class="panel-body new-post-body">
                         <p class="post-content" style="resize : none">@p.content</p>
                     </div>
-                    <!--Panel Footer-->
+                        <!--Panel Footer-->
                     <div class="panel-footer clearfix">
                         @*Sender : @p.sender*@
                         <div class="btn-toolbar pull-left" role="toolbar">

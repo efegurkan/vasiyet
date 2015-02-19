@@ -1,6 +1,7 @@
 package controllers
 
 import controllers.Application._
+import datalayer.GroupDBHelper
 import model.Post
 import play.api.Logger
 import play.api.libs.json.Json
@@ -14,10 +15,13 @@ object PostController extends Controller {
 
   def showPage = AuthAction { request =>
     try {
-      val posts = Post.getPosts(request.session.get("LoggedUser").get.toLong)
+      val loggedUser = request.session.get("LoggedUser").get.toLong
+      val posts = Post.getPosts(loggedUser)
+      //todo move it to group
+      val groups = GroupDBHelper.getGroupsOfUser(Some(loggedUser))
 
       //todo get groups and pass
-      Ok(views.html.logged.posts(posts.reverse, List.empty))
+      Ok(views.html.logged.posts(loggedUser, posts.reverse, groups))
     }
     catch {
       case ex: Exception => {
