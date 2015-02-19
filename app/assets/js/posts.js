@@ -2,15 +2,14 @@ $(document).ready(function () {
     $('select').select2({width: 'style'});
     $('textarea').autosize();
 
+    getPostsAndFill();
     $('.btn-newPostSave').on('click', function (e) {
         registerNewSave(e);
     });
-    $('.deletepost').on('click', function (e) {
+    $('#middlecontentarea').on('click','.deletepost', function (e) {
+        console.log($(this));
         registerDeleteRequest(e, $(this));
     });
-
-    getPostsAndFill();
-
 });
 
 function getPostsAndFill() {
@@ -18,24 +17,32 @@ function getPostsAndFill() {
     var sessionid = {'loggedUser':$('#loggedUser').val()};
 
     postAjax('/getposts',sessionid, function(data){
+        if(data.length<=0){
+            noPostPanel();
+        }
         for(i = 0; i<data.length;i++){
-            console.log(data[i]);
+            $('#loadingpanel').remove();
             createLoadTemplate(data[i]);
         }
     });
 
 }
 
+function noPostPanel(){
+    $('.loader').remove();
+    $('#loadingpanel').find('.panel-body').append("<p style='text-align: center;'>No posts found.<p>");
+}
+
 function createLoadTemplate(postdata){
     var instance = $('#loadtemplate').clone();
 
     //fill instance with content
-    instance.prop('data-wall-post',postdata.id);
+    instance.attr('data-wall-post',postdata.id);
     instance.find('h4.postheader').append(postdata.title);
     instance.find('p.post-content').append(postdata.content);
     instance.find('a.btn.btn-default.disabled').append(postdata.visibility);
     //cleanup unnecessary props and classes
-    instance.removeProp('id');
+    instance.removeAttr('id');
     instance.removeClass('hidden');
     //append template
     $('#middlecontentarea').append(instance);

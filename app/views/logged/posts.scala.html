@@ -76,6 +76,11 @@
                     </div> <!--End footer-->
                 </div> <!-- End New Post Panel-->
 
+                <div id="loadingpanel" class="panel panel-default">
+                    <div class="panel-body">
+                        <img class="loader" src="@routes.Assets.at("img/ajax-loader.gif")">
+                    </div>
+                </div>
           @*      <!--Load posts-->
             @for(p <- posts) {
                 <!-- Post panel-->

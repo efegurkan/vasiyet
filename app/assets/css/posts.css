@@ -53,3 +53,9 @@ h3.panel-title.post-title:focus:hover {
 .postheader {
     margin: 0;
 }
+
+.loader {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
