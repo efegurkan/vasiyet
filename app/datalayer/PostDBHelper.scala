@@ -16,38 +16,50 @@ object PostDBHelper extends DBHelper[Post] {
       get[String]("content") ~
       get[Option[String]]("filepath") ~
       get[Long]("sender") ~
-      get[DateTime]("date") map {
-      case id ~ title ~ content ~ filepath ~ sender ~ date => Post(id, title, content, filepath, sender, date)
+      get[DateTime]("date") ~
+      get[Long]("groupId") map {
+      case id ~ title ~ content ~ filepath ~ sender ~ date ~ visibility => Post(id, title, content, filepath, sender, date, visibility)
     }
   }
 
   def getPostsBySenderId(pSenderId: Long): List[Post] = {
     DB.withConnection { implicit c =>
       val query = SQL( """
-          Select * from Post
-          Where sender = {id}
+                         |Select Post.id, title, content, filepath, sender, date, groupId FROM Post
+                         |INNER JOIN PostVisibilityLookup
+                         |Where sender = {id} AND PostVisibilityLookup.postId = Post.id
                        """
-      ).on("id" -> pSenderId)
+        .stripMargin).on("id" -> pSenderId)
+      println(query)
       val result = query.executeQuery()
       val posts = result.as(parser *).toList
       posts
     }
   }
 
-  //todo visibility
   def createPost(title: String,
                  content: String,
                  filepath: Option[String],
                  sender: Long,
-                 date: DateTime): Long = {
-    DB.withConnection { implicit c =>
-      val query = SQL(
+                 date: DateTime,
+                 visibility: Option[Long]): Long = {
+    DB.withTransaction { implicit c =>
+      val query1 = SQL(
         """
           |INSERT INTO vasiyet.Post (id, title, content, filepath, sender, date)
-          |VALUES                 (Null, {title}, {content},  NULL  ,{sender} , {date})
+          |VALUES                 (Null, {title}, {content},  {filepath}  ,{sender} , {date})
           |
-        """.stripMargin).on("title" -> title, "content" -> content, "sender" -> sender, "date" -> date)
-      val insertedId = query.executeInsert()
+        """.stripMargin).on("title" -> title, "content" -> content, "filepath" -> filepath.getOrElse(null), "sender" -> sender, "date" -> date)
+      val insertedId: Option[Long] = query1.executeInsert()
+      val query2 = SQL(
+        """
+          |INSERT INTO vasiyet.PostVisibilityLookup(id, postId, groupId)
+          |VALUES (Null, {postId}, {groupId})
+        """.stripMargin).on("postId" -> insertedId.get, "groupId" -> visibility.get)
+      println(insertedId.get)
+      println(visibility.get)
+      val lookupdone: Option[Long] = query2.executeInsert()
+
       insertedId.getOrElse(0)
     }
   }

@@ -11,7 +11,8 @@ case class Post(id: Long,
                 content: String,
                 filepath: Option[String],
                 sender: Long,
-                date: DateTime)
+                date: DateTime,
+                visibility: Long)
 
 object Post extends JSONConvertable[Post] {
   def deletePost(id: Long): Boolean = {
@@ -39,8 +40,9 @@ object Post extends JSONConvertable[Post] {
     val titleValid: Boolean = !title.isEmpty
     val contentValid: Boolean = !content.isEmpty
 
+    //todo change default values with parameters i.e. visibility 0 to groupid
     if (idValid && titleValid && contentValid) {
-      new Post(id.get, title, content, None, 0, new DateTime())
+      new Post(id.get, title, content, None, 0, new DateTime(), 0)
     }
     else {
       throw new Exception("Post Json is not valid")
@@ -65,7 +67,7 @@ object Post extends JSONConvertable[Post] {
       if (data.id == 0) {
         //Add request
         //todo sender is not provided by json!
-        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date)
+        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date, Some(0))
         (insertedId != 0, insertedId)
       }
       else {
