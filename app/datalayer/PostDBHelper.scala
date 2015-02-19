@@ -30,7 +30,6 @@ object PostDBHelper extends DBHelper[Post] {
                          |Where sender = {id} AND PostVisibilityLookup.postId = Post.id
                        """
         .stripMargin).on("id" -> pSenderId)
-      println(query)
       val result = query.executeQuery()
       val posts = result.as(parser *).toList
       posts

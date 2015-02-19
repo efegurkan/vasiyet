@@ -2,7 +2,7 @@ package model
 
 import datalayer.PostDBHelper
 import org.joda.time.DateTime
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 
 import scala.util.Try
 
@@ -27,7 +27,18 @@ object Post extends JSONConvertable[Post] {
     }
   }
 
-  override def toJSON(t: Post): JsValue = ???
+  override def toJSON(t: Post): JsValue = {
+    val json = Json.obj(
+      "id" -> t.id,
+      "title" -> t.title,
+      "content" -> t.content,
+      "filepath" -> t.filepath,
+      "sender" -> t.sender,
+      "date" -> t.date,
+      "visibility" -> t.visibility
+    )
+    json
+  }
 
   //todo visibility and other fields
   override def fromJSON(json: JsValue): Post = {
