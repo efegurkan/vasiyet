@@ -6,7 +6,7 @@ $(document).ready(function () {
     $('.btn-newPostSave').on('click', function (e) {
         registerNewSave(e);
     });
-    $('#middlecontentarea').on('click','.deletepost', function (e) {
+    $('#middlecontentarea').on('click', '.deletepost', function (e) {
         console.log($(this));
         registerDeleteRequest(e, $(this));
     });
@@ -14,30 +14,31 @@ $(document).ready(function () {
 
 function getPostsAndFill() {
     console.info("Getting posts");
-    var sessionid = {'loggedUser':$('#loggedUser').val()};
+    var sessionid = {'loggedUser': $('#loggedUser').val()};
 
-    postAjax('/getposts',sessionid, function(data){
-        if(data.length<=0){
+    postAjax('/getposts', sessionid, function (data) {
+        if (data.length <= 0) {
             noPostPanel();
         }
-        for(i = 0; i<data.length;i++){
+        for (i = 0; i < data.length; i++) {
             $('#loadingpanel').remove();
-            createLoadTemplate(data[i]);
+            var templ = loadTemplate(data[i]);
+            $('#middlecontentarea').append(templ);
         }
     });
 
 }
 
-function noPostPanel(){
+function noPostPanel() {
     $('.loader').remove();
     $('#loadingpanel').find('.panel-body').append("<p style='text-align: center;'>No posts found.<p>");
 }
 
-function createLoadTemplate(postdata){
+function loadTemplate(postdata) {
     var instance = $('#loadtemplate').clone();
 
     //fill instance with content
-    instance.attr('data-wall-post',postdata.id);
+    instance.attr('data-wall-post', postdata.id);
     instance.find('h4.postheader').append(postdata.title);
     instance.find('p.post-content').append(postdata.content);
     instance.find('a.btn.btn-default.disabled').append(postdata.visibility);
@@ -45,17 +46,16 @@ function createLoadTemplate(postdata){
     //cleanup unnecessary props and classes
     instance.removeAttr('id');
     instance.removeClass('hidden');
-    //append template
-    $('#middlecontentarea').append(instance);
+    return instance;
 }
 
-function postAjax(url,data,success){
+function postAjax(url, data, success) {
     $.ajax({
         type: 'POST',
         url: url,
         data: JSON.stringify(data),
         contentType: 'application/json',
-        success:success,
+        success: success,
         error: function (jqXHR, textstatus, errorThrown) {
             console.log(jqXHR.responseText);
             console.log(textstatus);
