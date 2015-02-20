@@ -44,13 +44,13 @@
                         </div>
                     </div><!--Contacts tab end -->
                     <!--Groups tab-->
-                    <div role="tabpanel" class="tab-pane fade in row" id="groups">
+                    <div role="tabpanel" class="tab-pane fade in" id="groups">
                      @*   <div class="col-md-6 list-group">
                             <a href="/editgroup/1" class="list-group-item">Family<span class="badge">12</span></a>
                             <a href="/editgroup/2" class="list-group-item">Work<span class="badge">34</span></a>
                         </div>*@
 
-                            <div class="col-md-12 list-group">
+                            <div class="list-group">
                             @for(g <- groupList) {
                                 <a href="/editgroup/@g.id.get.toString"  class="list-group-item">@g.name<span class="badge">@g.members.length</span> </a>
                             }

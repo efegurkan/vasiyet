@@ -23,8 +23,8 @@ object ContactDBHelper extends DBHelper[Contact] {
   def getContactsByUserId(pUserId: Long): List[Contact] = {
     DB.withConnection { implicit c =>
       val query = SQL( """
-           SELECT * FROM vasiyet.Contact 
-           WHERE id 
+           SELECT * FROM vasiyet.Contact
+           WHERE id
            IN (Select contactid from vasiyet.UserLookup where userid= {userid} )
                        """).on("userid" -> pUserId)
       val result = query.executeQuery()
