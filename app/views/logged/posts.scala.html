@@ -39,13 +39,13 @@
 
     <!-- page content -->
     <input id="loggedUser" type="hidden" value="@loggedUser">
-    <div id="newtemplate" class="container center-block">
+    <div class="container center-block">
         <div class="row">
                 <!--middle content area-->
             <div id="middlecontentarea" class="col-md-8 col-md-offset-2">
 
                     <!-- New post panel-->
-                <div class="panel panel-info">
+                <div  id="newtemplate" class="panel panel-info">
                         <!--Panel Heading-->
                     <div class="panel-heading">
                         <h4 class="postheader"><input class="new-post-title transparent-text-area" placeholder="Click here to title your new post."></h4>
@@ -81,6 +81,7 @@
                 <div id="loadingpanel" class="panel panel-default">
                     <div class="panel-body">
                         <img class="loader" src="@routes.Assets.at("img/ajax-loader.gif")">
+                        <p hidden="true" style='text-align: center;'>No posts found.<p>
                     </div>
                 </div>
 

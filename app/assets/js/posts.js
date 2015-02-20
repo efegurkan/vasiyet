@@ -2,38 +2,57 @@ $(document).ready(function () {
     $('select').select2({width: 'style'});
     $('textarea').autosize();
 
-    getPostsAndFill();
-    $('.btn-newPostSave').on('click', function (e) {
-        registerNewSave(e);
-    });
-    $('#middlecontentarea').on('click', '.deletepost', function (e) {
-        console.log($(this));
-        registerDeleteRequest(e, $(this));
-    });
+    loadPosts();
+    registerNewSave();
+    registerDelete();
+
 });
 
-function getPostsAndFill() {
-    console.info("Getting posts");
+function loadPosts() {
+    console.debug("Loading posts");
     var sessionid = {'loggedUser': $('#loggedUser').val()};
 
-    postAjax('/getposts', sessionid, function (data) {
-        if (data.length <= 0) {
-            noPostPanel();
-        }
-        for (i = 0; i < data.length; i++) {
-            $('#loadingpanel').remove();
-            var templ = loadTemplate(data[i]);
-            $('#middlecontentarea').append(templ);
+    var promise = $.ajax({
+        type: 'POST',
+        url: '/getposts',
+        data: JSON.stringify(sessionid),
+        contentType: 'application/json',
+        error: function (jqXHR, textstatus, errorThrown) {
+            console.log(jqXHR.responseText);
+            console.log(textstatus);
+            console.log(errorThrown);
+            var msg = JSON.parse(jqXHR.responseText);
+            alert(msg.message);
         }
     });
 
+    promise.done(function (posts) {
+
+        reloadPosts(posts);
+    });
 }
 
+function reloadPosts(posts) {
+    console.debug("Reload");
+    $('#loadingpanel').nextAll().remove();
+    fillContentArea(posts);
+}
+
+function fillContentArea(json) {
+    if (json.length <= 0) {
+        console.debug('hello');
+        noPostPanel();
+    }
+    for (i = 0; i < json.length; i++) {
+        $('#loadingpanel').remove();
+        var templ = loadTemplate(json[i]);
+        $('#middlecontentarea').append(templ);
+    }
+}
 function noPostPanel() {
-    $('.loader').remove();
-    $('#loadingpanel').find('.panel-body').append("<p style='text-align: center;'>No posts found.<p>");
+    $('.loader').hide();
+    $('#loadingpanel').find('p').show();
 }
-
 function loadTemplate(postdata) {
     var instance = $('#loadtemplate').clone();
 
@@ -48,7 +67,6 @@ function loadTemplate(postdata) {
     instance.removeClass('hidden');
     return instance;
 }
-
 function postAjax(url, data, success) {
     $.ajax({
         type: 'POST',
@@ -65,9 +83,18 @@ function postAjax(url, data, success) {
         }
     });
 }
-
-function registerNewSave(event) {
-    console.log("register new save event");
+function registerNewSave() {
+    $('.btn-newPostSave').on('click', function (e) {
+        savePost(e);
+    });
+}
+function registerDelete() {
+    $('#middlecontentarea').on('click', '.deletepost', function (e) {
+        console.log($(this));
+        deletePost(e, $(this));
+    });
+}
+function savePost(event) {
     event.preventDefault();
 
     var title = $('input.new-post-title');
@@ -78,74 +105,30 @@ function registerNewSave(event) {
     if (title.val().length > 0 && content.val().length > 0) {//not empty
 
         //todo add other properties + visibility
-        var newSaveData = {
+        var saveData = {
             'id': '0',
             'title': title.val(),
             'content': content.val()
         };
 
-        submitSaveRequest(newSaveData);
+        postAjax('/editpost', saveData, function (data) {
+            alert(data.message);
+            loadPosts();
+        });
     } else {//empty
         alert("Your post has some empty areas!");
     }
 
 }
-
-function registerDeleteRequest(event, button) {
+function deletePost(event, button) {
     event.preventDefault();
     var id = button.closest('div.panel.panel-primary').data('wallPost');
-    console.log(id);
     data = {
         'postId': String(id)
     };
-    submitDeleteRequest(data);
-}
-
-function submitDeleteRequest(postId) {
-    $.ajax({
-        type: 'POST',
-        url: '/deletepost',
-        data: JSON.stringify(postId),
-        contentType: 'application/json',
-        success: function (data, textstatus, jqXHR) {
-            console.log(jqXHR.status);
-            console.log(textstatus);
-            console.log(data);
-            alert(data.message);
-            window.location.href = '/posts';
-        },
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-            var msg = JSON.parse(jqXHR.responseText);
-            alert(msg.message);
-        }
+    //submitDeleteRequest(data);
+    postAjax('/deletepost', data, function (data) {
+        alert(data.message);
+        window.location.href = '/posts';
     });
-}
-
-function submitSaveRequest(postData) {
-
-    $.ajax({
-        type: 'POST',
-        url: '/editpost',
-        data: JSON.stringify(postData),
-        contentType: 'application/json',
-        success: function (data, textstatus, jqXHR) {
-            console.log(jqXHR.status);
-            console.log(textstatus);
-            console.log(data);
-            alert(data.message);
-            window.location.href = '/posts';
-        },
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-            var msg = JSON.parse(jqXHR.responseText);
-            alert(msg.message);
-        }
-    });
-
-
 }
