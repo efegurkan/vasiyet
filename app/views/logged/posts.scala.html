@@ -58,10 +58,8 @@
                     <div class="panel-footer clearfix">
                             <!-- Left side buttons-->
                         <div class="btn-toolbar pull-left" role="toolbar">
-                            <select class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span>
-                                @for(g <- groups) {
-                                    <option value="@g.id.get">@g.name</option>
-                                }
+                            <select id="groupsdropdown" class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span>
+                                    <option value="0">All</option>
                             </select>
 
                         </div>
@@ -84,9 +82,7 @@
                         <p hidden="true" style='text-align: center;'>No posts found.<p>
                     </div>
                 </div>
-                <div id="maincontent">
-
-                </div>
+                <div id="maincontent"></div>
 
             </div><!--End column-->
         </div> <!-- End row -->

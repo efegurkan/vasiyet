@@ -1,6 +1,8 @@
 $(document).ready(function () {
-    $('select').select2({width: 'style'});
+    loadGroups();
+    $('select').select2();
     $('textarea').autosize();
+
 
     loadPosts();
     registerNewSave();
@@ -8,6 +10,15 @@ $(document).ready(function () {
 
 });
 
+function loadGroups(){
+    var sessionid = {'loggedUser':$('#loggedUser').val()};
+    postAjax('/getgroups',sessionid,function(groups){
+        for(i=0; i<groups.length;i++){
+            var g = groups[i];
+            $('#groupsdropdown').append('<option value=\"'+g.id+ '\">'+ g.name+'</option>');
+        }
+    });
+}
 function loadPosts() {
     console.debug("Loading posts");
     var sessionid = {'loggedUser': $('#loggedUser').val()};
@@ -27,17 +38,14 @@ function loadPosts() {
     });
 
     promise.done(function (posts) {
-
         reloadPosts(posts);
     });
 }
-
 function reloadPosts(posts) {
     console.debug("Reload");
     $('#maincontent').empty();
     fillContentArea(posts);
 }
-
 function fillContentArea(json) {
     if (json.length <= 0) {
         console.debug('hello');
@@ -101,15 +109,21 @@ function savePost(event) {
     console.log(title);
     //todo picture ?
     var content = $('textarea.new-post-content');
+    var group = $('select').select2('val');
 
     if (title.val().length > 0 && content.val().length > 0) {//not empty
 
-        //todo add other properties + visibility
+        //todo add other properties
         var saveData = {
             'id': '0',
             'title': title.val(),
-            'content': content.val()
+            'content': content.val(),
+            'group': group
         };
+        //clean form
+        title.val('');
+        content.val('');
+        $('select').val('0').trigger('change');
 
         postAjax('/editpost', saveData, function (data) {
             alert(data.message);

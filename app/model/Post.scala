@@ -60,14 +60,16 @@ object Post extends JSONConvertable[Post] {
     val id = Try((json \ "id").as[String].toLong.ensuring(i => i >= 0))
     val title = (json \ "title").as[String]
     val content = (json \ "content").as[String].ensuring(c => (c.length <= 500))
+    val groupid = Try((json \ "group").as[String].toLong.ensuring(g =>(g >=0)))
     //validate fields
     val idValid: Boolean = id.isSuccess
     val titleValid: Boolean = !title.isEmpty
     val contentValid: Boolean = !content.isEmpty
+    val groupidValid: Boolean = groupid.isSuccess
 
     //todo change default values with parameters i.e. visibility 0 to groupid
-    if (idValid && titleValid && contentValid) {
-      new Post(id.get, title, content, None, 0, new DateTime(), 0)
+    if (idValid && titleValid && contentValid && groupidValid) {
+      new Post(id.get, title, content, None, 0, new DateTime(), groupid.get)
     }
     else {
       throw new Exception("Post Json is not valid")
@@ -92,11 +94,11 @@ object Post extends JSONConvertable[Post] {
       if (data.id == 0) {
         //Add request
         //todo sender is not provided by json!
-        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date, Some(0))
+        val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date, Some(data.visibility))
         (insertedId != 0, insertedId)
       }
       else {
-        //edit request
+        //todo edit request
         (false, -1)
       }
     }

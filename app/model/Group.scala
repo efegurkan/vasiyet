@@ -115,7 +115,14 @@ object Group extends JSONConvertable[Group] {
     }
   }
 
-  override def toJSON(t: Group): JsValue = ???
+  override def toJSON(g: Group): JsValue ={
+    val json= Json.obj(
+      "id"->g.id.get,
+    "name"->g.name,
+    //todo add contacts and return members
+    "members"->"Not Implemented")
+    json
+  }
 
   //todo get members?
   override def fromJSON(json: JsValue): Group = {

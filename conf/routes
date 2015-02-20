@@ -24,6 +24,7 @@ POST        /editgroup                      controllers.GroupController.editGrou
 POST        /deletegroup                    controllers.GroupController.deleteGroup()
 POST        /addgroupmember                 controllers.GroupController.addMember()
 POST        /deletegroupmember              controllers.GroupController.deleteMember()
+POST        /getgroups                      controllers.GroupController.getGroupsJson()
 
 POST        /editpost                       controllers.PostController.addPost()
 POST        /deletepost                     controllers.PostController.deletePost()

@@ -23,8 +23,8 @@ object GroupController extends Controller {
 */
   def showAddGroup() = AuthAction { request =>
     val empty = new Group(new Some[Long](0), "");
-    val id =request.session.get("LoggedUser").get.toLong
-    Ok(views.html.logged.editgroup(empty, "Add",ContactDBHelper.getContactsByUserId(id)))
+    val id = request.session.get("LoggedUser").get.toLong
+    Ok(views.html.logged.editgroup(empty, "Add", ContactDBHelper.getContactsByUserId(id)))
   }
 
   def showEditGroup(id: Long) = AuthAction { request =>
@@ -35,7 +35,7 @@ object GroupController extends Controller {
       Redirect("/")
     }
     else
-      Ok(views.html.logged.editgroup(group.get, "Edit",ContactDBHelper.getContactsByUserId(id)))
+      Ok(views.html.logged.editgroup(group.get, "Edit", ContactDBHelper.getContactsByUserId(id)))
   }
 
   def editGroup() = AuthAction(BodyParsers.parse.json) { implicit request =>
@@ -44,7 +44,7 @@ object GroupController extends Controller {
       val isItSaved = Group.editGroup(group, request.session.get("LoggedUser").get.toLong);
 
       if (isItSaved._1)
-        Ok(Json.obj("Status"->"OK", "message"->"Group saved successfully","groupId"->isItSaved._2))
+        Ok(Json.obj("Status" -> "OK", "message" -> "Group saved successfully", "groupId" -> isItSaved._2))
       else
         throw new Exception("Group save failed")
     } catch {
@@ -139,4 +139,25 @@ object GroupController extends Controller {
         }
       }
   }
+
+  def getGroupsJson() = AuthAction(BodyParsers.parse.json) { request =>
+    try {
+      println(request.body)
+      val idValid: Boolean = Try((request.body \ "loggedUser").as[String].toLong.ensuring(i => i > 0)).isSuccess
+      if (idValid) {
+        val id = Try((request.body \ "loggedUser").as[String].toLong).get
+        val raw= GroupDBHelper.getGroupsOfUser(Some(id))
+        val jsonlist = raw.map(g => Group.toJSON(g))
+        val groups = Json.toJson(jsonlist)
+        Ok(groups)
+      } else throw new Exception("Groups cannot retrieved at the moment")
+    } catch {
+      case ex: Exception => {
+        Logger.warn("Group retrive exception")
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
+      }
+    }
+  }
+
 }
