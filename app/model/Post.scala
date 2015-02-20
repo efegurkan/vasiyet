@@ -1,8 +1,9 @@
 package model
 
-import datalayer.PostDBHelper
+import datalayer.{GroupDBHelper, PostDBHelper}
 import org.joda.time.DateTime
-import play.api.libs.json.{JsArray, JsValue, Json}
+import org.joda.time.format.DateTimeFormat
+import play.api.libs.json.{JsValue, Json}
 
 import scala.util.Try
 
@@ -15,7 +16,7 @@ case class Post(id: Long,
                 visibility: Long)
 
 object Post extends JSONConvertable[Post] {
-  def getPostsJson(userId: Long) : JsValue = {
+  def getPostsJson(userId: Long): JsValue = {
     val rawPosts = this.getPosts(userId)
     val jsonlist = rawPosts.map(p => toJSON(p))
     Json.toJson(jsonlist);
@@ -34,14 +35,21 @@ object Post extends JSONConvertable[Post] {
   }
 
   override def toJSON(t: Post): JsValue = {
+    val group = GroupDBHelper.getGroupById(Some(t.visibility))
+    val vis =if (t.visibility == 0) {
+      "All"
+    } else if (group.isDefined) {
+       group.get.name
+    }
+    else throw new Exception("group is not defined")
     val json = Json.obj(
       "id" -> t.id,
       "title" -> t.title,
       "content" -> t.content,
       "filepath" -> t.filepath,
       "sender" -> t.sender,
-      "date" -> t.date,
-      "visibility" -> t.visibility
+      "date" -> DateTimeFormat.forPattern("dd MM yyyy").print(t.date),
+      "visibility" -> vis
     )
     json
   }
@@ -68,7 +76,7 @@ object Post extends JSONConvertable[Post] {
 
   def getPosts(pSenderId: Long): List[Post] = {
     try {
-      PostDBHelper.getPostsBySenderId(pSenderId)
+      PostDBHelper.getPostsBySenderId(pSenderId).reverse
     }
     catch {
       case ex: Exception => {

@@ -41,6 +41,7 @@ function createLoadTemplate(postdata){
     instance.find('h4.postheader').append(postdata.title);
     instance.find('p.post-content').append(postdata.content);
     instance.find('a.btn.btn-default.disabled').append(postdata.visibility);
+    instance.find('#time').append(postdata.date);
     //cleanup unnecessary props and classes
     instance.removeAttr('id');
     instance.removeClass('hidden');
