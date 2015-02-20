@@ -34,7 +34,7 @@ function loadPosts() {
 
 function reloadPosts(posts) {
     console.debug("Reload");
-    $('#loadingpanel').nextAll().remove();
+    $('#maincontent').empty();
     fillContentArea(posts);
 }
 
@@ -46,7 +46,7 @@ function fillContentArea(json) {
     for (i = 0; i < json.length; i++) {
         $('#loadingpanel').remove();
         var templ = loadTemplate(json[i]);
-        $('#middlecontentarea').append(templ);
+        $('#maincontent').append(templ);
     }
 }
 function noPostPanel() {
@@ -129,6 +129,6 @@ function deletePost(event, button) {
     //submitDeleteRequest(data);
     postAjax('/deletepost', data, function (data) {
         alert(data.message);
-        window.location.href = '/posts';
+        loadPosts();
     });
 }
