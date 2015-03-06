@@ -12,7 +12,7 @@
 
 @body = {
     <!-- Post panel-->
-    <div id="loadtemplate" class="panel panel-primary hidden" data-wall-post="">
+    <div id="loadtemplate" class="panel panel-primary" hidden="hidden" data-wall-post="">
             <!--Panel Header-->
         <div class="panel-heading">
             <button type='button' class='close deletepost'>×</button>
@@ -25,7 +25,7 @@
             <!--Panel Footer-->
         <div class="panel-footer clearfix">
             <div class="btn-toolbar pull-left" role="toolbar">
-                <a class="btn btn-default disabled"></a>
+                <a class="btn btn-default disabled groupbtn"></a>
                 <a id="time" class="btn btn-sm disabled"></a>
             </div>
             <div class="btn-toolbar pull-right" role="toolbar">
@@ -44,22 +44,28 @@
                 <!--middle content area-->
             <div id="middlecontentarea" class="col-md-8 col-md-offset-2">
 
+                <div id="errorpanel" class="alert alert-danger" hidden="hidden" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    <p></p>
+                </div>
+
                     <!-- New post panel-->
-                <div  id="newtemplate" class="panel panel-info">
+                <div id="newtemplate" class="panel panel-info" hidden="hidden">
                         <!--Panel Heading-->
-                    <div class="panel-heading">
+                    <div class="panel-heading ">
                         <h4 class="postheader"><input class="new-post-title transparent-text-area" placeholder="Click here to title your new post."></h4>
                     </div>
                         <!--Panel body-->
-                    <div class="panel-body new-post-body">
-                        <textarea class="new-post-content post-content" role="textbox" placeholder="Write your post here." style="resize : none"></textarea>
+                    <div class="panel-body new-post-body ">
+                        <textarea class="new-post-content post-content " role="textbox" placeholder="Write your post here." style="resize : none"></textarea>
 
                     </div><!-- End Body-->
                     <div class="panel-footer clearfix">
                             <!-- Left side buttons-->
                         <div class="btn-toolbar pull-left" role="toolbar">
                             <select id="groupsdropdown" class="btn btn-default dropdown-toggle"><span class="glyphicon glyphicon-user"></span><span class="caret"></span>
-                                    <option value="0">All</option>
+                                <option value="0">All</option>
                             </select>
 
                         </div>
@@ -78,8 +84,8 @@
 
                 <div id="loadingpanel" class="panel panel-default">
                     <div class="panel-body">
-                        <img class="loader" src="@routes.Assets.at("img/ajax-loader.gif")">
-                        <p hidden="true" style='text-align: center;'>No posts found.<p>
+                        <img class="loading" src="@routes.Assets.at("img/ajax-loader.gif")">
+                        <p class="nopost" hidden="true" style='text-align : center ;'>No posts found.<p>
                     </div>
                 </div>
                 <div id="maincontent"></div>

@@ -1,148 +1,299 @@
-$(document).ready(function () {
-    loadGroups();
-    $('select').select2();
-    $('textarea').autosize();
+var templates = {
+    newTemplate: function () {
+        return $('#newtemplate');
+    },
+    editTemplate: function () {
+    },
+    loadTemplate: function () {
+        return $('#loadtemplate');
+    }
+};
 
+var dataOperations = (function () {
+    var pub = {};
+    //todo work on this
+    pub.initialData = function () {
+        var deferred = $.Deferred();
+        var getgroups = dataOperations.getGroups();
+        var getposts = dataOperations.getPosts();
 
-    loadPosts();
-    registerNewSave();
-    registerDelete();
+        var fnGroupDoneState = false;
+        var fnPostDoneState = false;
+
+        getgroups.done(function (data, textStatus, jqXHR) {
+            $.datastore.groups = data;
+            fnGroupDoneState = true;
+            checkFn();
+        });
+
+        getgroups.fail(function (jqXHR, textStatus, errorThrown) {
+            var msg = JSON.parse(jqXHR.responseText);
+            checkFn(msg);
+        });
+
+        getposts.done(function (data, textStatus, jqXHR) {
+            $.datastore.posts = data;
+            fnPostDoneState = true;
+            checkFn();
+        });
+
+        getposts.fail(function (jqXHR, textStatus, errorThrown) {
+            var msg = JSON.parse(jqXHR.responseText);
+            checkFn(msg);
+        });
+
+        function checkFn(message) {
+            if (fnGroupDoneState && fnPostDoneState) {
+                if (getgroups.isRejected || getposts.isRejected) {
+                    deferred.fail(message);
+                } else {
+                    deferred.resolve();
+                }
+            }
+        }
+
+        return deferred.promise();
+    };
+
+    pub.getGroups = function () {//return ajax promise
+        return dataOperations.ajaxPost('/getgroups');
+    };
+
+    pub.getPosts = function () {
+        return dataOperations.ajaxPost('/getposts');
+    };
+
+    //todo refactor this.
+    pub.savePost = function (element) {
+        var title = element.find('.new-post-title');
+        //todo picture ?
+        var content = element.find('.new-post-content');
+        var group = element.find('select').select2('val');
+        var deferred = $.Deferred();
+
+        if (title.val().length > 0 && content.val().length > 0) {//not empty
+
+            //todo add other properties
+            var saveData = {
+                'id': '0',
+                'title': title.val(),
+                'content': content.val(),
+                'group': group
+            };
+            //clean form
+            title.val('');
+            content.val('');
+            element.find('select').val('0').trigger('change');
+
+            var prom = dataOperations.ajaxPost('/editpost', saveData);
+            prom.done(function (data) {
+                //todo get data back
+                saveData.id= data.postId;
+                deferred.resolve(saveData);
+            });
+
+            prom.fail(function (jqXHR, textStatus, errorThrown) {
+                var msg = JSON.parse(jqXHR.responseText);
+                deferred.fail(msg.message);
+            });
+
+        } else {//empty
+            deferred.fail("Your post has some empty areas!");
+        }
+
+        return deferred.promise();
+    };
+
+    //edit save operation
+    pub.editPost = function (event, element) {
+        event.preventDefault();
+        //todo
+    };
+
+    pub.removePost = function (element) {
+        var id = element.closest('div.panel.panel-primary').data('wallPost');
+        var data = {'postId': String(id)};
+        return this.ajaxPost('/deletepost', data);
+
+    };
+
+    pub.ajaxPost = function (url, data) {
+        data = (typeof data === "undefined") ? JSON : data;
+        var promise = $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(data),
+            contentType: 'application/json'
+        });
+        return promise;
+    };
+
+    return pub;
+}());
+
+var DOMOperations = (function () {
+    var pub = {};
+    pub.clone = function (element) {
+        return element.clone();
+    };
+
+    pub.destroy = function (element) {
+        element.remove();
+    };
+
+    pub.fill = function (template, data) {
+        //fill instance with content
+        template.attr('data-wall-post', data.id);
+        template.find('h4.postheader').text(data.title);
+        template.find('p.post-content').text(data.content);
+        template.find('a.btn.btn-default.disabled').text(data.visibility);
+        template.find('#time').text(template.date);
+        //cleanup unnecessary props and classes
+        template.removeAttr('id');
+        template.removeClass('hidden');
+        return template;
+    };
+
+    pub.replace = function (oldElement, newElement) {
+        oldElement.replaceWith(newElement);
+    };
+
+    pub.enable = function (element) {
+    };
+
+    pub.disable = function (element) {
+    };
+
+    pub.showError = function (message) {
+        $('#errorpanel').show().text(message);
+    };
+
+    pub.showLoading = function () {
+        $('#loadingpanel').show();
+        $('.loading').show();
+        $('.nopost').hide();
+    };
+
+    pub.hideError = function () {
+        $('#errorpanel').hide().after('p').empty();
+    };
+
+    pub.hideLoading = function () {
+        $('#loadingpanel').hide();
+        $('.loading').hide();
+        $('.nopost').hide();
+    };
+
+    pub.showNoPost = function () {
+        $('#loadingpanel').show();
+        $('.loading').hide();
+        $('.nopost').show();
+    };
+
+    pub.hideNoPost = function () {
+        $('#loadingpanel').hide();
+        $('.loading').hide();
+        $('.nopost').hide();
+    };
+
+    pub.enablePlugins = function (element, func) {
+    };
+
+    pub.renderPosts = function () {
+
+        for (var i = 0; i < $.datastore.posts.length; ++i) {
+
+            var instance = DOMOperations.clone(templates.loadTemplate());
+            instance = DOMOperations.fill(instance, $.datastore.posts[i]);
+            instance.show();
+            $('#maincontent').append(instance);
+
+        }
+    };
+
+    return pub;
+}());
+
+$.datastore = {};
+
+var utilityOperations = (function () {
+    var pub = {};
+
+    pub.groupCheck = function () {
+        if (typeof $.datastore.groups !== 'undefined' && $.datastore.groups.length >= 0) {
+            var groups = $.datastore.groups;
+            for (var i = 0; i < groups.length; ++i) {
+                var select = $('#groupsdropdown');
+                select.append('<option></option>');
+                var option = $('option').last();
+                option.val(groups[i].id);
+                option.text(groups[i].name);
+            }
+            templates.newTemplate().show();
+            $("#groupsdropdown").select2();
+        }
+    };
+
+    pub.postCheck = function () {
+        DOMOperations.hideLoading();
+        if (typeof $.datastore.posts !== "undefined" && $.datastore.posts.length <= 0) {
+            DOMOperations.showNoPost();
+        } else {
+            DOMOperations.renderPosts();
+        }
+    };
+
+    pub.removePostHandler = function (element) {
+        var promise = dataOperations.removePost(element);
+        promise.done(function () {
+            DOMOperations.destroy(element.closest('div.panel.panel-primary'));
+        });
+        promise.fail(function (jqXHR, textStatus, errorThrown) {
+            var msg = JSON.parse(jqXHR.responseText);
+            DOMOperations.showError(msg.message);
+        });
+    };
+
+    pub.savePostHandler = function (element) {
+        var promise = dataOperations.savePost(element.closest($('#newtemplate')));
+        
+        promise.done(function (data) {
+            var instance = DOMOperations.clone(templates.loadTemplate());
+            instance = DOMOperations.fill(instance, data);
+            instance.show();
+            $('#maincontent').prepend(instance);
+        });
+        
+        promise.fail(function (error) {
+            DOMOperations.showError(error);
+        });
+    };
+
+    pub.registerHandlers = function () {
+        var maincontent = $('#maincontent');
+        maincontent.on('click', '.deletepost', function (e) {
+            e.preventDefault();
+            utilityOperations.removePostHandler($(this));
+        });
+
+        $('.btn-newPostSave').on('click', function (e) {
+            e.preventDefault();
+            utilityOperations.savePostHandler($(this));
+        });
+    };
+    return pub;
+}());
+
+$('document').ready(function () {
+    dataOperations.initialData().done(function () {
+        DOMOperations.hideLoading();
+        utilityOperations.groupCheck();
+        utilityOperations.postCheck();
+    }).fail(function (error) {
+        DOMOperations.hideLoading();
+        DOMOperations.showError(error);
+    }).always(function () {
+        utilityOperations.registerHandlers();
+    });
 
 });
-
-function loadGroups(){
-    var sessionid = {'loggedUser':$('#loggedUser').val()};
-    postAjax('/getgroups',sessionid,function(groups){
-        for(i=0; i<groups.length;i++){
-            var g = groups[i];
-            $('#groupsdropdown').append('<option value=\"'+g.id+ '\">'+ g.name+'</option>');
-        }
-    });
-}
-function loadPosts() {
-    console.debug("Loading posts");
-    var sessionid = {'loggedUser': $('#loggedUser').val()};
-
-    var promise = $.ajax({
-        type: 'POST',
-        url: '/getposts',
-        data: JSON.stringify(sessionid),
-        contentType: 'application/json',
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-            var msg = JSON.parse(jqXHR.responseText);
-            alert(msg.message);
-        }
-    });
-
-    promise.done(function (posts) {
-        reloadPosts(posts);
-    });
-}
-function reloadPosts(posts) {
-    console.debug("Reload");
-    $('#maincontent').empty();
-    fillContentArea(posts);
-}
-function fillContentArea(json) {
-    if (json.length <= 0) {
-        console.debug('hello');
-        noPostPanel();
-    }
-    for (i = 0; i < json.length; i++) {
-        $('#loadingpanel').remove();
-        var templ = loadTemplate(json[i]);
-        $('#maincontent').append(templ);
-    }
-}
-function noPostPanel() {
-    $('.loader').hide();
-    $('#loadingpanel').find('p').show();
-}
-function loadTemplate(postdata) {
-    var instance = $('#loadtemplate').clone();
-
-    //fill instance with content
-    instance.attr('data-wall-post', postdata.id);
-    instance.find('h4.postheader').append(postdata.title);
-    instance.find('p.post-content').append(postdata.content);
-    instance.find('a.btn.btn-default.disabled').append(postdata.visibility);
-    instance.find('#time').append(postdata.date);
-    //cleanup unnecessary props and classes
-    instance.removeAttr('id');
-    instance.removeClass('hidden');
-    return instance;
-}
-function postAjax(url, data, success) {
-    $.ajax({
-        type: 'POST',
-        url: url,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: success,
-        error: function (jqXHR, textstatus, errorThrown) {
-            console.log(jqXHR.responseText);
-            console.log(textstatus);
-            console.log(errorThrown);
-            var msg = JSON.parse(jqXHR.responseText);
-            alert(msg.message);
-        }
-    });
-}
-function registerNewSave() {
-    $('.btn-newPostSave').on('click', function (e) {
-        savePost(e);
-    });
-}
-function registerDelete() {
-    $('#middlecontentarea').on('click', '.deletepost', function (e) {
-        console.log($(this));
-        deletePost(e, $(this));
-    });
-}
-function savePost(event) {
-    event.preventDefault();
-
-    var title = $('input.new-post-title');
-    console.log(title);
-    //todo picture ?
-    var content = $('textarea.new-post-content');
-    var group = $('select').select2('val');
-
-    if (title.val().length > 0 && content.val().length > 0) {//not empty
-
-        //todo add other properties
-        var saveData = {
-            'id': '0',
-            'title': title.val(),
-            'content': content.val(),
-            'group': group
-        };
-        //clean form
-        title.val('');
-        content.val('');
-        $('select').val('0').trigger('change');
-
-        postAjax('/editpost', saveData, function (data) {
-            alert(data.message);
-            loadPosts();
-        });
-    } else {//empty
-        alert("Your post has some empty areas!");
-    }
-
-}
-function deletePost(event, button) {
-    event.preventDefault();
-    var id = button.closest('div.panel.panel-primary').data('wallPost');
-    data = {
-        'postId': String(id)
-    };
-    //submitDeleteRequest(data);
-    postAjax('/deletepost', data, function (data) {
-        alert(data.message);
-        loadPosts();
-    });
-}

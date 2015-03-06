@@ -140,21 +140,20 @@ object GroupController extends Controller {
       }
   }
 
-  def getGroupsJson() = AuthAction(BodyParsers.parse.json) { request =>
+  def getGroupsJson() = AuthAction { request =>
     try {
-      println(request.body)
-      val idValid: Boolean = Try((request.body \ "loggedUser").as[String].toLong.ensuring(i => i > 0)).isSuccess
-      if (idValid) {
-        val id = Try((request.body \ "loggedUser").as[String].toLong).get
-        val raw= GroupDBHelper.getGroupsOfUser(Some(id))
-        val jsonlist = raw.map(g => Group.toJSON(g))
-        val groups = Json.toJson(jsonlist)
-        Ok(groups)
-      } else throw new Exception("Groups cannot retrieved at the moment")
+      val id = request.session.get("LoggedUser").get.toLong
+      val raw = GroupDBHelper.getGroupsOfUser(Some(id))
+      val jsonlist = raw.map(g => Group.toJSON(g))
+      println(jsonlist)
+      val groups = Json.toJson(jsonlist)
+      Ok(groups)
+//      BadRequest(Json.obj("Status" -> "KO", "message" ->"dsadsa"))
     } catch {
       case ex: Exception => {
         Logger.warn("Group retrive exception")
         Logger.error(ex.getMessage)
+        ex.printStackTrace
         BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }
     }
