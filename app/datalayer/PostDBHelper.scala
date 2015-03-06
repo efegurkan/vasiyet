@@ -22,6 +22,22 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
+  def getPostById(postId: Long): Post = {
+    DB.withConnection { implicit c =>
+      val query = SQL(
+        """
+          |Select Post.id, title, content, filepath, sender, date, groupId FROM Post
+          |INNER JOIN PostVisibilityLookup
+          |Where Post.id = {postid} AND PostVisibilityLookup.postId = Post.id
+        """.stripMargin).on("postid" -> postId)
+
+      val result = query.executeQuery()
+      val post = result.as(parser *).head
+      post
+    }
+  }
+
+
   def getPostsBySenderId(pSenderId: Long): List[Post] = {
     DB.withConnection { implicit c =>
       val query = SQL( """

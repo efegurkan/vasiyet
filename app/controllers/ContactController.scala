@@ -12,10 +12,10 @@ import scala.util.Try
 object ContactController extends Controller {
 
   def showPage = AuthAction { request =>
-    val id = request.session.get("LoggedUser")
+    val id = request.session.get("userid")
     //TODO exception cases
     val contacts = ContactDBHelper.getContactsByUserId(id.get.toLong)
-    val groups = GroupDBHelper.getGroupsOfUser(Some(id.get.toLong))
+    val groups = GroupDBHelper.getGroupsOfUser(id.get.toLong)
     Ok(views.html.logged.contacts(contacts, groups))
 
   }
@@ -44,7 +44,7 @@ object ContactController extends Controller {
       //get contact from json
       val contact = Contact.fromJSON(request.body)
       //save contact and observe result.
-      val isItSaved = Contact.editContact(contact, request.session.get("LoggedUser").get.toLong)
+      val isItSaved = Contact.editContact(contact, request.session.get("userid").get.toLong)
       if (isItSaved)
         Ok(Json.obj("Status" -> "OK", "message" -> "Contact saved successfully."))
       else
@@ -86,7 +86,7 @@ object ContactController extends Controller {
   }
 
   def getContactsAutoComplete() = AuthAction { implicit request =>
-    val userid = request.session.get("LoggedUser")
+    val userid = request.session.get("userid")
     try {
       //    val useridValid: Boolean = Try((request.body \ "userid").as[String].toLong.ensuring(i => i > 0)).isSuccess
       //    if (useridValid) {

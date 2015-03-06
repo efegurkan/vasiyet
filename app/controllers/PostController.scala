@@ -15,10 +15,10 @@ object PostController extends Controller {
 
   def showPage = AuthAction { request =>
     try {
-      val loggedUser = request.session.get("LoggedUser").get.toLong
+      val loggedUser = request.session.get("userid").get.toLong
       val posts = Post.getPosts(loggedUser)
       //todo move it to group
-      val groups = GroupDBHelper.getGroupsOfUser(Some(loggedUser))
+      val groups = GroupDBHelper.getGroupsOfUser(loggedUser)
 
       //todo get groups and pass
       Ok(views.html.logged.posts(loggedUser, posts.reverse, groups))
@@ -30,15 +30,14 @@ object PostController extends Controller {
     }
   }
 
-  def addPost = AuthAction(BodyParsers.parse.json) { request =>
+  def addPost() = AuthAction(BodyParsers.parse.json) { request =>
     try {
-      //todo senderdata is not in json
       val post = Post.fromJSON(request.body)
 
-      val ret = Post.editPost(post, request.session.get("LoggedUser").get.toLong)
+      val ret = Post.editPost(post, request.session.get("userid").get.toLong)
 
       if (ret._1) {
-        Ok(Json.obj("Status" -> "OK", "message" -> "Post saved successfully", "postId" -> ret._2))
+        Ok(Json.obj("Status" -> "OK", "message" -> "Post saved successfully", "post" -> ret._2))
       }
       else {
         throw new Exception("Post save failed!")
@@ -78,10 +77,10 @@ object PostController extends Controller {
     }
   }
 
-  def getPosts() = AuthAction{request =>
+  def getPosts = AuthAction{request =>
 
     try {
-      val id = request.session.get("LoggedUser").get.toLong
+      val id = request.session.get("userid").get.toLong
       val posts = Post.getPostsJson(id)
       Ok(posts)
     }

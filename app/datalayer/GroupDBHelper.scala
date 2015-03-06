@@ -120,7 +120,7 @@ object GroupDBHelper extends DBHelper[Group] {
   }
 
   //TODO rework on this
-  def getGroupsOfUser(pUserId: Option[Long]): List[Group] = {
+  def getGroupsOfUser(pUserId: Long): List[Group] = {
     DB.withConnection { implicit c =>
       val query = SQL(
         """

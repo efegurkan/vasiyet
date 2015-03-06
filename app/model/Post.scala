@@ -16,6 +16,19 @@ case class Post(id: Long,
                 visibility: Long)
 
 object Post extends JSONConvertable[Post] {
+
+  def getPost(postId: Long): Post = {
+    try {
+      PostDBHelper.getPostById(postId)
+    }
+    catch {
+      case ex: Exception => {
+        ex.printStackTrace()
+        throw new Exception("Post couldn't be retrieved!")
+      }
+    }
+  }
+
   def getPostsJson(userId: Long): JsValue = {
     val rawPosts = this.getPosts(userId)
     val jsonlist = rawPosts.map(p => toJSON(p))
@@ -36,10 +49,10 @@ object Post extends JSONConvertable[Post] {
 
   override def toJSON(t: Post): JsValue = {
     val group = GroupDBHelper.getGroupById(Some(t.visibility))
-    val vis =if (t.visibility == 0) {
+    val vis = if (t.visibility == 0) {
       "All"
     } else if (group.isDefined) {
-       group.get.name
+      group.get.name
     }
     else throw new Exception("group is not defined")
     val json = Json.obj(
@@ -60,7 +73,7 @@ object Post extends JSONConvertable[Post] {
     val id = Try((json \ "id").as[String].toLong.ensuring(i => i >= 0))
     val title = (json \ "title").as[String]
     val content = (json \ "content").as[String].ensuring(c => (c.length <= 500))
-    val groupid = Try((json \ "group").as[String].toLong.ensuring(g =>(g >=0)))
+    val groupid = Try((json \ "group").as[String].toLong.ensuring(g => (g >= 0)))
     //validate fields
     val idValid: Boolean = id.isSuccess
     val titleValid: Boolean = !title.isEmpty
@@ -89,17 +102,17 @@ object Post extends JSONConvertable[Post] {
   }
 
   //todo add edit, visibility
-  def editPost(data: Post, loggedUserId: Long): (Boolean, Long) = {
+  def editPost(data: Post, loggedUserId: Long): (Boolean, JsValue) = {
     try {
       if (data.id == 0) {
         //Add request
-        //todo sender is not provided by json!
         val insertedId = PostDBHelper.createPost(data.title, data.content, data.filepath, loggedUserId, data.date, Some(data.visibility))
-        (insertedId != 0, insertedId)
+        val post = Post.getPost(insertedId)
+        (insertedId != 0, Post.toJSON(post))
       }
       else {
         //todo edit request
-        (false, -1)
+        (false, Json.obj())
       }
     }
     catch {

@@ -28,7 +28,7 @@ object Login extends Controller {
         try {
           val userObj = User.loginJson(data)
           Logger.warn("loginjson success")
-          Ok("/home").withSession("LoggedUser" -> userObj.get.id.get.toString)
+          Ok("/home").withSession("userid" -> userObj.get.id.toString)
         }
         catch{
           case e : Exception =>{
@@ -42,7 +42,7 @@ object Login extends Controller {
   }
 
   def renderLogin = Action { implicit request => {
-    if (request.session.get("LoggedUser").nonEmpty) {
+    if (request.session.get("userid").nonEmpty) {
       Redirect(routes.Application.home())
     } else {
       Logger.info("Login.renderLogin: Success")

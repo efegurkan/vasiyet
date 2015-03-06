@@ -41,7 +41,7 @@ object Register extends Controller {
         try {
           val registerObj = User.registerJson(data)
           Logger.warn("register success")
-          Ok("/home").withSession("LoggedUser"->registerObj.get.id.toString)
+          Ok("/home").withSession("userid"->registerObj.get.id.toString)
         }
         catch {
           case e: Exception => {

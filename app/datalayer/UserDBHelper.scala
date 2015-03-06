@@ -11,7 +11,7 @@ import anorm.SqlParser._
 object UserDBHelper extends DBHelper[User] {
 
   def parser: RowParser[User] = {
-    get[Option[Long]]("id") ~
+    get[Long]("id") ~
       get[String]("email") ~
       get[String]("name") ~
       get[String]("surname") map {
@@ -31,21 +31,22 @@ object UserDBHelper extends DBHelper[User] {
         VALUES( NULL, {email}, {password}, {name}, {surname} )
                        """).on("email" -> pEmail, "password" -> pPassword, "name" -> pName, "surname" -> pSurname)
 
-      try{
+      try {
         query.execute()
       }
       catch {
-        case ex : jdbc4.MySQLIntegrityConstraintViolationException=> {Logger.error(ex.getErrorCode.toString)
-          if(ex.getErrorCode == 1062)
+        case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
+          Logger.error(ex.getErrorCode.toString)
+          if (ex.getErrorCode == 1062)
             throw new Exception("{'error':'This mail adress is already in use!'}")
           else
-            throw new Exception("{'error':'Please contact us with this error code:'"+ex.getErrorCode + "}")
-          }
-        case e : Throwable =>{
+            throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
+        }
+        case e: Throwable => {
           throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
           false
-          }
+        }
       }
     }
   }
@@ -105,16 +106,13 @@ object UserDBHelper extends DBHelper[User] {
         }
       }
       catch {
-        case mysqlException: jdbc4.MySQLIntegrityConstraintViolationException =>
-        {
-          throw new Exception("{'error':'An error occured with error code :" + mysqlException.getErrorCode+ ". Please contact us with error code '}")
+        case mysqlException: jdbc4.MySQLIntegrityConstraintViolationException => {
+          throw new Exception("{'error':'An error occured with error code :" + mysqlException.getErrorCode + ". Please contact us with error code '}")
         }
-        case uce : UserCredentialsException =>
-        {
+        case uce: UserCredentialsException => {
           throw new Exception("{'error':'Username/password not correct'}")
         }
-        case ex : Throwable =>
-        {
+        case ex: Throwable => {
           ex.printStackTrace()
           throw new Exception("{'error':'An unknown error occured. Please contact us!'}")
         }

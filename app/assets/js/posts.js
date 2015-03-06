@@ -63,7 +63,6 @@ var dataOperations = (function () {
         return dataOperations.ajaxPost('/getposts');
     };
 
-    //todo refactor this.
     pub.savePost = function (element) {
         var title = element.find('.new-post-title');
         //todo picture ?
@@ -87,9 +86,9 @@ var dataOperations = (function () {
 
             var prom = dataOperations.ajaxPost('/editpost', saveData);
             prom.done(function (data) {
-                //todo get data back
-                saveData.id= data.postId;
-                deferred.resolve(saveData);
+                //saveData.id= data.postId;
+                console.log(data);
+                deferred.resolve(data.post);
             });
 
             prom.fail(function (jqXHR, textStatus, errorThrown) {
@@ -147,7 +146,7 @@ var DOMOperations = (function () {
         template.find('h4.postheader').text(data.title);
         template.find('p.post-content').text(data.content);
         template.find('a.btn.btn-default.disabled').text(data.visibility);
-        template.find('#time').text(template.date);
+        template.find('#time').text(data.date);
         //cleanup unnecessary props and classes
         template.removeAttr('id');
         template.removeClass('hidden');
@@ -258,6 +257,7 @@ var utilityOperations = (function () {
         var promise = dataOperations.savePost(element.closest($('#newtemplate')));
         
         promise.done(function (data) {
+            console.log(data);
             var instance = DOMOperations.clone(templates.loadTemplate());
             instance = DOMOperations.fill(instance, data);
             instance.show();
@@ -265,6 +265,7 @@ var utilityOperations = (function () {
         });
         
         promise.fail(function (error) {
+            console.log(error);
             DOMOperations.showError(error);
         });
     };

@@ -23,7 +23,7 @@ object GroupController extends Controller {
 */
   def showAddGroup() = AuthAction { request =>
     val empty = new Group(new Some[Long](0), "");
-    val id = request.session.get("LoggedUser").get.toLong
+    val id = request.session.get("userid").get.toLong
     Ok(views.html.logged.editgroup(empty, "Add", ContactDBHelper.getContactsByUserId(id)))
   }
 
@@ -41,7 +41,7 @@ object GroupController extends Controller {
   def editGroup() = AuthAction(BodyParsers.parse.json) { implicit request =>
     try {
       val group = Group.fromJSON(request.body)
-      val isItSaved = Group.editGroup(group, request.session.get("LoggedUser").get.toLong);
+      val isItSaved = Group.editGroup(group, request.session.get("userid").get.toLong)
 
       if (isItSaved._1)
         Ok(Json.obj("Status" -> "OK", "message" -> "Group saved successfully", "groupId" -> isItSaved._2))
@@ -142,8 +142,8 @@ object GroupController extends Controller {
 
   def getGroupsJson() = AuthAction { request =>
     try {
-      val id = request.session.get("LoggedUser").get.toLong
-      val raw = GroupDBHelper.getGroupsOfUser(Some(id))
+      val id = request.session.get("userid").get.toLong
+      val raw = GroupDBHelper.getGroupsOfUser(id)
       val jsonlist = raw.map(g => Group.toJSON(g))
       println(jsonlist)
       val groups = Json.toJson(jsonlist)
