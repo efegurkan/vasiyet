@@ -6,7 +6,6 @@ var templates = {
 
             select.append('<option></option>');
             var option = select.find('option').last();
-            console.log(groups[i]);
             option.val(groups[i].id);
             option.text(groups[i].name);
         }
@@ -44,125 +43,151 @@ var templates = {
 };
 
 var dataOperations = (function () {
-    var pub = {};
-    //todo work on this
-    pub.initialData = function () {
-        var deferred = $.Deferred();
-        var getgroups = dataOperations.getGroups();
-        var getposts = dataOperations.getPosts();
+        var pub = {};
+        //todo work on this
+        pub.initialData = function () {
+            var deferred = $.Deferred();
+            var getgroups = dataOperations.getGroups();
+            var getposts = dataOperations.getPosts();
 
-        var fnGroupDoneState = false;
-        var fnPostDoneState = false;
+            var fnGroupDoneState = false;
+            var fnPostDoneState = false;
 
-        getgroups.done(function (data, textStatus, jqXHR) {
-            $.datastore.groups = data;
-            fnGroupDoneState = true;
-            checkFn();
-        });
+            getgroups.done(function (data, textStatus, jqXHR) {
+                $.datastore.groups = data;
+                fnGroupDoneState = true;
+                checkFn();
+            });
 
-        getgroups.fail(function (jqXHR, textStatus, errorThrown) {
-            var msg = JSON.parse(jqXHR.responseText);
-            checkFn(msg);
-        });
+            getgroups.fail(function (jqXHR, textStatus, errorThrown) {
+                var msg = JSON.parse(jqXHR.responseText);
+                checkFn(msg);
+            });
 
-        getposts.done(function (data, textStatus, jqXHR) {
-            $.datastore.posts = data;
-            fnPostDoneState = true;
-            checkFn();
-        });
+            getposts.done(function (data, textStatus, jqXHR) {
+                //$.datastore.posts = data;
+                dataOperations.initiatePostsForDatastore(data);
+                fnPostDoneState = true;
+                checkFn();
+            });
 
-        getposts.fail(function (jqXHR, textStatus, errorThrown) {
-            var msg = JSON.parse(jqXHR.responseText);
-            checkFn(msg);
-        });
+            getposts.fail(function (jqXHR, textStatus, errorThrown) {
+                var msg = JSON.parse(jqXHR.responseText);
+                checkFn(msg);
+            });
 
-        function checkFn(message) {
-            if (fnGroupDoneState && fnPostDoneState) {
-                if (getgroups.isRejected || getposts.isRejected) {
-                    deferred.fail(message);
-                } else {
-                    deferred.resolve();
+            function checkFn(message) {
+                if (fnGroupDoneState && fnPostDoneState) {
+                    if (getgroups.isRejected || getposts.isRejected) {
+                        deferred.fail(message);
+                    } else {
+                        deferred.resolve();
+                    }
                 }
             }
-        }
 
-        return deferred.promise();
-    };
+            return deferred.promise();
+        };
 
-    pub.getGroups = function () {//return ajax promise
-        return dataOperations.ajaxPost('/getgroups');
-    };
-
-    pub.getPosts = function () {
-        return dataOperations.ajaxPost('/getposts');
-    };
-
-    pub.savePost = function (element) {
-        var title = element.find('.new-post-title');
-        //todo picture ?
-        var content = element.find('.new-post-content');
-        var group = element.find('select').select2('val');
-        var deferred = $.Deferred();
-
-        if (title.val().length > 0 && content.val().length > 0) {//not empty
-
-            //todo add other properties
-            var saveData = {
-                'id': '0',
-                'title': title.val(),
-                'content': content.val(),
-                'group': group
-            };
-            //clean form
-            title.val('');
-            content.val('');
-            element.find('select').val('0').trigger('change');
-
-            var prom = dataOperations.ajaxPost('/editpost', saveData);
-            prom.done(function (data) {
-                //saveData.id= data.postId;
-                console.log(data);
-                deferred.resolve(data.post);
+        pub.initiatePostsForDatastore = function (data) {
+            $.datastore.posts = {};
+            data.forEach(function (post) {
+                $.datastore.posts[post.id] = post;
             });
+        };
 
-            prom.fail(function (jqXHR, textStatus, errorThrown) {
-                var msg = JSON.parse(jqXHR.responseText);
-                deferred.fail(msg.message);
+        pub.addPostToStore = function (post) {
+            //check if store is empty,
+            $.datastore.posts[post.id] = post;
+        };
+
+        pub.removePostFromStore = function (post) {
+            //check if store is empty.
+            if (!$.isEmptyObject($.datastore.posts)) {
+                delete $.datastore.posts[post.id];
+            }
+            else {
+                DOMOperations.showError("The post you are trying to remove does not exists!");
+            }
+        };
+
+
+        pub.getGroups = function () {//return ajax promise
+            return dataOperations.ajaxPost('/getgroups');
+        };
+
+        pub.getPosts = function () {
+            return dataOperations.ajaxPost('/getposts');
+        };
+
+        pub.savePost = function (element) {
+            var title = element.find('.new-post-title');
+            //todo picture ?
+            var content = element.find('.new-post-content');
+            var group = element.find('select').select2('val');
+            var deferred = $.Deferred();
+
+            if (title.val().length > 0 && content.val().length > 0) {//not empty
+
+                //todo add other properties
+                var saveData = {
+                    'id': '0',
+                    'title': title.val(),
+                    'content': content.val(),
+                    'group': group
+                };
+                //clean form
+                title.val('');
+                content.val('');
+                element.find('select').val('0').trigger('change');
+
+                var prom = dataOperations.ajaxPost('/editpost', saveData);
+                prom.done(function (data) {
+                    //saveData.id= data.postId;
+                    console.log(data);
+                    deferred.resolve(data.post);
+                });
+
+                prom.fail(function (jqXHR, textStatus, errorThrown) {
+                    var msg = JSON.parse(jqXHR.responseText);
+                    deferred.fail(msg.message);
+                });
+
+            } else {//empty
+                deferred.fail("Your post has some empty areas!");
+            }
+
+            return deferred.promise();
+        };
+
+        //edit save operation
+        pub.editPost = function (event, element) {
+            event.preventDefault();
+            //todo
+        };
+
+        pub.removePost = function (element) {
+            var id = element.closest('div.panel.panel-primary').data('wallPost');
+            var data = {'postId': String(id)};
+            return this.ajaxPost('/deletepost', data);
+
+        };
+
+        pub.ajaxPost = function (url, data) {
+            data = (typeof data === "undefined") ? JSON : data;
+            var promise = $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(data),
+                contentType: 'application/json'
             });
+            return promise;
+        };
 
-        } else {//empty
-            deferred.fail("Your post has some empty areas!");
-        }
-
-        return deferred.promise();
-    };
-
-    //edit save operation
-    pub.editPost = function (event, element) {
-        event.preventDefault();
-        //todo
-    };
-
-    pub.removePost = function (element) {
-        var id = element.closest('div.panel.panel-primary').data('wallPost');
-        var data = {'postId': String(id)};
-        return this.ajaxPost('/deletepost', data);
-
-    };
-
-    pub.ajaxPost = function (url, data) {
-        data = (typeof data === "undefined") ? JSON : data;
-        var promise = $.ajax({
-            type: 'POST',
-            url: url,
-            data: JSON.stringify(data),
-            contentType: 'application/json'
-        });
-        return promise;
-    };
-
-    return pub;
-}());
+        return pub;
+    }()
+    )
+    ;
 
 var DOMOperations = (function () {
     var pub = {};
@@ -237,15 +262,15 @@ var DOMOperations = (function () {
     };
 
     pub.renderPosts = function () {
-
-        for (var i = 0; i < $.datastore.posts.length; ++i) {
-
+        console.log("hello");
+        $.each($.datastore.posts, function (index, post) {
+            console.log(post);
             var instance = DOMOperations.clone(templates.loadTemplate());
-            instance = DOMOperations.fill(instance, $.datastore.posts[i]);
+            instance = DOMOperations.fill(instance, post);
             instance.show();
             $('#maincontent').append(instance);
 
-        }
+        });
     };
 
     return pub;
@@ -265,22 +290,33 @@ var utilityOperations = (function () {
     };
 
     pub.postCheck = function () {
+        console.log("postcheck");
+
         DOMOperations.hideLoading();
-        if (typeof $.datastore.posts !== "undefined" && $.datastore.posts.length <= 0) {
+        if ($.isEmptyObject($.datastore.posts)) {
             DOMOperations.showNoPost();
         } else {
-            DOMOperations.renderPosts();
+            DOMOperations.hideNoPost();
+            //DOMOperations.renderPosts();
         }
     };
 
     pub.removePostHandler = function (element) {
+        var elementdata = element.closest('div.panel.panel-primary').data('fd');
         var promise = dataOperations.removePost(element);
-        promise.done(function () {
+        promise.done(function (data) {
+            console.log('promise ret');
+            console.log(data);
+            dataOperations.removePostFromStore(elementdata);
             DOMOperations.destroy(element.closest('div.panel.panel-primary'));
+
         });
         promise.fail(function (jqXHR, textStatus, errorThrown) {
             var msg = JSON.parse(jqXHR.responseText);
             DOMOperations.showError(msg.message);
+        });
+        promise.always(function () {
+            utilityOperations.postCheck();
         });
     };
 
@@ -293,6 +329,8 @@ var utilityOperations = (function () {
             instance = DOMOperations.fill(instance, data);
             instance.show();
             $('#maincontent').prepend(instance);
+            dataOperations.addPostToStore(data);
+            utilityOperations.postCheck();
         });
 
         promise.fail(function (error) {
@@ -342,6 +380,9 @@ $('document').ready(function () {
         DOMOperations.showError(error);
     }).always(function () {
         utilityOperations.registerHandlers();
+        //utilityOperations.groupCheck();
+        //utilityOperations.postCheck();
+        DOMOperations.renderPosts();
     });
 
 });
