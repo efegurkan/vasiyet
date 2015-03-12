@@ -11,7 +11,7 @@
 }
 
 @body = {
-    <!-- Post panel-->
+    <!-- Post template-->
     <div id="loadtemplate" class="panel panel-primary" hidden="hidden" data-wall-post="">
             <!--Panel Header-->
         <div class="panel-heading">
@@ -30,12 +30,39 @@
             </div>
             <div class="btn-toolbar pull-right" role="toolbar">
                 <div class="btn-group">
-                    <a class="btn btn-danger btn-editPost" ><span class="glyphicon glyphicon-edit"></span></a>
+                    <a class="btn btn-danger btn-activateEdit" ><span class="glyphicon glyphicon-edit"></span></a>
                 </div>
             </div>
 
         </div> <!--End footer-->
-    </div> <!-- End Panel-->
+    </div> <!-- End Post template-->
+
+    <!-- Edit template -->
+    <div id="edittemplate" class="panel panel-danger" hidden="hidden" data-wall-post="">
+            <!--Panel Header-->
+        <div class="panel-heading">
+            <button type='button' class='close canceledit'>×</button>
+            <h4 class="postheader">edit</h4>
+        </div>
+            <!--Panel Body-->
+        <div class="panel-body edit-post-body">
+            <p class="post-content" style="resize : none">edit tmpl</p>
+        </div>
+            <!--Panel Footer-->
+        <div class="panel-footer clearfix">
+            <div class="btn-toolbar pull-left" role="toolbar">
+                <select id="editdropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span>
+                    <option value="0">All</option>
+                </select>
+            </div>
+            <div class="btn-toolbar pull-right" role="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-success btn-editSave" ><span class="glyphicon glyphicon-floppy-disk"></span></a>
+                </div>
+            </div>
+
+        </div> <!--End footer-->
+    </div> <!-- End Edit Template-->
 
     <!-- page content -->
     <input id="loggedUser" type="hidden" value="@loggedUser">

@@ -1,8 +1,42 @@
 var templates = {
     newTemplate: function () {
+        var groups = $.datastore.groups;
+        var select = $('#groupsdropdown');
+        for (var i = 0; i < groups.length; ++i) {
+
+            select.append('<option></option>');
+            var option = select.find('option').last();
+            console.log(groups[i]);
+            option.val(groups[i].id);
+            option.text(groups[i].name);
+        }
         return $('#newtemplate');
     },
-    editTemplate: function () {
+    editTemplate: function (postElement) {
+        var instance = $('#edittemplate');
+        var data = postElement.data('fd');
+        instance.attr('data-wall-post', data.id);
+        instance.find('h4.postheader').text(data.title);
+        instance.find('p.post-content').text(data.content);
+        //todo make it editable
+        //instance.find('').append();
+        var groups = $.datastore.groups;
+        console.log(groups);
+        var select = instance.find('#editdropdown');
+        console.log(select);
+        for (var i = 0; i < groups.length; ++i) {
+
+            select.append('<option></option>');
+            var option = select.find('option').last();
+            console.log(option);
+            option.val(groups[i].id);
+            option.text(groups[i].name);
+        }
+        instance.find('#time').text(data.date);
+        instance.removeClass('hidden');
+        instance.removeAttr('id');
+
+        return instance;
     },
     loadTemplate: function () {
         return $('#loadtemplate');
@@ -142,6 +176,7 @@ var DOMOperations = (function () {
 
     pub.fill = function (template, data) {
         //fill instance with content
+        template.data('fd', data);
         template.attr('data-wall-post', data.id);
         template.find('h4.postheader').text(data.title);
         template.find('p.post-content').text(data.content);
@@ -155,6 +190,7 @@ var DOMOperations = (function () {
 
     pub.replace = function (oldElement, newElement) {
         oldElement.replaceWith(newElement);
+        newElement.show();
     };
 
     pub.enable = function (element) {
@@ -195,7 +231,9 @@ var DOMOperations = (function () {
         $('.nopost').hide();
     };
 
-    pub.enablePlugins = function (element, func) {
+    pub.enablePlugins = function (element) {
+        element.find('select').select2();
+        element.find('textarea').autosize();
     };
 
     pub.renderPosts = function () {
@@ -220,16 +258,9 @@ var utilityOperations = (function () {
 
     pub.groupCheck = function () {
         if (typeof $.datastore.groups !== 'undefined' && $.datastore.groups.length >= 0) {
-            var groups = $.datastore.groups;
-            for (var i = 0; i < groups.length; ++i) {
-                var select = $('#groupsdropdown');
-                select.append('<option></option>');
-                var option = $('option').last();
-                option.val(groups[i].id);
-                option.text(groups[i].name);
-            }
-            templates.newTemplate().show();
-            $("#groupsdropdown").select2();
+            var templ = templates.newTemplate();
+            templ.show();
+            DOMOperations.enablePlugins(templ);
         }
     };
 
@@ -255,7 +286,7 @@ var utilityOperations = (function () {
 
     pub.savePostHandler = function (element) {
         var promise = dataOperations.savePost(element.closest($('#newtemplate')));
-        
+
         promise.done(function (data) {
             console.log(data);
             var instance = DOMOperations.clone(templates.loadTemplate());
@@ -263,11 +294,22 @@ var utilityOperations = (function () {
             instance.show();
             $('#maincontent').prepend(instance);
         });
-        
+
         promise.fail(function (error) {
             console.log(error);
             DOMOperations.showError(error);
         });
+    };
+
+    pub.activateEditTemplate = function (element) {
+        var div = element.closest('.panel.panel-primary');
+        var instance = templates.editTemplate(div);
+        $.datastore.editState = true;
+        $.datastore.lastEdited = div;
+        DOMOperations.replace(div, instance);
+        DOMOperations.enablePlugins(instance);
+
+
     };
 
     pub.registerHandlers = function () {
@@ -280,6 +322,11 @@ var utilityOperations = (function () {
         $('.btn-newPostSave').on('click', function (e) {
             e.preventDefault();
             utilityOperations.savePostHandler($(this));
+        });
+
+        $('.btn-activateEdit').on('click', function (e) {
+            e.preventDefault();
+            utilityOperations.activateEditTemplate($(this));
         });
     };
     return pub;
