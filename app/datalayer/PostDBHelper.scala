@@ -79,6 +79,34 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
+  //todo missing filepath, sender etc
+  def editPost(id: Long,
+               title: String,
+               content: String,
+               filePath: Option[String],
+               date: DateTime,
+               visibility: Option[Long]) = {
+    DB.withTransaction { implicit c =>
+      val query1 = SQL(
+        """
+          |UPDATE vasiyet.Post
+          |SET title = {title}, content = {content}, date = {date}
+          |WHERE vasiyet.Post.id = {id}
+        """.stripMargin).on("id" -> id, "title" -> title, "content" -> content, "date" -> date)
+      query1.executeUpdate();
+
+      val query2 = SQL(
+        """
+          |UPDATE vasiyet.PostVisibilityLookup
+          |SET groupId = {groupId}
+          |WHERE vasiyet.PostVisibilityLookup.postId= {postId}
+        """.stripMargin).on("postId" -> id, "groupId" -> visibility.get)
+      query2.executeUpdate()
+
+      true
+    }
+  }
+
   def deletePost(id: Long): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL(

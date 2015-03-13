@@ -101,7 +101,6 @@ object Post extends JSONConvertable[Post] {
     }
   }
 
-  //todo add edit, visibility
   def editPost(data: Post, loggedUserId: Long): (Boolean, JsValue) = {
     try {
       if (data.id == 0) {
@@ -111,8 +110,9 @@ object Post extends JSONConvertable[Post] {
         (insertedId != 0, Post.toJSON(post))
       }
       else {
-        //todo edit request
-        (false, Json.obj())
+        PostDBHelper.editPost(data.id,data.title,data.content,data.filepath,data.date,Some(data.visibility))
+        val post = Post.getPost(data.id)
+        (true, Post.toJSON(post))
       }
     }
     catch {
