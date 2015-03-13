@@ -12,13 +12,12 @@ var templates = {
         return $('#newtemplate');
     },
     editTemplate: function (postElement) {
-        var instance = $('#edittemplate');
+        var instance = $('#edittemplate').clone();
         var data = postElement.data('fd');
+        instance.addClass('editpanel');
         instance.attr('data-wall-post', data.id);
         instance.find('h4.postheader').text(data.title);
         instance.find('p.post-content').text(data.content);
-        //todo make it editable
-        //instance.find('').append();
         var groups = $.datastore.groups;
         console.log(groups);
         var select = instance.find('#editdropdown');
@@ -37,8 +36,21 @@ var templates = {
 
         return instance;
     },
-    loadTemplate: function () {
-        return $('#loadtemplate');
+    loadTemplate: function (data) {
+        var template = $('#loadtemplate').clone();
+        //fill instance with content
+        template.data('fd', data);
+        template.attr('data-wall-post', data.id);
+        template.find('h4.postheader').text(data.title);
+        template.find('p.post-content').text(data.content);
+        template.find('a.btn.btn-default.disabled').text(data.visibility);
+        template.find('#time').text(data.date);
+        //cleanup unnecessary props and classes
+        template.removeAttr('id');
+        template.removeClass('hidden');
+        return template;
+
+        //return $('#loadtemplate');
     }
 };
 
@@ -163,7 +175,7 @@ var dataOperations = (function () {
         //edit save operation
         pub.editPost = function (event, element) {
             event.preventDefault();
-            //todo
+            //todo implementation
         };
 
         pub.removePost = function (element) {
@@ -199,19 +211,6 @@ var DOMOperations = (function () {
         element.remove();
     };
 
-    pub.fill = function (template, data) {
-        //fill instance with content
-        template.data('fd', data);
-        template.attr('data-wall-post', data.id);
-        template.find('h4.postheader').text(data.title);
-        template.find('p.post-content').text(data.content);
-        template.find('a.btn.btn-default.disabled').text(data.visibility);
-        template.find('#time').text(data.date);
-        //cleanup unnecessary props and classes
-        template.removeAttr('id');
-        template.removeClass('hidden');
-        return template;
-    };
 
     pub.replace = function (oldElement, newElement) {
         oldElement.replaceWith(newElement);
@@ -265,8 +264,7 @@ var DOMOperations = (function () {
         console.log("hello");
         $.each($.datastore.posts, function (index, post) {
             console.log(post);
-            var instance = DOMOperations.clone(templates.loadTemplate());
-            instance = DOMOperations.fill(instance, post);
+            var instance = templates.loadTemplate(post);
             instance.show();
             $('#maincontent').append(instance);
 
@@ -324,9 +322,7 @@ var utilityOperations = (function () {
         var promise = dataOperations.savePost(element.closest($('#newtemplate')));
 
         promise.done(function (data) {
-            console.log(data);
-            var instance = DOMOperations.clone(templates.loadTemplate());
-            instance = DOMOperations.fill(instance, data);
+            var instance = templates.loadTemplate(data);
             instance.show();
             $('#maincontent').prepend(instance);
             dataOperations.addPostToStore(data);
@@ -340,14 +336,27 @@ var utilityOperations = (function () {
     };
 
     pub.activateEditTemplate = function (element) {
+        utilityOperations.cancelEdit();
         var div = element.closest('.panel.panel-primary');
         var instance = templates.editTemplate(div);
         $.datastore.editState = true;
-        $.datastore.lastEdited = div;
+        $.datastore.lastEdited = div.data('fd');
+        $.datastore.lastEditedSelector = div;
         DOMOperations.replace(div, instance);
         DOMOperations.enablePlugins(instance);
 
 
+    };
+
+    pub.cancelEdit = function () {
+        //defined and true
+        var div = $('.editpanel');
+        if ($.datastore.editState !== "undefined" && $.datastore.editState) {
+            DOMOperations.replace(div, templates.loadTemplate($.datastore.lastEdited));
+        }
+        else {//undefined or false means its clear
+            $.datastore.editState = false;
+        }
     };
 
     pub.registerHandlers = function () {
@@ -362,9 +371,14 @@ var utilityOperations = (function () {
             utilityOperations.savePostHandler($(this));
         });
 
-        $('.btn-activateEdit').on('click', function (e) {
+        maincontent.on('click', '.btn-activateEdit', function (e) {
             e.preventDefault();
             utilityOperations.activateEditTemplate($(this));
+        });
+
+        maincontent.on('click', '.canceledit', function (e) {
+            e.preventDefault();
+            utilityOperations.cancelEdit($(this));
         });
     };
     return pub;
