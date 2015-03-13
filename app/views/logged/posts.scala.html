@@ -42,12 +42,12 @@
             <!--Panel Header-->
         <div class="panel-heading">
             <button type='button' class='close canceledit'>×</button>
-            <h4 class="postheader">edit</h4>
+            <h4 class="postheader"><input class="edit-post-title transparent-text-area" placeholder="Write your new title here."></h4>
         </div>
             <!--Panel Body-->
         <div class="panel-body edit-post-body">
-            <p class="post-content" style="resize : none">edit tmpl</p>
-        </div>
+            @*<p class="post-content" style="resize : none">edit tmpl</p>*@
+            <textarea class="edit-post-content post-content " role="textbox" placeholder="Write your new post here." style="resize : none"></textarea>        </div>
             <!--Panel Footer-->
         <div class="panel-footer clearfix">
             <div class="btn-toolbar pull-left" role="toolbar">

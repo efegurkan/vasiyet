@@ -77,7 +77,7 @@ object PostController extends Controller {
     }
   }
 
-  def getPosts = AuthAction{request =>
+  def getPosts = AuthAction { request =>
 
     try {
       val id = request.session.get("userid").get.toLong
@@ -88,7 +88,7 @@ object PostController extends Controller {
       case ex: Exception => {
         Logger.error("Postcontroller get posts")
         Logger.error(ex.getMessage)
-        BadRequest(Json.obj("Status"->"KO", "message"-> ex.getMessage))
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }
     }
 

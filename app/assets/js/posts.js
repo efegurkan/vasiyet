@@ -16,8 +16,8 @@ var templates = {
         var data = postElement.data('fd');
         instance.addClass('editpanel');
         instance.attr('data-wall-post', data.id);
-        instance.find('h4.postheader').text(data.title);
-        instance.find('p.post-content').text(data.content);
+        instance.find('.edit-post-title').val(data.title);
+        instance.find('.edit-post-content').val(data.content);
         var groups = $.datastore.groups;
         console.log(groups);
         var select = instance.find('#editdropdown');
@@ -173,9 +173,49 @@ var dataOperations = (function () {
         };
 
         //edit save operation
-        pub.editPost = function (event, element) {
-            event.preventDefault();
-            //todo implementation
+        pub.editPost = function (element) {
+            console.log('dataop editpost');
+            console.log(element.data('wallPost'));
+            console.log(element);
+            var dat = element.data();
+            console.log(dat);
+            var title = element.find('.edit-post-title');
+            //todo picture ?
+            var content = element.find('.edit-post-content');
+            var group = element.find('select').select2('val');
+            var deferred = $.Deferred();
+
+            if (title.val().length > 0 && content.val().length > 0) {//not empty
+
+                //todo add other properties
+                var saveData = {
+                    'id': element.data('wallPost').toString(),
+                    'title': title.val(),
+                    'content': content.val(),
+                    'group': group
+                };
+                //clean form
+                title.val('');
+                content.val('');
+                element.find('select').val('0').trigger('change');
+
+                var prom = dataOperations.ajaxPost('/editpost', saveData);
+                prom.done(function (data) {
+                    //saveData.id= data.postId;
+                    console.log(data);
+                    deferred.resolve(data.post);
+                });
+
+                prom.fail(function (jqXHR, textStatus, errorThrown) {
+                    var msg = JSON.parse(jqXHR.responseText);
+                    deferred.fail(msg.message);
+                });
+
+            } else {//empty
+                deferred.fail("Your post has some empty areas!");
+            }
+
+            return deferred.promise();
         };
 
         pub.removePost = function (element) {
@@ -263,7 +303,7 @@ var DOMOperations = (function () {
     pub.renderPosts = function () {
         console.log("hello");
         $.each($.datastore.posts, function (index, post) {
-            console.log(post);
+            //console.log(post);
             var instance = templates.loadTemplate(post);
             instance.show();
             $('#maincontent').append(instance);
@@ -335,6 +375,22 @@ var utilityOperations = (function () {
         });
     };
 
+    pub.editPostHandler = function (element) {
+        console.log('editposthandler');
+        console.log(element);
+        var promise = dataOperations.editPost(element.closest('.editpanel'));
+
+        promise.done(function (data) {
+            $.datastore.lastEdited = data;
+            utilityOperations.cancelEdit();
+        });
+
+        promise.fail(function (error) {
+            console.log(error);
+            DOMOperations.showError(error);
+        });
+    };
+
     pub.activateEditTemplate = function (element) {
         utilityOperations.cancelEdit();
         var div = element.closest('.panel.panel-primary');
@@ -379,6 +435,11 @@ var utilityOperations = (function () {
         maincontent.on('click', '.canceledit', function (e) {
             e.preventDefault();
             utilityOperations.cancelEdit($(this));
+        });
+
+        maincontent.on('click', '.btn-editSave', function (e) {
+            e.preventDefault();
+            utilityOperations.editPostHandler($(this));
         });
     };
     return pub;
