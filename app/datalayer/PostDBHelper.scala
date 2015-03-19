@@ -9,7 +9,6 @@ import play.api.db.DB
 
 object PostDBHelper extends DBHelper[Post] {
 
-
   def parser: RowParser[Post] = {
     get[Long]("id") ~
       get[String]("title") ~
@@ -19,6 +18,29 @@ object PostDBHelper extends DBHelper[Post] {
       get[DateTime]("date") ~
       get[Long]("groupId") map {
       case id ~ title ~ content ~ filepath ~ sender ~ date ~ visibility => Post(id, title, content, filepath, sender, date, visibility)
+    }
+  }
+
+  def getPostsByPage(userId: Long, pageNum: Int):List[Post] = {
+    DB.withConnection{ implicit  c =>
+
+      val pageElementCount = 15
+      val convertedPageNum = pageNum -1
+      val start = pageElementCount* convertedPageNum
+      val end = start + pageElementCount
+      val query = SQL(
+        """
+          |SELECT Post.id, title, content,filepath, sender, date, groupId
+          |FROM Post
+          |INNER JOIN PostVisibilityLookup
+          |WHERE sender = {id} AND PostVisibilityLookup.postId = Post.id
+          |ORDER BY date DESC
+          |LIMIT {start},{end}
+        """.stripMargin).on("id"->userId, "start"->start, "end"->end)
+      val result = query.executeQuery()
+      val posts = result.as(parser*).toList
+      posts
+
     }
   }
 

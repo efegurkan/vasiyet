@@ -29,6 +29,7 @@ POST        /getgroups                      controllers.GroupController.getGroup
 POST        /editpost                       controllers.PostController.addPost()
 POST        /deletepost                     controllers.PostController.deletePost()
 POST        /getposts                       controllers.PostController.getPosts()
+POST        /getpagination                  controllers.PostController.pagination()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson

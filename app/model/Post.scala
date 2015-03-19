@@ -17,6 +17,23 @@ case class Post(id: Long,
 
 object Post extends JSONConvertable[Post] {
 
+  def getPostsPaginated(loggedUser: Long, pageNum: Int): JsValue = {
+    try {
+      val posts = PostDBHelper.getPostsByPage(loggedUser: Long, pageNum)
+      val jsonPosts = posts.map(p => toJSON(p))
+
+      val orderList = posts.map(p => p.id)
+      Json.obj("posts" -> jsonPosts, "orders" -> Json.arr(orderList))
+    }
+    catch {
+      case ex: Exception => {
+        ex.printStackTrace()
+        throw new Exception("Posts on the current page couldn't be retrieved!")
+      }
+    }
+  }
+
+
   def getPost(postId: Long): Post = {
     try {
       PostDBHelper.getPostById(postId)
@@ -40,10 +57,10 @@ object Post extends JSONConvertable[Post] {
       PostDBHelper.deletePost(id)
     }
     catch {
-      case ex: Exception => {
+      case ex: Exception =>
         ex.printStackTrace()
         throw new Exception("Post deletion could not saved on database")
-      }
+
     }
   }
 
@@ -110,7 +127,7 @@ object Post extends JSONConvertable[Post] {
         (insertedId != 0, Post.toJSON(post))
       }
       else {
-        PostDBHelper.editPost(data.id,data.title,data.content,data.filepath,data.date,Some(data.visibility))
+        PostDBHelper.editPost(data.id, data.title, data.content, data.filepath, data.date, Some(data.visibility))
         val post = Post.getPost(data.id)
         (true, Post.toJSON(post))
       }

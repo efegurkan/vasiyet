@@ -20,7 +20,6 @@ object PostController extends Controller {
       //todo move it to group
       val groups = GroupDBHelper.getGroupsOfUser(loggedUser)
 
-      //todo get groups and pass
       Ok(views.html.logged.posts(loggedUser, posts.reverse, groups))
     }
     catch {
@@ -28,6 +27,33 @@ object PostController extends Controller {
         BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
       }
     }
+  }
+
+  def pagination = AuthAction(BodyParsers.parse.json) { request =>
+    try {
+
+      val pagenumvalid: Boolean = Try((request.body \ "pagenum").as[String].toInt.ensuring(i => i > 0)).isSuccess
+      val loggedUser = request.session.get("userid").get.toInt
+      if (pagenumvalid) {
+        val pagenum = Try((request.body \ "pagenum").as[String].toInt).get
+        val pagePosts = Post.getPostsPaginated(loggedUser, pagenum)
+        Ok(pagePosts)
+      }
+      else {
+        val pagenum = 1
+        val pagePosts = Post.getPostsPaginated(loggedUser, pagenum)
+        Ok(pagePosts)
+      }
+
+    }
+    catch {
+      case ex: Exception => {
+        Logger.error("PostController Error")
+        Logger.error(ex.getMessage)
+        BadRequest(Json.obj("Status" -> "KO", "message" -> ex.getMessage))
+      }
+    }
+
   }
 
   def addPost() = AuthAction(BodyParsers.parse.json) { request =>
