@@ -21,13 +21,39 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
-  def getPostsByPage(userId: Long, pageNum: Int):List[Post] = {
-    DB.withConnection{ implicit  c =>
+  def getPostsByPage(userId: Long, pageNum: Int): (List[Post],Long,Long) = {
+    DB.withConnection { implicit c =>
 
       val pageElementCount = 15
-      val convertedPageNum = pageNum -1
-      val start = pageElementCount* convertedPageNum
-      val end = start + pageElementCount
+      val convertedPageNum = pageNum - 1
+      //      val start = pageElementCount* convertedPageNum
+      //      val end = start + pageElementCount
+
+      val pageQuery = SQL(
+        """
+          |SELECT COUNT(id)
+          |FROM Post
+        """.stripMargin)
+
+      val totalElementCount = pageQuery.executeQuery().as(scalar[Long].single)
+
+      val maxPageNumber = math.ceil(totalElementCount.toDouble / pageElementCount.toDouble)
+      println(maxPageNumber)
+
+      val start = if (maxPageNumber < pageNum) {
+        pageElementCount * (maxPageNumber - 1)
+      } else {
+        pageElementCount * convertedPageNum
+      }
+      println(start)
+
+      val end = if (maxPageNumber < pageNum) {
+        (maxPageNumber) * pageElementCount
+      } else {
+        start + pageElementCount
+      }
+      println(end)
+
       val query = SQL(
         """
           |SELECT Post.id, title, content,filepath, sender, date, groupId
@@ -36,10 +62,10 @@ object PostDBHelper extends DBHelper[Post] {
           |WHERE sender = {id} AND PostVisibilityLookup.postId = Post.id
           |ORDER BY date DESC
           |LIMIT {start},{end}
-        """.stripMargin).on("id"->userId, "start"->start, "end"->end)
+        """.stripMargin).on("id" -> userId, "start" -> start.toInt, "end" -> end.toInt)
       val result = query.executeQuery()
-      val posts = result.as(parser*).toList
-      posts
+      val posts = result.as(parser *).toList
+      (posts,(end/pageElementCount).toLong,maxPageNumber.toLong)
 
     }
   }

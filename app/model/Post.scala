@@ -19,11 +19,12 @@ object Post extends JSONConvertable[Post] {
 
   def getPostsPaginated(loggedUser: Long, pageNum: Int): JsValue = {
     try {
-      val posts = PostDBHelper.getPostsByPage(loggedUser: Long, pageNum)
+      val tuple = PostDBHelper.getPostsByPage(loggedUser: Long, pageNum)
+      val posts = tuple._1
       val jsonPosts = posts.map(p => toJSON(p))
 
       val orderList = posts.map(p => p.id)
-      Json.obj("posts" -> jsonPosts, "orders" -> Json.arr(orderList))
+      Json.obj("posts" -> jsonPosts, "orders" -> orderList,"activePage"->tuple._2,"maxPage"->tuple._3)
     }
     catch {
       case ex: Exception => {

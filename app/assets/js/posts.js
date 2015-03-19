@@ -60,8 +60,9 @@ var dataOperations = (function () {
         pub.initialData = function () {
             var deferred = $.Deferred();
             var getgroups = dataOperations.getGroups();
-            var getposts = dataOperations.getPosts();
-
+            //var getposts = dataOperations.getPosts();
+            var getposts = dataOperations.getPagination();
+            console.log(getposts);
             var fnGroupDoneState = false;
             var fnPostDoneState = false;
 
@@ -78,7 +79,8 @@ var dataOperations = (function () {
 
             getposts.done(function (data, textStatus, jqXHR) {
                 //$.datastore.posts = data;
-                dataOperations.initiatePostsForDatastore(data);
+                console.log(data);
+                dataOperations.initiatePostsForDatastore(data.posts);
                 fnPostDoneState = true;
                 checkFn();
             });
@@ -99,6 +101,23 @@ var dataOperations = (function () {
             }
 
             return deferred.promise();
+        };
+
+        pub.getPagination = function () {
+            var pagenum = utilityOperations.paginationParameter();
+            console.log(pagenum);
+
+            var data= {
+              "pagenum":pagenum.toString()
+            };
+            //var pagination = dataOperations.ajaxPost("/getpagination", data);
+            //var deferred = $.Deferred();
+
+            //pagination.done(function (data) {
+            //
+
+            //});
+            return dataOperations.ajaxPost("/getpagination",data);
         };
 
         pub.initiatePostsForDatastore = function (data) {
@@ -319,6 +338,18 @@ $.datastore = {};
 var utilityOperations = (function () {
     var pub = {};
 
+    pub.paginationParameter = function () {
+        var pagenum = location.search.split("p=")[1];
+
+        pagenum = parseInt(pagenum, 10);
+        if (!isNaN(pagenum)) {
+            return pagenum;
+        }
+        else{
+            return 1;
+        }
+    };
+
     pub.groupCheck = function () {
         if (typeof $.datastore.groups !== 'undefined' && $.datastore.groups.length >= 0) {
             var templ = templates.newTemplate();
@@ -397,7 +428,6 @@ var utilityOperations = (function () {
         var instance = templates.editTemplate(div);
         $.datastore.editState = true;
         $.datastore.lastEdited = div.data('fd');
-        $.datastore.lastEditedSelector = div;
         DOMOperations.replace(div, instance);
         DOMOperations.enablePlugins(instance);
 
