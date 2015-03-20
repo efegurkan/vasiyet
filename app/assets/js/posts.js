@@ -77,11 +77,15 @@ var dataOperations = (function () {
                 checkFn(msg);
             });
 
+            //post related information
+            //posts, post order, pagination information
             getposts.done(function (data, textStatus, jqXHR) {
-                //$.datastore.posts = data;
                 console.log(data);
-                dataOperations.initiatePostsForDatastore(data.posts);
+                dataOperations.initiatePostsForDatastore(data);
+                $.datastore.activePage = data.activePage;
+                $.datastore.maxPage = data.maxPage;
                 fnPostDoneState = true;
+
                 checkFn();
             });
 
@@ -107,8 +111,8 @@ var dataOperations = (function () {
             var pagenum = utilityOperations.paginationParameter();
             console.log(pagenum);
 
-            var data= {
-              "pagenum":pagenum.toString()
+            var data = {
+                "pagenum": pagenum.toString()
             };
             //var pagination = dataOperations.ajaxPost("/getpagination", data);
             //var deferred = $.Deferred();
@@ -117,14 +121,16 @@ var dataOperations = (function () {
             //
 
             //});
-            return dataOperations.ajaxPost("/getpagination",data);
+            return dataOperations.ajaxPost("/getpagination", data);
         };
 
         pub.initiatePostsForDatastore = function (data) {
             $.datastore.posts = {};
-            data.forEach(function (post) {
+            $.datastore.postOrder = [];
+            data.posts.forEach(function (post) {
                 $.datastore.posts[post.id] = post;
             });
+            $.datastore.postOrder = data.orders;
         };
 
         pub.addPostToStore = function (post) {
@@ -319,6 +325,43 @@ var DOMOperations = (function () {
         element.find('textarea').autosize();
     };
 
+    pub.createPagination = function () {
+
+        var prev = $('#prev');
+        var prevlink = $('#prevlink');
+        var next = $('#next');
+        var nextlink = $('#nextlink');
+
+        var activePage = parseInt($.datastore.activePage);
+        var prevNum = activePage - 1;
+        var nextNum = activePage + 1;
+        if (isNaN(activePage)) {
+            prevNum = nextNum = 0;
+        }
+
+        prevlink.attr("href", '?p=' + prevNum);
+        nextlink.attr("href", '?p=' + nextNum);
+
+        if ($.datastore.activePage === 1) {
+            prev.addClass('disabled');
+            prevlink.removeAttr('href');
+        }
+
+        if ($.datastore.activePage === $.datastore.maxPage) {
+            next.addClass('disabled');
+            nextlink.removeAttr('href');
+        }
+
+        for (var i = $.datastore.maxPage; i >= 1; i--) {
+            if ($.datastore.activePage === i) {
+                prev.after('<li><a class="active" href="?p=' + i + ' ">' + i + '</a></li>');
+            } else {
+                prev.after('<li><a href="?p=' + i + ' ">' + i + '</a></li>');
+            }
+        }
+
+    };
+
     pub.renderPosts = function () {
         console.log("hello");
         $.each($.datastore.posts, function (index, post) {
@@ -345,7 +388,7 @@ var utilityOperations = (function () {
         if (!isNaN(pagenum)) {
             return pagenum;
         }
-        else{
+        else {
             return 1;
         }
     };
@@ -366,7 +409,7 @@ var utilityOperations = (function () {
             DOMOperations.showNoPost();
         } else {
             DOMOperations.hideNoPost();
-            //DOMOperations.renderPosts();
+            DOMOperations.createPagination();
         }
     };
 
