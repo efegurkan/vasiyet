@@ -21,26 +21,29 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
-  def getPostsByPage(userId: Long, pageNum: Int): (List[Post],Long,Long) = {
+  def getPostsByPage(userId: Long, pageNum: Int): (List[Post], Long, Long) = {
     DB.withConnection { implicit c =>
 
-      val pageElementCount = 15
+      val pageElementCount = 10
       val convertedPageNum = pageNum - 1
       //      val start = pageElementCount* convertedPageNum
       //      val end = start + pageElementCount
 
       val pageQuery = SQL(
         """
-          |SELECT COUNT(id)
+          |SELECT COUNT(*)
           |FROM Post
-        """.stripMargin)
+          |WHERE sender = {id}
+        """.stripMargin).on("id" -> userId)
 
       val totalElementCount = pageQuery.executeQuery().as(scalar[Long].single)
 
       val maxPageNumber = math.ceil(totalElementCount.toDouble / pageElementCount.toDouble)
       println(maxPageNumber)
 
-      val start = if (maxPageNumber < pageNum) {
+      val start = if (maxPageNumber == 0) {
+        0
+      } else if (maxPageNumber < pageNum) {
         pageElementCount * (maxPageNumber - 1)
       } else {
         pageElementCount * convertedPageNum
@@ -65,7 +68,7 @@ object PostDBHelper extends DBHelper[Post] {
         """.stripMargin).on("id" -> userId, "start" -> start.toInt, "end" -> end.toInt)
       val result = query.executeQuery()
       val posts = result.as(parser *).toList
-      (posts,(end/pageElementCount).toLong,maxPageNumber.toLong)
+      (posts, (end / pageElementCount).toLong, maxPageNumber.toLong)
 
     }
   }

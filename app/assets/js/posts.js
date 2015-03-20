@@ -252,7 +252,7 @@ var dataOperations = (function () {
 
         pub.ajaxPost = function (url, data) {
             data = (typeof data === "undefined") ? JSON : data;
-            return  $.ajax({
+            return $.ajax({
                 type: 'POST',
                 url: url,
                 data: JSON.stringify(data),
@@ -319,6 +319,14 @@ var DOMOperations = (function () {
         $('.nopost').hide();
     };
 
+    pub.hidePagination = function () {
+        $('#paginationarea').hide();
+    };
+
+    pub.showPagination = function () {
+        $('#paginationarea').show();
+    };
+
     pub.enablePlugins = function (element) {
         element.find('select').select2();
         element.find('textarea').autosize();
@@ -335,13 +343,24 @@ var DOMOperations = (function () {
         var prevNum = activePage - 1;
         var nextNum = activePage + 1;
         if (isNaN(activePage)) {
-            prevNum = nextNum = 0;
+            prevNum = 0;
+            nextNum = 0;
+        } else if (prevNum < 0) {
+            prevNum = 0;
+        } else if (nextNum < 0) {
+            nextNum = 0;
         }
 
         prevlink.attr("href", '?p=' + prevNum);
         nextlink.attr("href", '?p=' + nextNum);
 
-        if ($.datastore.activePage === 1) {
+        if ($.datastore.activePage === 0) {
+            prev.addClass('disabled');
+            next.addClass('disabled');
+            prevlink.removeAttr('href');
+            nextlink.removeAttr('href');
+        }
+        else if ($.datastore.activePage === 1) {
             prev.addClass('disabled');
             prevlink.removeAttr('href');
         }
@@ -363,7 +382,7 @@ var DOMOperations = (function () {
 
     pub.renderPosts = function () {
         $.datastore.postOrder.forEach(function (id) {
-            var post =$.datastore.posts[id];
+            var post = $.datastore.posts[id];
             var instance = templates.loadTemplate(post);
             instance.show();
             $('#maincontent').append(instance);
@@ -404,9 +423,10 @@ var utilityOperations = (function () {
         DOMOperations.hideLoading();
         if ($.isEmptyObject($.datastore.posts)) {
             DOMOperations.showNoPost();
+            DOMOperations.hidePagination();
         } else {
             DOMOperations.hideNoPost();
-            DOMOperations.createPagination();
+            DOMOperations.showPagination();
         }
     };
 
@@ -520,6 +540,7 @@ $('document').ready(function () {
         DOMOperations.hideLoading();
         utilityOperations.groupCheck();
         utilityOperations.postCheck();
+        DOMOperations.createPagination();
     }).fail(function (error) {
         DOMOperations.hideLoading();
         DOMOperations.showError(error);
