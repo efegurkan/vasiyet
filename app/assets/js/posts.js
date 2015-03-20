@@ -457,6 +457,7 @@ var utilityOperations = (function () {
             instance.show();
             $('#maincontent').prepend(instance);
             dataOperations.addPostToStore(data);
+            window.location.replace('/');
             utilityOperations.postCheck();
         });
 
