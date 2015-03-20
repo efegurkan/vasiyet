@@ -66,20 +66,20 @@ var dataOperations = (function () {
             var fnGroupDoneState = false;
             var fnPostDoneState = false;
 
-            getgroups.done(function (data, textStatus, jqXHR) {
+            getgroups.done(function (data) {
                 $.datastore.groups = data;
                 fnGroupDoneState = true;
                 checkFn();
             });
 
-            getgroups.fail(function (jqXHR, textStatus, errorThrown) {
+            getgroups.fail(function (jqXHR) {
                 var msg = JSON.parse(jqXHR.responseText);
                 checkFn(msg);
             });
 
             //post related information
             //posts, post order, pagination information
-            getposts.done(function (data, textStatus, jqXHR) {
+            getposts.done(function (data) {
                 console.log(data);
                 dataOperations.initiatePostsForDatastore(data);
                 $.datastore.activePage = data.activePage;
@@ -252,13 +252,12 @@ var dataOperations = (function () {
 
         pub.ajaxPost = function (url, data) {
             data = (typeof data === "undefined") ? JSON : data;
-            var promise = $.ajax({
+            return  $.ajax({
                 type: 'POST',
                 url: url,
                 data: JSON.stringify(data),
                 contentType: 'application/json'
             });
-            return promise;
         };
 
         return pub;
@@ -363,13 +362,11 @@ var DOMOperations = (function () {
     };
 
     pub.renderPosts = function () {
-        console.log("hello");
-        $.each($.datastore.posts, function (index, post) {
-            //console.log(post);
+        $.datastore.postOrder.forEach(function (id) {
+            var post =$.datastore.posts[id];
             var instance = templates.loadTemplate(post);
             instance.show();
             $('#maincontent').append(instance);
-
         });
     };
 
