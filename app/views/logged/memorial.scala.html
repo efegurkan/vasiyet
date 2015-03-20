@@ -1,0 +1,74 @@
+@(loggedUser: Long, posts: List[model.Post] = List.empty, groups: List[model.Group] = List.empty)
+
+@head = {
+    <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+}
+
+@body = {
+    <!-- Post template-->
+    <div id="loadtemplate" class="panel panel-primary" data-wall-post="">
+            <!--Panel Header-->
+        <div class="panel-heading">
+            <h4 class="postheader"></h4>
+        </div>
+            <!--Panel Body-->
+        <div class="panel-body post-body">
+            <p class="post-content"></p>
+        </div>
+            <!--Panel Footer-->
+        <div class="panel-footer clearfix">
+            <div class="btn-toolbar pull-left" role="toolbar">
+                <a class="btn btn-default disabled groupbtn"></a>
+                <a id="time" class="btn btn-sm disabled"></a>
+            </div>
+
+        </div> <!--End footer-->
+    </div> <!-- End Post template-->
+
+    <!-- page content -->
+    <div class="container center-block">
+        <div class="row">
+                <!--middle content area-->
+            <div id="middlecontentarea" class="col-md-8 col-md-offset-2">
+
+                <div id="errorpanel" class="alert alert-danger" hidden="hidden" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    <p></p>
+                </div>
+
+                <div id="loadingpanel" class="panel panel-default">
+                    <div class="panel-body">
+                        <img class="loading" src="@routes.Assets.at("img/ajax-loader.gif")">
+                        <p class="nopost" hidden="hidden" style='text-align : center ;'>No posts found.<p>
+                    </div>
+                </div>
+                <div id="maincontent"></div>
+                <div id="paginationarea" align="center">
+                    <nav>
+                        <ul class="pagination">
+                            <li id="prev">
+                                <a id="prevlink" href="" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li id="next">
+                                <a id="nextlink" href="" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div><!--End column-->
+        </div> <!-- End row -->
+    </div> <!-- End container -->
+
+}
+
+@include = {
+    @*<script src="@routes.Assets.at("js/posts.js")"></script>*@
+}
+
+@loggedMaster("Memorial")(head)(body)(include)

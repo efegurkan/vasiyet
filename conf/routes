@@ -10,6 +10,7 @@ GET         /home                           controllers.Application.home
 #GET         /contacts                       controllers.Application.contacts
 GET         /contacts                       controllers.ContactController.showPage
 GET         /posts                          controllers.PostController.showPage
+GET        /memorial                       controllers.Memorial.showPage
 
 GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
