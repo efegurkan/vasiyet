@@ -135,12 +135,20 @@ object PostDBHelper extends DBHelper[Post] {
                date: DateTime,
                visibility: Option[Long]) = {
     DB.withTransaction { implicit c =>
-      val query1 = SQL(
+      /*val query1 = SQL(
         """
           |UPDATE vasiyet.Post
           |SET title = {title}, content = {content}, date = {date}
           |WHERE vasiyet.Post.id = {id}
         """.stripMargin).on("id" -> id, "title" -> title, "content" -> content, "date" -> date)
+      query1.executeUpdate();*/
+
+      val query1 = SQL(
+        """
+          |UPDATE vasiyet.Post
+          |SET title = {title}, content = {content}
+          |WHERE vasiyet.Post.id = {id}
+        """.stripMargin).on("id" -> id, "title" -> title, "content" -> content)
       query1.executeUpdate();
 
       val query2 = SQL(
