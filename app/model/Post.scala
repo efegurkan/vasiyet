@@ -1,6 +1,6 @@
 package model
 
-import datalayer.{GroupDBHelper, PostDBHelper}
+import datalayer.{UserDBHelper, GroupDBHelper, PostDBHelper}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.{JsValue, Json}
@@ -67,6 +67,7 @@ object Post extends JSONConvertable[Post] {
 
   override def toJSON(t: Post): JsValue = {
     val group = GroupDBHelper.getGroupById(Some(t.visibility))
+    val sender = UserDBHelper.getUserById(t.sender)
     val vis = if (t.visibility == 0) {
       "All"
     } else if (group.isDefined) {
@@ -78,7 +79,7 @@ object Post extends JSONConvertable[Post] {
       "title" -> t.title,
       "content" -> t.content,
       "filepath" -> t.filepath,
-      "sender" -> t.sender,
+      "sender" -> (sender.name+" "+sender.surname),
       "date" -> DateTimeFormat.forPattern("dd MM yyyy").print(t.date),
       "visibility" -> vis
     )

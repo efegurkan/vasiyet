@@ -121,6 +121,22 @@ object UserDBHelper extends DBHelper[User] {
     }
   }
 
+  def getUserById(pId: Long): User = {
+    DB.withConnection { implicit c =>
+      val query = SQL( """
+          Select * FROM User
+          WHERE {id} = id
+                       """).on("id" -> pId)
+
+      val queryResult = query.executeQuery()
+
+      queryResult.as(parser *).head
+
+    }
+  }
+
+
+
 }
 
 class UserCredentialsException() extends Exception
