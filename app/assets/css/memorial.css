@@ -1,0 +1,7 @@
+.solarized {
+    color: lightgray;
+}
+
+.solarized:hover{
+    color: inherit;
+}

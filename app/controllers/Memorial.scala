@@ -1,6 +1,16 @@
 package controllers
 
-object Memorial {
+import play.api.libs.json.Json
+import play.api.mvc.{Action, Controller}
+import utility.AuthAction
 
-  def showPage() = play.mvc.Results.TODO
+object Memorial extends Controller{
+
+  def showPage() = AuthAction {request =>
+    Ok(views.html.logged.memorial())
+  }
+
+  def pagination() = Action{ request =>
+    Ok(Json.obj())
+  }
 }

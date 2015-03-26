@@ -1,12 +1,11 @@
-@(loggedUser: Long, posts: List[model.Post] = List.empty, groups: List[model.Group] = List.empty)
-
 @head = {
     <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+    <link href="@routes.Assets.at("css/bootplus.css")" rel="stylesheet" media="screen">
 }
 
 @body = {
     <!-- Post template-->
-    <div id="loadtemplate" class="panel panel-primary" data-wall-post="">
+  @*  <div id="loadtemplate" hidden="hidden" class="panel panel-primary" data-wall-post="">
             <!--Panel Header-->
         <div class="panel-heading">
             <h4 class="postheader"></h4>
@@ -24,6 +23,17 @@
 
         </div> <!--End footer-->
     </div> <!-- End Post template-->
+*@
+    <div id="loadtemplate" data-wall-post="" class="card" hidden="hidden">
+        <h3 class="card-heading simple postheader"></h3>
+        <div class="card-body">
+            <p class="loadbody"></p>
+        </div>
+        <div class="card-actions">
+            <a class="pull-left solarised disabled rendertt group" data-toggle="tooltip" data-title="Shown group"></a>
+            <a class="pull-right solarised rendertt sender" data-toggle="tooltip" data-title=""></a>
+        </div>
+    </div>
 
     <!-- page content -->
     <div class="container center-block">
@@ -37,7 +47,7 @@
                     <p></p>
                 </div>
 
-                <div id="loadingpanel" class="panel panel-default">
+                <div id="loadingpanel" class="panel panel-default" hidden="hidden">
                     <div class="panel-body">
                         <img class="loading" src="@routes.Assets.at("img/ajax-loader.gif")">
                         <p class="nopost" hidden="hidden" style='text-align : center ;'>No posts found.<p>
@@ -60,7 +70,6 @@
                         </ul>
                     </nav>
                 </div>
-
             </div><!--End column-->
         </div> <!-- End row -->
     </div> <!-- End container -->
@@ -68,7 +77,8 @@
 }
 
 @include = {
-    @*<script src="@routes.Assets.at("js/posts.js")"></script>*@
+    <script src="@routes.Assets.at("js/memorial.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.at("css/memorial.css")">
 }
 
 @loggedMaster("Memorial")(head)(body)(include)
