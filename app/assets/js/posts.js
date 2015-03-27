@@ -56,7 +56,6 @@ var templates = {
 
 var dataOperations = (function () {
         var pub = {};
-        //todo work on this
         pub.initialData = function () {
             var deferred = $.Deferred();
             var getgroups = dataOperations.getGroups();

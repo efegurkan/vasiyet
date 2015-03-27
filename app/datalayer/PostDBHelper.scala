@@ -130,7 +130,6 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
-  //todo missing filepath, sender etc
   def editPost(id: Long,
                title: String,
                content: String,
