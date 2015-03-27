@@ -6,6 +6,7 @@ var templates = {
         var sender = template.find('.sender');
         var group = template.find('.group');
         var posttime = data.date;
+        template.removeAttr('id');
         template.data('fd', data);
         template.attr('data-wall-post', data.id);
         title.text(data.title);
