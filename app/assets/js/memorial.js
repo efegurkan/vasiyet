@@ -42,8 +42,8 @@ var DataOperations = (function () {
         var urlparams = UtilityOperations.getUrlParams();
         console.log(urlparams);
         var data = {
-            "pagenum": urlparams.pagenum.toString(),
-            "token": urlparams.token.toString()
+            "pagenum": urlparams.toString()//,
+            //"token": urlparams.token.toString()
         };
         return DataOperations.ajaxPost("/getpagination", data);
     };
@@ -96,18 +96,27 @@ var UtilityOperations = (function () {
     };
 
     pub.getUrlParams = function () {
-        var pairs = location.search.split("&");
-        var params = {"token": "", "pagenum": 1};
-        for (var i = 0; i < pairs.length; i++) {
-            console.log(pairs);
-            if (typeof pairs[i] !== 'undefined' && pairs[i] !== "") {
-                var thingies = pairs.split("=");
-                params[thingies[0]] = thingies[1];
-                console.log(params);
-            }
-        }
+        //var pairs = location.search.split("&");
+        //var params = {"token": "", "pagenum": 1};
+        //for (var i = 0; i < pairs.length; i++) {
+        //    console.log(pairs);
+        //    if (typeof pairs[i] !== 'undefined' && pairs[i] !== "") {
+        //        var thingies = pairs.split("=");
+        //        params[thingies[0]] = thingies[1];
+        //        console.log(params);
+        //    }
+        //}
+        //
+        //return params;
+        var pagenum = location.search.split("p=")[1];
 
-        return params;
+        pagenum = parseInt(pagenum, 10);
+        if (!isNaN(pagenum)) {
+            return pagenum;
+        }
+        else {
+            return 1;
+        }
     };
 
 

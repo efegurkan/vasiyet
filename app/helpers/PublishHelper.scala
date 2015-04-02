@@ -9,7 +9,7 @@ object PublishHelper {
 
     val merhum = UserDBHelper.getUserById(merhumId)
     if (checkState(merhum)) {//RIP
-      merhum.memorial
+      //merhum.memorial
     } else {
       setState
       MemorialHelper.createMemorial(merhum)
