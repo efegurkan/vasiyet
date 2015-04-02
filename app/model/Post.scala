@@ -13,7 +13,8 @@ case class Post(id: Long,
                 filepath: Option[String],
                 sender: Long,
                 date: DateTime,
-                visibility: Long)
+                visibility: Long,
+                isLocked: Boolean = false)
 
 object Post extends JSONConvertable[Post] {
 
@@ -24,7 +25,7 @@ object Post extends JSONConvertable[Post] {
       val jsonPosts = posts.map(p => toJSON(p))
 
       val orderList = posts.map(p => p.id)
-      Json.obj("posts" -> jsonPosts, "orders" -> orderList,"activePage"->tuple._2,"maxPage"->tuple._3)
+      Json.obj("posts" -> jsonPosts, "orders" -> orderList, "activePage" -> tuple._2, "maxPage" -> tuple._3)
     }
     catch {
       case ex: Exception => {
@@ -65,6 +66,10 @@ object Post extends JSONConvertable[Post] {
     }
   }
 
+  def lockPost(t: Post): Boolean = {
+    PostDBHelper.lockPost(t.id)
+  }
+
   override def toJSON(t: Post): JsValue = {
     val group = GroupDBHelper.getGroupById(Some(t.visibility))
     val sender = UserDBHelper.getUserById(t.sender)
@@ -79,7 +84,7 @@ object Post extends JSONConvertable[Post] {
       "title" -> t.title,
       "content" -> t.content,
       "filepath" -> t.filepath,
-      "sender" -> (sender.name+" "+sender.surname),
+      "sender" -> (sender.name + " " + sender.surname),
       "date" -> DateTimeFormat.forPattern("dd MM yyyy").print(t.date),
       "visibility" -> vis
     )
@@ -101,7 +106,7 @@ object Post extends JSONConvertable[Post] {
 
     //todo change default values with parameters i.e. visibility 0 to groupid
     if (idValid && titleValid && contentValid && groupidValid) {
-      new Post(id.get, title, content, None, 0, new DateTime(), groupid.get)
+      new Post(id.get, title, content, None, 0, new DateTime(), groupid.get, false)
     }
     else {
       throw new Exception("Post Json is not valid")

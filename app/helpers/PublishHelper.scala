@@ -8,24 +8,18 @@ object PublishHelper {
   def publishMemorial(merhumId: Long): String = {
 
     val merhum = UserDBHelper.getUserById(merhumId)
-    if (checkState(merhum)) {//RIP
+    if (merhum.isdead) {//RIP
       //merhum.memorial
     } else {
-      setState
+      setState(merhum)
       MemorialHelper.createMemorial(merhum)
     }
     "return url"
   }
 
 
-  def checkState(merhum: User): Boolean = {
-
-    //todo implementation
-    false
-  }
-
-  def setState = {
-    //todo implementation
+  def setState(merhum: User) = {
+    User.kill(merhum)
   }
 
 

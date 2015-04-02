@@ -119,8 +119,8 @@ object ContactDBHelper extends DBHelper[Contact] {
           throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
         case e: Throwable => {
-          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
+          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           None
         }
       }

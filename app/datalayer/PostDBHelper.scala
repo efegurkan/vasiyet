@@ -165,6 +165,19 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
+  def lockPost(pId: Long): Boolean = {
+    DB.withConnection{ implicit c =>
+      val query = SQL(
+        """
+          |UPDATE vasiyet.Post
+          |SET isLocked = {islocked}
+          |WHERE id = {id}
+        """.stripMargin).on("id"->pId, "isLocked"-> true)
+
+      query.execute()
+    }
+  }
+
   def deletePost(id: Long): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL(

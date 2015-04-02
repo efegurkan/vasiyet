@@ -13,6 +13,7 @@ object MemorialHelper {
     //todo implementation
     //create memorial url
     //lock members posts
+    PostLocker.lockPosts(merhum)
     //retrieve member's contacts
     //edit contact email <==> memorial lookup table
     //trigger email notification

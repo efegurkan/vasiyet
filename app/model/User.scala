@@ -10,7 +10,8 @@ case class RegisterForm(email: String, password: String, name: String, surname: 
 case class User(id: Long,
                 email: String,
                 name: String,
-                surname: String)
+                surname: String,
+                isdead: Boolean)
 
 object User {
 
@@ -45,4 +46,9 @@ object User {
       case e: Exception => throw new Exception(e.getMessage)
     }
   }
+
+  def kill(merhum:User): Boolean = {
+    UserDBHelper.killUser(merhum.id)
+  }
+
 }

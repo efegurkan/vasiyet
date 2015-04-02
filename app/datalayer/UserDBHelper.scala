@@ -14,8 +14,9 @@ object UserDBHelper extends DBHelper[User] {
     get[Long]("id") ~
       get[String]("email") ~
       get[String]("name") ~
-      get[String]("surname") map {
-      case id ~ email ~ name ~ surname => User(id, email, name, surname)
+      get[String]("surname") ~
+      get[Boolean]("isDead") map {
+      case id ~ email ~ name ~ surname ~ isDead=> User(id, email, name, surname, isDead)
     }
 
   }
@@ -28,7 +29,7 @@ object UserDBHelper extends DBHelper[User] {
     DB.withConnection { implicit c =>
       val query = SQL( """
         INSERT INTO User
-        VALUES( NULL, {email}, {password}, {name}, {surname} )
+        VALUES( NULL, {email}, {password}, {name}, {surname}, '0' )
                        """).on("email" -> pEmail, "password" -> pPassword, "name" -> pName, "surname" -> pSurname)
 
       try {
@@ -43,8 +44,8 @@ object UserDBHelper extends DBHelper[User] {
             throw new Exception("{'error':'Please contact us with this error code:'" + ex.getErrorCode + "}")
         }
         case e: Throwable => {
-          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           e.printStackTrace()
+          throw new Exception("{'error':'Unknown error occured. Please contact us!'}")
           false
         }
       }
@@ -135,6 +136,19 @@ object UserDBHelper extends DBHelper[User] {
     }
   }
 
+  def killUser(pId: Long): Boolean = {
+    DB.withConnection{ implicit  c =>
+      val query = SQL(
+        """
+          |UPDATE User
+          |SET isDead = {isDead}
+          |WHERE id ={id}
+        """.stripMargin)
+      .on("id"->pId, "isDead"->true)
+
+      query.execute()
+    }
+  }
 
 
 }
