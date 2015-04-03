@@ -6,9 +6,11 @@ import play.api.Logger
 
 object MemorialHelper {
 
-  def getMemorialUrl():String = {
+  def getMemorialUrl(user:User):String = {
     //todo implementation
-    "return url"
+    //url/memorial/id
+    //this returns id part as string
+    MemorialDBHelper.getMemorialId(user).toString
   }
 
   def createMemorial(merhum: User): String = {
@@ -27,14 +29,17 @@ object MemorialHelper {
       populateLookupTable(merhum,memorialid)
       Logger.info("PopulateLookupTable Worked")
       //trigger email notification
+
+      //return id
+      memorialid.toString
     }
     catch {
       case ex: Exception => {
         ex.printStackTrace()
         Logger.error("Exception on createMemorial")
+        throw new Exception("Memorial creation failed")
       }
     }
-    "url"
   }
 
   def populateLookupTable(merhum: User, memorialId:Long) = {
