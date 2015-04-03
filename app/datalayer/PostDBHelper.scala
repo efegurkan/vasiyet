@@ -172,9 +172,12 @@ object PostDBHelper extends DBHelper[Post] {
           |UPDATE vasiyet.Post
           |SET isLocked = {islocked}
           |WHERE id = {id}
-        """.stripMargin).on("id"->pId, "isLocked"-> true)
+        """.stripMargin).on("id"->pId, "islocked"-> true)
 
-      query.execute()
+      println("lockposts execute starting")
+      val ret = query.execute()
+      println("lockposts execute done")
+      ret
     }
   }
 

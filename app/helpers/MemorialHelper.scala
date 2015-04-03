@@ -15,13 +15,17 @@ object MemorialHelper {
     //todo implementation
     //create memorial
     try {
+      Logger.info("create memorial on memorialhelper started")
       val memorialid = MemorialDBHelper.createMemorial(merhum)
-
+      println("memorialid:"+ memorialid)
+      Logger.info("No exception on create memorial on memorialDBhelper")
 
       //lock members posts
       PostLocker.lockPosts(merhum)
-      //retrieve member's contacts
+      Logger.info("Post locker, lock posts worked")
       //edit contact email <==> memorial lookup table
+      populateLookupTable(merhum,memorialid)
+      Logger.info("PopulateLookupTable Worked")
       //trigger email notification
     }
     catch {
@@ -37,13 +41,14 @@ object MemorialHelper {
     //todo implementation
     try {
       val contacts = ContactDBHelper.getContactsByUserId(merhum.id)
-
+      println("contacts" + contacts)
       MemorialDBHelper.generateLookupTable(memorialId, contacts)
     }
     catch {
       case ex: Exception => {
         ex.printStackTrace()
         Logger.error("Exception on populateLookupTable")
+        throw new Exception("populateLookupTable did not worked")
       }
     }
   }

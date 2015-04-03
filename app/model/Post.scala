@@ -3,6 +3,7 @@ package model
 import datalayer.{UserDBHelper, GroupDBHelper, PostDBHelper}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 
 import scala.util.Try
@@ -67,7 +68,11 @@ object Post extends JSONConvertable[Post] {
   }
 
   def lockPost(t: Post): Boolean = {
-    PostDBHelper.lockPost(t.id)
+    Logger.info("Post.lockPost initiated")
+    println("post:" + t)
+    val ret = PostDBHelper.lockPost(t.id)
+    Logger.info("LockPost on PostDBHelper worked correctly")
+    ret
   }
 
   override def toJSON(t: Post): JsValue = {

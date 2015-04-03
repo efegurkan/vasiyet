@@ -22,7 +22,7 @@ object MemorialDBHelper {
   }
 
   def generateLookupTable(memorialId: Long, contacts: List[Contact]) = {
-    DB.withConnection { implicit c =>
+    DB.withConnection { implicit connection =>
 
       val indexedValues = contacts.zipWithIndex
       val rows = indexedValues.map { case (value, i) =>
@@ -36,10 +36,21 @@ object MemorialDBHelper {
         )
       }
 
-      val query = SQL(
+      println(parameters)
+      SQL(
         """
           |INSERT INTO vasiyet.MemorialLookup(id, memorialId, contactemail) VALUES
-        """.stripMargin + rows).on(parameters:_ *).executeInsert()
+        """.stripMargin + rows).on(parameters:_ *).executeUpdate()
+     /* contacts.foreach(c =>
+        SQL(
+          """
+            |INSERT INTO vasiyet.MemorialLookup(id, memorialId, contactemail)
+            |VALUES (Null, {memorialId}, {email})
+          """.stripMargin)
+          .on("memorialId"-> memorialId, "email"->c.email)
+          .executeInsert()
+      )*/
+
     }
   }
 }

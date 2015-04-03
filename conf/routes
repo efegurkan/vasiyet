@@ -10,7 +10,7 @@ GET         /home                           controllers.Application.home
 #GET         /contacts                       controllers.Application.contacts
 GET         /contacts                       controllers.ContactController.showPage
 GET         /posts                          controllers.PostController.showPage
-GET        /memorial                       controllers.Memorial.showPage
+GET         /memorial                       controllers.Memorial.showPage
 
 GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
@@ -39,6 +39,10 @@ POST        /loginjson                      controllers.Login.loginJson
 
 POST        /logout                         controllers.Login.logout
 POST        /registerjson                   controllers.Register.registerJson
+
+#todo delete after testing
+GET         /test                           controllers.Application.test
+GET         /mail                           controllers.Application.mailtest
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                   controllers.Assets.at(path="/public", file)
