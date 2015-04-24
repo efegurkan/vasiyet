@@ -1,5 +1,7 @@
+@(id:Long = 0, isPublic: Boolean = true)
+
 @head = {
-    <script type="application/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+    <script type="application/javascript" src="@routes.Assets.at("../../../public/js/lib/bootstrap.min.js")"></script>
     @*<link href="@routes.Assets.at("css/bootplus.css")" rel="stylesheet" media="screen">*@
 }
 
@@ -49,7 +51,7 @@
 
                 <div id="loadingpanel" class="panel panel-default" hidden="hidden">
                     <div class="panel-body">
-                        <img class="loading" src="@routes.Assets.at("img/ajax-loader.gif")">
+                        <img class="loading" src="@routes.Assets.at("../../../public/img/ajax-loader.gif")">
                         <p class="nopost" hidden="hidden" style='text-align : center ;'>No posts found.<p>
                     </div>
                 </div>
@@ -81,4 +83,8 @@
     <link rel="stylesheet" href="@routes.Assets.at("css/memorial.css")">
 }
 
-@loggedMaster("Memorial")(head)(body)(include)
+@if(isPublic){
+    @public.publicMaster("Memorial")(head)(body)(include)
+}else {
+    @logged.loggedMaster("Memorial")(head)(body)(include)
+}

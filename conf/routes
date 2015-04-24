@@ -6,11 +6,13 @@
 GET         /                               controllers.Login.renderLogin
 
 GET         /home                           controllers.Application.home
+GET         /register                       controllers.Register.showPage()
 #GET         /home                           controllers.Contact.showPage
 #GET         /contacts                       controllers.Application.contacts
 GET         /contacts                       controllers.ContactController.showPage
 GET         /posts                          controllers.PostController.showPage
-GET         /memorial                       controllers.Memorial.showPage
+GET         /memorial                       controllers.Memorial.showPage()
+GET         /memorial/$id<[0-9]+>           controllers.Memorial.showPubPage(id: Long)
 
 GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)

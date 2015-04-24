@@ -1,0 +1,62 @@
+@head = {
+    <link rel="stylesheet" href="@routes.Assets.at("register.css")">
+    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrap.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("js/lib/bootstrapValidator.js")"></script>
+}
+
+@body = {
+    <div class="container">
+        <div class="col-md-12 panel panel-default panel-body">
+            <form class="form-horizontal " id="loginForm">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="email">Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="password">Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                </div>
+                <div id="registerInfo" style="display : none ;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="verify">Verify Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" name="password" class="form-control" id="verify" placeholder="Verify password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="name">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="surname">Surname</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="surname" class="form-control" id="surname" placeholder="Surname">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <div class="col-sm-offset-3 col-sm-6">
+                        <button type="submit" class="btn btn-default" id="loginBtn">Login</button>
+                    </div>
+                </div>
+                <ul class="nav"><li class="nav-divider"></li></ul>
+                <div class="col-sm-offset-3">
+                    <a href="#registerInfo" data-toggle="#registerInfo" id="togglebtn">Don't have an account?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+}
+
+@includes = {
+    <script src="@routes.Assets.at("js/login.js")"></script>
+}
+
+@public.publicMaster("Register")(head)(body)(includes)

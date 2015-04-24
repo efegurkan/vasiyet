@@ -509,7 +509,9 @@ var utilityOperations = (function () {
         var maincontent = $('#maincontent');
         maincontent.on('click', '.deletepost', function (e) {
             e.preventDefault();
-            utilityOperations.removePostHandler($(this));
+            var isConfirmed = confirm("You are about to delete this post. Are you sure ?");
+            if (isConfirmed)
+                utilityOperations.removePostHandler($(this));
         });
 
         $('.btn-newPostSave').on('click', function (e) {

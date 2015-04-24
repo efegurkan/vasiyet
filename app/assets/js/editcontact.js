@@ -17,7 +17,8 @@ $(document).ready(function () {
 
 function enableDeleteButton() {
     var btn = $('#delete');
-    if ($('#contactId').length !== 0 && $('#contactId').val() ==='0') {
+    var contactid = $('#contactId');
+    if (contactid.length !== 0 && contactid.val() ==='0') {
         btn.prop('disabled',true);
     }
     else {

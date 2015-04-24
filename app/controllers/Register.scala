@@ -79,4 +79,12 @@ object Register extends Controller {
 //      }
 //    )
 //  }
+  def showPage() = Action{ request =>
+  if (request.session.get("userid").nonEmpty) {
+  Redirect(routes.Application.home())
+} else {
+  Logger.info("Login.renderLogin: Success")
+  Ok(views.html.public.register())
+}
+}
 }

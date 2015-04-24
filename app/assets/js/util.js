@@ -1,4 +1,6 @@
 function logout(){
+    var isConfirmed = confirm("Do you really want to log out?");
+    if (isConfirmed)
     $.ajax({
         type : "POST",
         url : "/logout",
@@ -14,3 +16,4 @@ function logout(){
         }
     });
 }
+

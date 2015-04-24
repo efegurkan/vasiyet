@@ -29,10 +29,9 @@ object Post extends JSONConvertable[Post] {
       Json.obj("posts" -> jsonPosts, "orders" -> orderList, "activePage" -> tuple._2, "maxPage" -> tuple._3)
     }
     catch {
-      case ex: Exception => {
+      case ex: Exception =>
         ex.printStackTrace()
         throw new Exception("Posts on the current page couldn't be retrieved!")
-      }
     }
   }
 
@@ -42,17 +41,16 @@ object Post extends JSONConvertable[Post] {
       PostDBHelper.getPostById(postId)
     }
     catch {
-      case ex: Exception => {
+      case ex: Exception =>
         ex.printStackTrace()
         throw new Exception("Post couldn't be retrieved!")
-      }
     }
   }
 
   def getPostsJson(userId: Long): JsValue = {
     val rawPosts = this.getPosts(userId)
     val jsonlist = rawPosts.map(p => toJSON(p))
-    Json.toJson(jsonlist);
+    Json.toJson(jsonlist)
   }
 
   def deletePost(id: Long): Boolean = {
@@ -101,8 +99,8 @@ object Post extends JSONConvertable[Post] {
     // get data from json
     val id = Try((json \ "id").as[String].toLong.ensuring(i => i >= 0))
     val title = (json \ "title").as[String]
-    val content = (json \ "content").as[String].ensuring(c => (c.length <= 500))
-    val groupid = Try((json \ "group").as[String].toLong.ensuring(g => (g >= 0)))
+    val content = (json \ "content").as[String].ensuring(c => c.length <= 500)
+    val groupid = Try((json \ "group").as[String].toLong.ensuring(g => g >= 0))
     //validate fields
     val idValid: Boolean = id.isSuccess
     val titleValid: Boolean = !title.isEmpty
@@ -123,10 +121,9 @@ object Post extends JSONConvertable[Post] {
       PostDBHelper.getPostsBySenderId(pSenderId).reverse
     }
     catch {
-      case ex: Exception => {
+      case ex: Exception =>
         ex.printStackTrace()
         throw new Exception("Couldn't load posts!")
-      }
     }
   }
 
@@ -145,10 +142,9 @@ object Post extends JSONConvertable[Post] {
       }
     }
     catch {
-      case ex: Exception => {
+      case ex: Exception =>
         ex.printStackTrace()
         throw new Exception("Couldn't save post!")
-      }
     }
 
   }
