@@ -42,10 +42,11 @@ var DataOperations = (function () {
         var urlparams = UtilityOperations.getUrlParams();
         console.log(urlparams);
         var data = {
-            "pagenum": urlparams.toString()//,
-            //"token": urlparams.token.toString()
+            //todo check if /memorial or /memorialid and send ajax request respectively
+            "pagenum": urlparams.toString(),
+            "memorialId": '8'
         };
-        return DataOperations.ajaxPost("/getpagination", data);
+        return DataOperations.ajaxPost("/getmemorial", data);
     };
 
     pub.initiatePostsForDatastore = function (data) {

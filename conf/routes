@@ -11,8 +11,8 @@ GET         /register                       controllers.Register.showPage()
 #GET         /contacts                       controllers.Application.contacts
 GET         /contacts                       controllers.ContactController.showPage
 GET         /posts                          controllers.PostController.showPage
-GET         /memorial                       controllers.Memorial.showPage()
-GET         /memorial/$id<[0-9]+>           controllers.Memorial.showPubPage(id: Long)
+GET         /memorial                       controllers.MemorialController.showPage()
+GET         /memorial/$id<[0-9]+>           controllers.MemorialController.showMemorial(id: Long)
 
 GET         /addcontact                     controllers.ContactController.showAddContact()
 GET         /editcontact/$id<[0-9]+>        controllers.ContactController.showEditContact(id : Long)
@@ -34,7 +34,7 @@ POST        /deletepost                     controllers.PostController.deletePos
 POST        /getposts                       controllers.PostController.getPosts()
 POST        /getpagination                  controllers.PostController.pagination()
 
-POST        /getmemorial                    controllers.Memorial.pagination()
+POST        /getmemorial                    controllers.MemorialController.pagination()
 
 GET         /login                          controllers.Login.renderLogin
 POST        /loginjson                      controllers.Login.loginJson

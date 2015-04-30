@@ -36,12 +36,12 @@ object PostController extends Controller {
       val loggedUser = request.session.get("userid").get.toInt
       if (pagenumvalid) {
         val pagenum = Try((request.body \ "pagenum").as[String].toInt).get
-        val pagePosts = Post.getPostsPaginated(loggedUser, pagenum)
+        val pagePosts = Post.getAllPostsPaginated(loggedUser, pagenum)
         Ok(pagePosts)
       }
       else {
         val pagenum = 1
-        val pagePosts = Post.getPostsPaginated(loggedUser, pagenum)
+        val pagePosts = Post.getAllPostsPaginated(loggedUser, pagenum)
         Ok(pagePosts)
       }
 

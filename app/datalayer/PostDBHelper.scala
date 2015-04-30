@@ -26,8 +26,6 @@ object PostDBHelper extends DBHelper[Post] {
 
       val pageElementCount = 10
       val convertedPageNum = pageNum - 1
-      //      val start = pageElementCount* convertedPageNum
-      //      val end = start + pageElementCount
 
       val pageQuery = SQL(
         """
@@ -67,7 +65,8 @@ object PostDBHelper extends DBHelper[Post] {
           |LIMIT {start},{end}
         """.stripMargin).on("id" -> userId, "start" -> start.toInt, "end" -> end.toInt)
       val result = query.executeQuery()
-      val posts = result.as(parser *).toList
+      val posts = result.as(parser *)
+      //posts, activepage , maxpagenum
       (posts, (end / pageElementCount).toLong, maxPageNumber.toLong)
 
     }

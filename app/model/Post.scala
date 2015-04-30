@@ -19,7 +19,7 @@ case class Post(id: Long,
 
 object Post extends JSONConvertable[Post] {
 
-  def getPostsPaginated(loggedUser: Long, pageNum: Int): JsValue = {
+  def getAllPostsPaginated(loggedUser: Long, pageNum: Int): JsValue = {
     try {
       val tuple = PostDBHelper.getPostsByPage(loggedUser: Long, pageNum)
       val posts = tuple._1
