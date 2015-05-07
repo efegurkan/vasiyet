@@ -93,7 +93,7 @@ object UserDBHelper extends DBHelper[User] {
   }
 
   def loginUser(pEmail: String, pPassword: String): Option[User] = {
-    DB.withConnection { implicit c =>
+    DB.withTransaction { implicit c =>
       val query = SQL( """
           SELECT * FROM User
           WHERE email = {email} AND password = {password}
@@ -102,7 +102,13 @@ object UserDBHelper extends DBHelper[User] {
         val result = query.executeQuery.as(parser *)
         result match {
           case Nil => throw new UserCredentialsException()
-          case x :: xs => Some(x)
+          case x :: xs => {
+            SQL(
+              """
+                |REPLACE INTO LoginCheck SET userid = {uid}, loginTime = NOW(), isMailSent = isMailSent
+              """.stripMargin).on("uid"->x.id).executeUpdate()
+            Some(x)
+          }
 
         }
       }
