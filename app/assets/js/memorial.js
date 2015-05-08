@@ -40,12 +40,17 @@ var DataOperations = (function () {
 
     pub.getPaginatedPosts = function () {
         var urlparams = UtilityOperations.getUrlParams();
+        var isPub = UtilityOperations.getIsPublic();
         console.log(urlparams);
-        var data = {
-            //todo check if /memorial or /memorialid and send ajax request respectively
-            "pagenum": urlparams.toString(),
-            "memorialId": '8'
-        };
+        var data = {};
+            data.pagenum = urlparams.toString();
+
+        if(isPub) {
+            var pathnum = window.location.pathname.split("/")[2];
+            data.memorialId =  pathnum;
+        }
+        else data.memorialId = "0";
+
         return DataOperations.ajaxPost("/getmemorial", data);
     };
 
@@ -120,6 +125,13 @@ var UtilityOperations = (function () {
         }
     };
 
+    pub.getIsPublic = function () {
+        var path = window.location.pathname.split('/');
+        if(path.length > 2 && $.isNumeric(path[1])) {
+            return true;
+        }
+        return false;
+    };
 
     return pub;
 }());
