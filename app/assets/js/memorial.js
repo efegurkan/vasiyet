@@ -127,7 +127,7 @@ var UtilityOperations = (function () {
 
     pub.getIsPublic = function () {
         var path = window.location.pathname.split('/');
-        if(path.length > 2 && $.isNumeric(path[1])) {
+        if(path.length > 2 && $.isNumeric(path[2])) {
             return true;
         }
         return false;
