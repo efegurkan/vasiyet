@@ -91,6 +91,17 @@ object Contact extends JSONConvertable[Contact] {
     }
   }
 
+  def getContactByUserId(contactid:Long,userid:Long):Contact = {
+    try{
+      ContactDBHelper.getContactByUserId(contactid,userid)
+    }
+    catch {
+      case ex: Exception => Logger.error("Contact.getContact exception")
+        ex.printStackTrace()
+        throw new Exception("Something went wrong! We couldn't get the contact information.")
+    }
+  }
+
 
 }
 

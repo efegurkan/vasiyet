@@ -51,4 +51,12 @@ object User {
     UserDBHelper.killUser(merhum.id)
   }
 
+  def getUserById(id:Long) : User={
+    try {
+      UserDBHelper.getUserById(id)
+    }
+    catch {
+      case ex:Exception => throw new Exception("User could not be retrieved")
+    }
+  }
 }

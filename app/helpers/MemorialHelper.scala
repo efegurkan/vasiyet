@@ -7,14 +7,12 @@ import play.api.Logger
 object MemorialHelper {
 
   def getMemorialUrl(user:User):String = {
-    //todo implementation
     //url/memorial/id
     //this returns id part as string
     MemorialDBHelper.getMemorialId(user).toString
   }
 
   def createMemorial(merhum: User): String = {
-    //todo implementation
     //create memorial
     try {
       Logger.info("create memorial on memorialhelper started")
@@ -43,7 +41,6 @@ object MemorialHelper {
   }
 
   def populateLookupTable(merhum: User, memorialId:Long) = {
-    //todo implementation
     try {
       val contacts = ContactDBHelper.getContactsByUserId(merhum.id)
       println("contacts" + contacts)

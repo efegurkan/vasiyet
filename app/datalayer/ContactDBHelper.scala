@@ -141,4 +141,19 @@ object ContactDBHelper extends DBHelper[Contact] {
 
     }
   }
+
+  def getContactByUserId(ContactId: Long, UserId: Long): Contact = {
+    DB.withConnection { implicit c =>
+      val query = SQL("""
+                    |SELECT Contact.id,Contact.name, Contact.surname,Contact.email FROM Contact
+                    |WHERE  Contact.id = {ContactId}
+                    |AND ( EXISTS(SELECT 1 FROM UserLookup WHERE userid = {UserId} AND contactid = {ContactId}))
+                    |""".stripMargin).on("UserId" -> UserId,"ContactId"->ContactId)
+
+
+      val result = query.executeQuery()
+      result.as(parser *).head
+
+    }
+  }
 }

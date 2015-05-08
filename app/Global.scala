@@ -18,7 +18,6 @@ object Global extends GlobalSettings {
     Logger.info("Mail notification scheduling")
     val notifier = Akka.system(app).actorOf(Props(new MailNotifActor()))
 
-    //todo mail
     Akka.system(app).scheduler.schedule(0 seconds,10 seconds, notifier, "tick")
   }
 }

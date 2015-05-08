@@ -106,4 +106,60 @@ object MemorialDBHelper {
       (posts,paginationvalues._3, paginationvalues._4)
     }
   }
+
+  def getOtherMemorialPaginated(memorial: Memorial, sessionuser:User, pagenum: Int):(List[Post],Long,Long) = {
+    DB.withConnection{implicit c=>
+      val paginationvalues = PostPagination.calculatePagination(memorial.owner, pagenum)
+      val query = SQL(
+        """
+          |(SELECT DISTINCT Post.id, title, content, filepath, sender, date, GroupContactLookup.groupId FROM Post
+          |
+          |JOIN Contact ON Contact.email = {ContactEmail}
+          |
+          |JOIN UserLookup ON UserLookup.contactid= Contact.id AND UserLookup.userid = {MemorialSenderId}
+          |
+          |JOIN UserGroupLookup ON UserGroupLookup.userId = UserLookup.userid
+          |
+          |JOIN GroupContactLookup ON GroupContactLookup.contactId = Contact.id
+          |
+          |JOIN PostVisibilityLookup ON PostVisibilityLookup.groupId = GroupContactLookup.groupId
+          |
+          |WHERE Post.sender = {MemorialSenderId} AND Post.id = PostVisibilityLookup.postId)
+          |
+          |UNION (SELECT Post.id, title, content, filepath, sender, date, 0
+          |FROM Post JOIN PostVisibilityLookup ON(Post.id = PostVisibilityLookup.postId)
+          |WHERE PostVisibilityLookup.groupId = 0 AND Post.sender ={MemorialSenderId})
+          |
+          |ORDER BY date DESC
+          |LIMIT {start},{end}
+        """.stripMargin).on("ContactEmail"->sessionuser.email,
+          "MemorialSenderId"-> memorial.owner,
+          "start" -> paginationvalues._1,
+          "end" -> paginationvalues._2)
+
+      val posts:List[Post] = query.executeQuery().as(PostDBHelper.parser *)
+      //posts, activePage, maxPage
+      (posts, paginationvalues._3, paginationvalues._4)
+
+    }
+  }
+
+  def getOwnMemorialPaginated(memorialowner: User, pagenum: Int):(List[Post],Long,Long) = {
+    DB.withConnection {implicit c=>
+      val paginationvalues = PostPagination.calculatePagination(memorialowner.id, pagenum)
+      val posts: List[Post] = SQL(
+        """
+        |SELECT Post.id, title, content, filepath, sender, date, groupId
+        |FROM Post JOIN PostVisibilityLookup ON(Post.id = PostVisibilityLookup.postId)
+        |WHERE sender = {memorialOwner}
+        |ORDER BY date DESC
+        |LIMIT {start},{end}
+      """.
+          stripMargin).on("memorialOwner" -> memorialowner.id,
+          "start" -> paginationvalues._1,
+          "end" -> paginationvalues._2).executeQuery().as(PostDBHelper.parser *)
+        //posts, activePage, maxPage
+        (posts,paginationvalues._3, paginationvalues._4)
+      }
+  }
 }

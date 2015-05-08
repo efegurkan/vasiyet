@@ -17,6 +17,7 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
+  //todo auth check
   def createGroup(pGroupName: String, userId: Long): Long = {
     try {
       DB.withTransaction { implicit c =>
@@ -37,7 +38,7 @@ object GroupDBHelper extends DBHelper[Group] {
       }
     }
   }
-
+  //todo auth check
   def deleteGroup(pId: Long): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL("DELETE FROM vasiyet.Group Where id = {id}").on("id" -> pId)
@@ -59,6 +60,7 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
+  //todo auth check
   def updateGroup(pId: Option[Long], name: String): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL("UPDATE vasiyet.Group SET name = {name} WHERE id = {id}").on("id" -> pId, "name" -> name)
@@ -79,6 +81,7 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
+  //todo auth check
   def getGroupById(pGroupId: Option[Long]): Option[Group] = {
     DB.withConnection { implicit c =>
       val query = SQL(
@@ -119,6 +122,7 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
+  //todo auth check
   def getGroupsOfUser(pUserId: Long): List[Group] = {
     DB.withConnection { implicit c =>
       val query = SQL(
@@ -137,6 +141,7 @@ object GroupDBHelper extends DBHelper[Group] {
 
   }
 
+  //todo auth check
   def deleteMember(groupid: Long, contactid: Long): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL("DELETE FROM vasiyet.GroupContactLookup WHERE groupId = {groupid} AND contactId = {contactid}").
@@ -145,14 +150,13 @@ object GroupDBHelper extends DBHelper[Group] {
     }
   }
 
+  //todo auth check
   def addMember(groupId: Long, contactId: Long): Boolean = {
     DB.withConnection{implicit c =>
       val query = SQL("INSERT INTO vasiyet.GroupContactLookup VALUES(NULL,{groupid}, {contactid})").
         on("groupid"->groupId,"contactid"->contactId)
 
-      val result = query.executeInsert()
-      true//todo ?
+      query.executeUpdate()!= 0
     }
-    false
   }
 }

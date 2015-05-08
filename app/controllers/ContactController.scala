@@ -12,29 +12,46 @@ import scala.util.Try
 object ContactController extends Controller {
 
   def showPage = AuthAction { request =>
-    val id = request.session.get("userid")
-    //TODO exception cases
-    val contacts = ContactDBHelper.getContactsByUserId(id.get.toLong)
-    val groups = GroupDBHelper.getGroupsOfUser(id.get.toLong)
-    Ok(views.html.logged.contacts(contacts, groups))
-
+    try {
+      val id = request.session.get("userid")
+      //TODO exception cases
+      val contacts = ContactDBHelper.getContactsByUserId(id.get.toLong)
+      val groups = GroupDBHelper.getGroupsOfUser(id.get.toLong)
+      Ok(views.html.logged.contacts(contacts, groups))
+    }
+    catch {
+      case ex: Exception => {
+        Logger.error("ContactController.showPage exception")
+        ex.printStackTrace()
+        BadRequest("Something went wrong during the execution of the page. Please contact us about this problem.")
+      }
+    }
   }
 
   def showAddContact() = AuthAction { request =>
-    val empty = new model.Contact(new Some[Long](0), "", "", "")
-    Ok(views.html.logged.editcontact(empty, "Add"))
+    try {
+      val empty = new model.Contact(new Some[Long](0), "", "", "")
+      Ok(views.html.logged.editcontact(empty, "Add"))
+    }
+    catch {
+      case ex: Exception => {
+        Logger.error("ContactController.showAddContact exception")
+        ex.printStackTrace()
+        BadRequest("Something went wrong during the execution of the page. Please contact us about this problem.")
+      }
+    }
   }
 
   def showEditContact(id: Long) = AuthAction { request =>
-    //TODO inform user about Redirect
-    Logger.warn(id.toString)
-    val contact = ContactDBHelper.getContactById(id)
-    Logger.warn(contact.toString)
-    if (!contact.isDefined) {
-      Redirect("/")
-    }
-    else {
-      Ok(views.html.logged.editcontact(contact.get, "Edit"))
+    try {
+      val sessionid = request.session.get("userid").get.toLong
+      val contact = Contact.getContactByUserId(id,sessionid)
+      Ok(views.html.logged.editcontact(contact, "Edit"))
+
+    } catch {
+      case ex: Exception =>
+        Logger.error("ContactController.showEditContact exception")
+        Redirect("/contacts")
     }
   }
 

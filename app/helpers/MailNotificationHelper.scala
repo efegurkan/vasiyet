@@ -24,7 +24,7 @@ object MailNotificationHelper{
     MailerPlugin.send(testmail)
   }
 
-  def publishCheckMail(user:User) {
+  def publishCheckMail(user:User) {//log in or will publish memorial
     println(user.email)
     val testmail = Email(
       "Test email",
