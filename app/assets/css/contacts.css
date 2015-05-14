@@ -1,3 +1,10 @@
 .navi-bottom{
     margin-bottom: 15px;
 }
+
+
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+    width: 940px;
+}

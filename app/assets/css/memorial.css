@@ -10,8 +10,8 @@
 
 body {
     margin: 0;
-    font-family: Roboto, arial, sans-serif;
-    font-size: 13px;
+    /*font-family: Roboto, arial, sans-serif;*/
+    /*font-size: 13px;*/
     line-height: 20px;
     color: #444444;
     background-color: #e5e5e5;
@@ -21,7 +21,7 @@ body {
 .navbar-static-top .container,
 .navbar-fixed-top .container,
 .navbar-fixed-bottom .container {
-    /* width: 940px; */
+     width: 940px;
 }
 
 h1,

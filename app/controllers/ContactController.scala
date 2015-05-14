@@ -11,6 +11,7 @@ import scala.util.Try
 
 object ContactController extends Controller {
 
+  /*Auth check, only see your own contacts*/
   def showPage = AuthAction { request =>
     try {
       val id = request.session.get("userid")
@@ -28,6 +29,7 @@ object ContactController extends Controller {
     }
   }
 
+  /*Auth check, empty contact*/
   def showAddContact() = AuthAction { request =>
     try {
       val empty = new model.Contact(new Some[Long](0), "", "", "")
@@ -42,6 +44,7 @@ object ContactController extends Controller {
     }
   }
 
+  /*Auth check, only edit own contacts*/
   def showEditContact(id: Long) = AuthAction { request =>
     try {
       val sessionid = request.session.get("userid").get.toLong
@@ -55,6 +58,7 @@ object ContactController extends Controller {
     }
   }
 
+  /*Auth check, edit request only your own contacts*/
   //Handle edit contact request as JSON
   def editContactJson() = AuthAction(BodyParsers.parse.json) { implicit request =>
     try {
@@ -86,11 +90,13 @@ object ContactController extends Controller {
       throw new Exception("Incoming data is corrupted")
   }
 
+  /*Auth check, only delete a contact from own contacts*/
   //Handle delete request as JSON
   def deleteContact() = AuthAction(BodyParsers.parse.json) { implicit request =>
     try {
+      val sessionid = request.session.get("userid").get.toLong
       val contactId = extractDeleteJsonData(request.body)
-      if (Contact.deleteContact(contactId.get))
+      if (Contact.deleteContact(contactId.get,sessionid))
         Ok(Json.obj("Status" -> "OK", "message" -> "Contact deleted successfully"))
       else
         throw new Exception("Contact deletion failed")
@@ -101,7 +107,7 @@ object ContactController extends Controller {
         BadRequest(Json.obj("Status" -> "KO", "message" -> message))
     }
   }
-
+  /*Auth check, only get own contacts*/
   def getContactsAutoComplete() = AuthAction { implicit request =>
     val userid = request.session.get("userid")
     try {

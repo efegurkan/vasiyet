@@ -17,7 +17,12 @@ h3.panel-title.post-title:focus:hover {
     outline: none;
 }
 
-
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+     width: 940px;
+}
 /*div.panel-body:focus {*/
     /*background: rgba(211, 211, 211, 0.5);*/
 /*}*/
@@ -25,6 +30,15 @@ h3.panel-title.post-title:focus:hover {
 /*div.panel-body:hover {*/
     /*background: rgba(0, 150, 211, 0.3);*/
 /*}*/
+
+body {
+    margin: 0;
+    /*font-family: Roboto, arial, sans-serif;*/
+    /*font-size: 13px;*/
+    line-height: 20px;
+    color: #444444;
+    background-color: #e5e5e5;
+}
 
 .post-content {
     outline: none;

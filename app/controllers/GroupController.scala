@@ -21,16 +21,20 @@ object GroupController extends Controller {
       (JsPath \ "groupId").read[Option[Long]]
     )(AddMemberData.apply _)
 */
+
+  /*Auth check*/
   def showAddGroup() = AuthAction { request =>
-    val empty = new Group(new Some[Long](0), "");
+    val empty = new Group(new Some[Long](0), "")
     val id = request.session.get("userid").get.toLong
     Ok(views.html.logged.editgroup(empty, "Add", ContactDBHelper.getContactsByUserId(id)))
   }
 
+  /*Auth check, only show own groups*/
   def showEditGroup(id: Long) = AuthAction { request =>
     //TODO inform user about Redirect
-    Logger.warn(id.toString)
-    val group = GroupDBHelper.getGroupById(Option(id))
+
+    val sessionid = request.session.get("userid").get.toLong
+    val group = GroupDBHelper.getGroupByIdWithUser(id,sessionid)
     if (!group.isDefined) {
       Redirect("/")
     }
@@ -66,6 +70,7 @@ object GroupController extends Controller {
       throw new Exception("Incoming data is corrupted")
   }
 
+  /*Auth check*/
   def addMember() = AuthAction(BodyParsers.parse.json) { request =>
     try {
       val memberData = extractMemberAdditionData(request.body)
@@ -92,10 +97,12 @@ object GroupController extends Controller {
       throw new Exception("Incoming data is corrupted")
   }
 
+  /*Auth check, only delete own members from own groups*/
   def deleteMember() = AuthAction(BodyParsers.parse.json) { request =>
     try {
+      val sessionid = request.session.get("userid").get.toLong
       val data = extractMemberAdditionData(request.body)
-      val isItDeleted = Group.deleteMember(data)
+      val isItDeleted = Group.deleteMember(data,sessionid)
       if (isItDeleted)
         Ok(Json.obj("Status" -> "OK", "message" -> "Member deleted from group successfully"))
       else
@@ -121,12 +128,14 @@ object GroupController extends Controller {
       throw new Exception("Incoming data is corrupted")
   }
 
+  /*Auth check, only delete own Groups*/
   //Handle group delete request as JSON
-  def deleteGroup() = AuthAction(parse.json) {
+  def deleteGroup() = AuthAction(BodyParsers.parse.json) {
     request =>
       try {
+        val sessionid = request.session.get("userid").get.toLong
         val data = extractDeleteGroupData(request.body)
-        val isItDeleted = Group.deleteGroup(data)
+        val isItDeleted = Group.deleteGroup(data,sessionid)
         if (isItDeleted)
           Ok(Json.obj("Status" -> "OK", "message" -> "Group deleted successfully"))
         else
@@ -140,6 +149,7 @@ object GroupController extends Controller {
       }
   }
 
+  /*Auth check, only get own groups*/
   def getGroupsJson() = AuthAction { request =>
     try {
       val id = request.session.get("userid").get.toLong

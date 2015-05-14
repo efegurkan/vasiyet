@@ -45,9 +45,9 @@ object Group extends JSONConvertable[Group] {
     }
   }
 
-  def deleteGroup(groupId: Long): Boolean = {
+  def deleteGroup(groupId: Long,sessionid: Long): Boolean = {
     try {
-      GroupDBHelper.deleteGroup(groupId)
+      GroupDBHelper.deleteGroup(groupId,sessionid)
 
     } catch {
       case ex: Exception =>
@@ -76,12 +76,12 @@ object Group extends JSONConvertable[Group] {
     }
   }
 
-  def deleteMember(data: (Long, Long)): Boolean = {
+  def deleteMember(data: (Long, Long),sessionid:Long): Boolean = {
     val groupid = data._1
     val contactid = data._2
 
     try {
-      GroupDBHelper.deleteMember(groupid, contactid)
+      GroupDBHelper.deleteMember(groupid, contactid, sessionid)
     }
     catch {
       //todo exception handling review

@@ -243,7 +243,7 @@ var dataOperations = (function () {
         };
 
         pub.removePost = function (element) {
-            var id = element.closest('div.panel.panel-primary').data('wallPost');
+            var id = element.closest('div.panel.panel-info').data('wallPost');
             var data = {'postId': String(id)};
             return this.ajaxPost('/deletepost', data);
 
@@ -430,13 +430,13 @@ var utilityOperations = (function () {
     };
 
     pub.removePostHandler = function (element) {
-        var elementdata = element.closest('div.panel.panel-primary').data('fd');
+        var elementdata = element.closest('div.panel.panel-info').data('fd');
         var promise = dataOperations.removePost(element);
         promise.done(function (data) {
             console.log('promise ret');
             console.log(data);
             dataOperations.removePostFromStore(elementdata);
-            DOMOperations.destroy(element.closest('div.panel.panel-primary'));
+            DOMOperations.destroy(element.closest('div.panel.panel-info'));
 
         });
         promise.fail(function (jqXHR, textStatus, errorThrown) {
@@ -484,7 +484,7 @@ var utilityOperations = (function () {
 
     pub.activateEditTemplate = function (element) {
         utilityOperations.cancelEdit();
-        var div = element.closest('.panel.panel-primary');
+        var div = element.closest('.panel.panel-info');
         var instance = templates.editTemplate(div);
         $.datastore.editState = true;
         $.datastore.lastEdited = div.data('fd');

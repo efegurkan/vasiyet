@@ -78,9 +78,9 @@ object Contact extends JSONConvertable[Contact] {
     }
   }
 
-  def deleteContact(id: Long): Boolean = {
+  def deleteContact(id: Long,sessionid: Long): Boolean = {
     try {
-      ContactDBHelper.deleteContact(id)
+      ContactDBHelper.deleteContact(id,sessionid)
 
     } catch {
       case ex: Exception =>

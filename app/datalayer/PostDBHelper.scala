@@ -180,13 +180,14 @@ object PostDBHelper extends DBHelper[Post] {
     }
   }
 
-  def deletePost(id: Long): Boolean = {
+  /*Auth check, only delete own posts*/
+  def deletePost(id: Long, loggedUserId: Long): Boolean = {
     DB.withConnection { implicit c =>
       val query = SQL(
         """
           |DELETE FROM vasiyet.Post
-          |WHERE id = {id}
-        """.stripMargin).on("id" -> id)
+          |WHERE id = {id} AND sender = {loggedUser}
+        """.stripMargin).on("id" -> id,"loggedUser" -> loggedUserId)
 
       query.executeUpdate() != 0
     }

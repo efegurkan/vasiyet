@@ -73,10 +73,15 @@ object ContactDBHelper extends DBHelper[Contact] {
   }
 
 
-  def deleteContact(pId: Long): Boolean = {
+  def deleteContact(pId: Long,sessionid:Long): Boolean = {
     println(pId)
     DB.withConnection { implicit c =>
-      val query = SQL( """ DELETE FROM vasiyet.Contact WHERE id = {id} """.stripMargin).on("id" -> pId)
+      val query = SQL(
+        """
+          |DELETE FROM Contact
+          |WHERE  Contact.id = {ContactId}
+          |AND ( EXISTS(SELECT 1 FROM UserLookup WHERE userid = {UserId} AND contactid = {ContactId}))
+          |""".stripMargin).on("ContactId" -> pId, "UserId"->sessionid)
 
       //If no rows affected it is false
       query.executeUpdate() != 0

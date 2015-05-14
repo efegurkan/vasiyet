@@ -53,9 +53,10 @@ object Post extends JSONConvertable[Post] {
     Json.toJson(jsonlist)
   }
 
-  def deletePost(id: Long): Boolean = {
+  /*Auth check, only delete own posts*/
+  def deletePost(id: Long, loggedUserId: Long): Boolean = {
     try {
-      PostDBHelper.deletePost(id)
+      PostDBHelper.deletePost(id, loggedUserId)
     }
     catch {
       case ex: Exception =>
@@ -74,7 +75,7 @@ object Post extends JSONConvertable[Post] {
   }
 
   override def toJSON(t: Post): JsValue = {
-    val group = GroupDBHelper.getGroupById(Some(t.visibility))
+    val group = GroupDBHelper.getGroupById(t.visibility)
     val sender = UserDBHelper.getUserById(t.sender)
     val vis = if (t.visibility == 0) {
       "All"
