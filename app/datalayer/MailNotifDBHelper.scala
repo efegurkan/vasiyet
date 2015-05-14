@@ -36,7 +36,18 @@ object MailNotifDBHelper{
       SQL(
         """
           |SELECT userid FROM LoginCheck
-          |WHERE isMailSent = FALSE AND loginTime < NOW() - INTERVAL {interval} MINUTE
+          |WHERE isMailSent = FALSE AND isMemorialPublished = FALSE AND loginTime < NOW() - INTERVAL {interval} MINUTE
+        """.stripMargin).on("interval"->interval/*, "intervalType"-> intervalType*/).executeQuery().as(scalar[Long] *)
+    }
+  }
+
+  def getMailedUsersInterval(intervalType: String, interval: Int) :List[Long] = {
+    DB.withConnection{implicit c =>
+      println(interval + " minutes")
+      SQL(
+        """
+          |SELECT userid FROM LoginCheck
+          |WHERE isMailSent = TRUE AND isMemorialPublished = FALSE AND loginTime < NOW() - INTERVAL {interval} MINUTE
         """.stripMargin).on("interval"->interval/*, "intervalType"-> intervalType*/).executeQuery().as(scalar[Long] *)
     }
   }

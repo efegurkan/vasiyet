@@ -6,13 +6,13 @@ import play.api.Logger
 
 object MemorialHelper {
 
-  def getMemorialUrl(user:User):String = {
+  def getMemorialUrl(user:User):Long = {
     //url/memorial/id
     //this returns id part as string
-    MemorialDBHelper.getMemorialId(user).toString
+    MemorialDBHelper.getMemorialId(user)
   }
 
-  def createMemorial(merhum: User): String = {
+  def createMemorial(merhum: User): Long = {
     //create memorial
     try {
       Logger.info("create memorial on memorialhelper started")
@@ -28,8 +28,9 @@ object MemorialHelper {
       Logger.info("PopulateLookupTable Worked")
       //trigger email notification
 
+      MemorialDBHelper.setMemorialPublished(merhum.id)
       //return id
-      memorialid.toString
+      memorialid
     }
     catch {
       case ex: Exception => {
@@ -51,6 +52,20 @@ object MemorialHelper {
         ex.printStackTrace()
         Logger.error("Exception on populateLookupTable")
         throw new Exception("populateLookupTable did not worked")
+      }
+    }
+  }
+
+  def getMemorialContactEmails(memorialid:Long): List[String] = {
+    try{
+      val contacts = MemorialDBHelper.getMemorialContactEmails(memorialid)
+      contacts
+    }
+    catch {
+      case ex: Exception => {
+        ex.printStackTrace()
+        Logger.error("Exception on getMemorialContacts")
+        throw new Exception("memorial contacts couldn't retrieved.")
       }
     }
   }

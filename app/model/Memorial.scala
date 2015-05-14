@@ -45,6 +45,7 @@ object Memorial extends JSONConvertable[Memorial] {
 
       if(user.isdead){
         //somebody else logged as dead person
+        println(user)
         throw new Exception("This account may be compromised. Operation not permitted")
       }
       else{//user alive

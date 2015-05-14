@@ -162,4 +162,26 @@ object MemorialDBHelper {
         (posts,paginationvalues._3, paginationvalues._4)
       }
   }
+
+  def getMemorialContactEmails(memorialid: Long): List[String]= {
+    DB.withConnection{implicit c =>
+      SQL(
+        """
+          |SELECT contactemail FROM MemorialLookup
+          |WHERE memorialId = {memorialid}
+        """.stripMargin).on("memorialid"-> memorialid).executeQuery().as(scalar[String] *)
+
+    }
+  }
+
+  def setMemorialPublished(userid: Long) ={
+    DB.withConnection{implicit c =>
+      SQL(
+        """
+          |UPDATE LoginCheck
+          |SET isMemorialPublished = TRUE
+          |WHERE userid = {userid}
+        """.stripMargin).on("userid"->userid).executeUpdate()
+    }
+  }
 }
