@@ -13,6 +13,11 @@
     padding-top: 20px;
 }
 
+.navbar-fixed-top
+{
+    margin-right: 0!important;
+}
+
 .bg-img{
     position: fixed;
     width: 100%;

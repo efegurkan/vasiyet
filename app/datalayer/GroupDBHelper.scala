@@ -40,15 +40,23 @@ object GroupDBHelper extends DBHelper[Group] {
   }
   //todo auth check
   def deleteGroup(pId: Long,sessionid: Long): Boolean = {
-    DB.withConnection { implicit c =>
+    DB.withTransaction { implicit c =>
       val query = SQL(
         """DELETE FROM vasiyet.Group
           |Where id = {id}
           |AND EXISTS (SELECT 1 FROM UserGroupLookup WHERE userId = {userid} AND GroupId = {id})""".stripMargin)
         .on("id" -> pId,"userid"->sessionid)
 
+      val query2 = SQL(
+        """
+          |DELETE FROM PostVisibilityLookup
+          |WHERE groupId = {id}
+        """.stripMargin).on("id"-> pId)
       try {
-        query.executeUpdate() != 0
+        val res1 = query.executeUpdate()
+        val res2 = query2.executeUpdate()
+        (res1!=0 &&  res2!=0)
+
       } catch {
         case ex: jdbc4.MySQLIntegrityConstraintViolationException => {
           Logger.error(ex.getErrorCode.toString)
