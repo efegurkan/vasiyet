@@ -221,11 +221,25 @@ var DOMOperations = (function () {
             $('#maincontent').append(instance);
         });
     };
+
+    pub.renderBackGroundImage = function() {
+        var navbar = $('nav');
+        navbar.addClass('memorial-nav');
+        var range = [0,1,2,3];
+        var value = range[Math.floor(Math.random() * range.length)];
+        var bg = $('.background');
+        bg.addClass('bg-img'+value.toString());
+
+    };
+
     return pub;
 }());
 
 
 $('document').ready(function () {
+
+    DOMOperations.renderBackGroundImage();
+
     DataOperations.initialize().done(function () {
         DOMOperations.hideLoading();
         DOMOperations.createPagination();
